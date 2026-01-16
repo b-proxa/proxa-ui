@@ -4,17 +4,20 @@
    ============================================================ */
 
 .modal-overlay {
-    display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0);
     z-index: 1000;
+    display: flex;
     align-items: center;
     justify-content: center;
+    visibility: hidden;
+    transition: background 0.2s ease, visibility 0.2s ease;
 }
 
 .modal-overlay.open {
-    display: flex;
+    visibility: visible;
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .modal {
@@ -24,6 +27,14 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.modal-overlay.open .modal {
+    opacity: 1;
+    transform: scale(1) translateY(0);
 }
 
 .modal--large {
@@ -49,17 +60,25 @@
 
 .modal__close {
     margin-left: auto;
-    padding: 0;
-    font-size: 1.5rem;
+    padding: var(--space-1);
+    font-size: 1.25rem;
     line-height: 1;
     color: var(--gray-400);
     background: none;
     border: none;
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
 }
 
 .modal__close:hover {
     color: var(--gray-600);
+    background: var(--gray-100);
+}
+
+.modal__close:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent);
 }
 
 .modal__body {

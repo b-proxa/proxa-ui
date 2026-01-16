@@ -411,8 +411,11 @@
             uploadZone.classList.add('dragover');
         });
 
-        uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('dragover');
+        uploadZone.addEventListener('dragleave', (e) => {
+            // Only remove class if leaving the upload zone entirely (not entering a child)
+            if (!uploadZone.contains(e.relatedTarget)) {
+                uploadZone.classList.remove('dragover');
+            }
         });
 
         uploadZone.addEventListener('drop', (e) => {

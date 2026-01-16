@@ -1064,7 +1064,11 @@
             fileDropzone.classList.add('dragover');
         });
 
-        fileDropzone.addEventListener('dragleave', () => fileDropzone.classList.remove('dragover'));
+        fileDropzone.addEventListener('dragleave', (e) => {
+            if (!fileDropzone.contains(e.relatedTarget)) {
+                fileDropzone.classList.remove('dragover');
+            }
+        });
 
         fileDropzone.addEventListener('drop', (e) => {
             e.preventDefault();
