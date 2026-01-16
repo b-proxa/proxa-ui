@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <script>
+        // Hide header when loaded in iframe
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('in-iframe');
+        }
+    </script>
+    <style>
+        .in-iframe .app-header { display: none; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="24" y="4" width="28" height="28" rx="2" transform="rotate(45 24 4)" fill="#1c1917"/>
+            <path d="M12 32 Q18 28, 24 26 Q30 24, 36 16" stroke="#e8e8e6" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M14 34 Q20 30, 26 28 Q32 26, 38 18" stroke="#6b8f71" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="app-header__divider"></div>
+        <div>
+            <div class="app-header__label">Proxa Workspace</div>
+            <div class="app-header__name">Selkirk Snow Cat Skiing</div>
+        </div>
+        <nav class="app-tabs">
+            <a href="../index.html" class="app-tab">Style Guide</a>
+            <a href="../patterns/record.html" class="app-tab">Record</a>
+            <a href="dashboard.html" class="app-tab active">Dashboard</a>
+        </nav>
+    </header>
+
+    <!-- Content -->
+    <main class="app-content" style="max-width: 900px;">
+        <!-- Hub Section -->
+        <div class="section-title" style="margin-bottom: var(--space-3);">Hub</div>
+        <div class="hub-grid" style="margin-bottom: var(--space-6);">
+            <div class="hub-card" onclick="openPanel('updates-panel')">
+                <div class="hub-card__top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span class="badge badge--count">4</span>
+                </div>
+                <div class="hub-card__title">Updates</div>
+                <div class="hub-card__meta">12 new this week</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('team-panel')">
+                <div class="hub-card__top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="7" r="3"/>
+                        <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                        <circle cx="17" cy="7" r="2.5"/>
+                        <path d="M21 20v-1.5a3 3 0 0 0-2.5-2.96"/>
+                    </svg>
+                </div>
+                <div class="hub-card__title">Team</div>
+                <div class="hub-card__meta">8 members</div>
+            </div>
+            <div class="hub-card">
+                <div class="hub-card__top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="17" rx="2"/>
+                        <path d="M3 9h18"/>
+                        <path d="M8 2v4"/>
+                        <path d="M16 2v4"/>
+                    </svg>
+                </div>
+                <div class="hub-card__title">Calendar</div>
+                <div class="hub-card__meta">3 tours scheduled</div>
+            </div>
+            <div class="hub-card">
+                <div class="hub-card__top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <div class="hub-card__title">Projects</div>
+                <div class="hub-card__meta">5 active</div>
+            </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="section-title" style="margin-bottom: var(--space-3);">Metrics</div>
+        <div class="metrics-grid" style="margin-bottom: var(--space-6);">
+            <div class="metric-card" onclick="openPanel('revenue-panel')">
+                <div class="metric-card__top">
+                    <span class="metric-card__label">Revenue</span>
+                    <span class="metric-card__change metric-card__change--negative">-70.88%</span>
+                </div>
+                <div class="metric-card__value">$14.3K</div>
+                <svg class="metric-card__sparkline" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M2,26 L2,18 L11,12 L20,16 L29,10 L38,14 L47,20 L56,16 L65,8 L74,12 L83,6 L92,10 L98,4 L98,26 Z" fill="url(#grad-red)"/>
+                    <polyline points="2,18 11,12 20,16 29,10 38,14 47,20 56,16 65,8 74,12 83,6 92,10 98,4" fill="none" stroke="#b54848" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card">
+                <div class="metric-card__top">
+                    <span class="metric-card__label">Sales</span>
+                    <span class="metric-card__change metric-card__change--positive">+97.16%</span>
+                </div>
+                <div class="metric-card__value">$11.5K</div>
+                <svg class="metric-card__sparkline" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M2,26 L2,20 L11,18 L20,14 L29,16 L38,10 L47,6 L56,8 L65,4 L74,6 L83,3 L92,5 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,20 11,18 20,14 29,16 38,10 47,6 56,8 65,4 74,6 83,3 92,5 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card">
+                <div class="metric-card__top">
+                    <span class="metric-card__label">Bookings</span>
+                    <span class="metric-card__change metric-card__change--positive">+12.5%</span>
+                </div>
+                <div class="metric-card__value">847</div>
+                <svg class="metric-card__sparkline" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="grad-green2" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M2,26 L2,16 L11,14 L20,12 L29,14 L38,10 L47,8 L56,10 L65,6 L74,8 L83,4 L92,6 L98,3 L98,26 Z" fill="url(#grad-green2)"/>
+                    <polyline points="2,16 11,14 20,12 29,14 38,10 47,8 56,10 65,6 74,8 83,4 92,6 98,3" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Recent Activity Table -->
+        <div class="section-title" style="margin-bottom: var(--space-3);">Recent Activity</div>
+        <div class="data-table-wrap" style="display: block; width: 100%;">
+            <table class="data-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="text-align: center;">Owner</th>
+                        <th style="text-align: right;">Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Q4 Financial Report</td>
+                        <td style="text-align: center;"><span class="badge badge--success">Complete</span></td>
+                        <td style="text-align: center;"><div class="avatar">JD</div></td>
+                        <td style="text-align: right;">2 hours ago</td>
+                    </tr>
+                    <tr>
+                        <td>2024 Budget Forecast</td>
+                        <td style="text-align: center;"><span class="badge badge--warning">In Review</span></td>
+                        <td style="text-align: center;"><div class="avatar">AL</div></td>
+                        <td style="text-align: right;">Yesterday</td>
+                    </tr>
+                    <tr>
+                        <td>Tour Package Pricing</td>
+                        <td style="text-align: center;"><span class="badge">Draft</span></td>
+                        <td style="text-align: center;"><div class="avatar">MK</div></td>
+                        <td style="text-align: right;">3 days ago</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Overlay -->
+    <div class="overlay" onclick="closePanel()"></div>
+
+    <!-- Updates Panel -->
+    <div class="panel" id="updates-panel">
+        <div class="panel__header">
+            <span class="panel__title">Updates</span>
+            <button class="panel__close" onclick="closePanel()">×</button>
+        </div>
+        <div class="panel__content">
+            <div class="panel-section">
+                <div class="panel-section__title">Today</div>
+                <div class="comment">
+                    <div class="comment__avatar">JD</div>
+                    <div class="comment__content">
+                        <div class="comment__header">
+                            <span class="comment__author">Jake Donovan</span>
+                            <span class="comment__time">2 hours ago</span>
+                        </div>
+                        <div class="comment__text">Updated Q4 revenue projections based on December bookings.</div>
+                    </div>
+                </div>
+                <div class="comment">
+                    <div class="comment__avatar">AL</div>
+                    <div class="comment__content">
+                        <div class="comment__header">
+                            <span class="comment__author">Amy Liu</span>
+                            <span class="comment__time">5 hours ago</span>
+                        </div>
+                        <div class="comment__text">Added new expense categories for equipment maintenance.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Panel -->
+    <div class="panel" id="team-panel">
+        <div class="panel__header">
+            <span class="panel__title">Team</span>
+            <button class="panel__close" onclick="closePanel()">×</button>
+        </div>
+        <div class="panel__content">
+            <div class="panel-section">
+                <div class="panel-section__title">Members</div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                    <div style="display: flex; align-items: center; gap: var(--space-3);">
+                        <div class="avatar avatar--lg">JD</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: var(--text-sm); font-weight: 500;">Jake Donovan</div>
+                            <div style="font-size: var(--text-xs); color: var(--gray-500);">Operations Manager</div>
+                        </div>
+                        <div class="status-dot"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-3);">
+                        <div class="avatar avatar--lg">AL</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: var(--text-sm); font-weight: 500;">Amy Liu</div>
+                            <div style="font-size: var(--text-xs); color: var(--gray-500);">Finance Lead</div>
+                        </div>
+                        <div class="status-dot"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-3);">
+                        <div class="avatar avatar--lg">MK</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: var(--text-sm); font-weight: 500;">Mike Kim</div>
+                            <div style="font-size: var(--text-xs); color: var(--gray-500);">Marketing</div>
+                        </div>
+                        <div class="status-dot status-dot--offline"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Detail Panel -->
+    <div class="panel panel--wide" id="revenue-panel">
+        <div class="panel__header">
+            <span class="panel__title">Revenue</span>
+            <button class="panel__close" onclick="closePanel()">×</button>
+        </div>
+        <div class="panel__content">
+            <div style="font-size: 1.5rem; font-weight: 500; color: var(--gray-900); margin-bottom: 4px;">$14,320</div>
+            <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 500; color: var(--error); margin-bottom: 16px;">
+                ↘ -70.88% vs prior period
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section__title">Analysis</div>
+                <p style="font-size: var(--text-sm); color: var(--gray-600); line-height: 1.6;">
+                    Revenue is down significantly compared to the same period last year. This is primarily due to reduced bookings in the early season period and increased competition from new operators.
+                </p>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section__title">Metadata</div>
+                <div class="meta-list">
+                    <div class="meta-row">
+                        <span class="meta-row__label">Owner</span>
+                        <span class="meta-row__value">Jake Donovan</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-row__label">Last updated</span>
+                        <span class="meta-row__value">Jan 8, 2026</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-row__label">Update frequency</span>
+                        <span class="meta-row__value">Weekly</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section__title">Comments</div>
+                <div class="comment">
+                    <div class="comment__avatar">JD</div>
+                    <div class="comment__content">
+                        <div class="comment__header">
+                            <span class="comment__author">Jake Donovan</span>
+                            <span class="comment__time">2 days ago</span>
+                        </div>
+                        <div class="comment__text">We should revisit pricing for group bookings. Early bird discounts may help.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { openPanel as open, closePanel as close, initPanels } from '../js/slide-panel.js';
+
+        // Make functions available globally
+        window.openPanel = open;
+        window.closePanel = close;
+
+        initPanels();
+    </script>
+</body>
+</html>

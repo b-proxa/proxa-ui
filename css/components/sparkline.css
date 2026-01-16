@@ -1,0 +1,34 @@
+/* ============================================================
+   SPARKLINE
+   Inline trend visualization
+   ============================================================ */
+
+.sparkline {
+    width: 100%;
+    height: 32px;
+}
+
+.sparkline--sm {
+    height: 24px;
+}
+
+.sparkline--lg {
+    height: 48px;
+}
+
+/* SVG sparkline gradients (defined inline in SVG) */
+.sparkline-gradient-positive {
+    --sparkline-color: var(--fin-favorable);
+}
+
+.sparkline-gradient-negative {
+    --sparkline-color: var(--fin-unfavorable);
+}
+
+.sparkline-gradient-neutral {
+    --sparkline-color: var(--gray-400);
+}
+
+.sparkline-gradient-accent {
+    --sparkline-color: var(--accent);
+}

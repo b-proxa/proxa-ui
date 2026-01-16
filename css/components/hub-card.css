@@ -1,0 +1,75 @@
+/* ============================================================
+   HUB CARD
+   Navigation cards for dashboard hubs
+   ============================================================ */
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.hub-card {
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    background: transparent;
+    border-radius: var(--radius-lg);
+    border: var(--border);
+    cursor: pointer;
+    transition: background var(--transition-base);
+}
+
+.hub-card:hover {
+    background: var(--gray-75);
+}
+
+.hub-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.hub-card__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 2px;
+}
+
+.hub-card__meta {
+    font-size: 0.7rem;
+    color: var(--gray-500);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hub-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .hub-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .hub-card {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+    }
+
+    .hub-card__top {
+        margin-bottom: 0;
+    }
+
+    .hub-card__top .badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+}

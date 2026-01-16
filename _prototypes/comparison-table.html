@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison Table — YoY Analysis</title>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            
+            --fin-favorable: #4a7c59;
+            --fin-favorable-bg: #eef4f0;
+            --fin-unfavorable: #b54848;
+            --fin-unfavorable-bg: #fdf2f2;
+            
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: 14px;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: var(--width-medium, 900px);
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+        
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .comparison-table thead th {
+            padding: 12px 16px;
+            font-weight: 600;
+            text-align: right;
+            color: var(--gray-600);
+            background: var(--gray-50);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .comparison-table thead th:first-child {
+            text-align: left;
+            width: 35%;
+        }
+        
+        .comparison-table thead th.col-variance {
+            background: var(--gray-100);
+        }
+        
+        .comparison-table thead .col-group {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .comparison-table tbody td {
+            padding: 10px 16px;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-100);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .comparison-table tbody td:first-child {
+            text-align: left;
+        }
+        
+        .comparison-table tbody tr:hover td {
+            background: var(--gray-50);
+        }
+        
+        .comparison-table tbody tr:hover td.col-variance {
+            background: var(--gray-100);
+        }
+        
+        /* Row types */
+        .comparison-table .row-section td {
+            padding: 14px 16px 8px;
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--gray-500);
+            background: var(--gray-50) !important;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .comparison-table .row-subtotal td {
+            font-weight: 600;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .comparison-table .row-total td {
+            font-weight: 700;
+            background: var(--gray-100) !important;
+            border-top: 2px solid var(--gray-300);
+        }
+        
+        .comparison-table .row-spacer td {
+            padding: 6px;
+            background: white !important;
+            border: none;
+        }
+        
+        /* Variance columns */
+        .col-variance {
+            background: var(--gray-50);
+            border-left: 1px solid var(--gray-200);
+        }
+        
+        /* Variance badges */
+        .variance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        
+        .variance-badge--favorable {
+            color: var(--fin-favorable);
+            background: var(--fin-favorable-bg);
+        }
+        
+        .variance-badge--unfavorable {
+            color: var(--fin-unfavorable);
+            background: var(--fin-unfavorable-bg);
+        }
+        
+        .variance-badge--neutral {
+            color: var(--gray-500);
+            background: var(--gray-100);
+        }
+        
+        /* Indent */
+        .indent-1 { padding-left: 28px !important; }
+        
+        /* Footer legend */
+        .footer {
+            padding: 12px 24px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            font-size: 10px;
+            color: var(--gray-500);
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer__item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .footer__dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        
+        .footer__dot--favorable { background: var(--fin-favorable); }
+        .footer__dot--unfavorable { background: var(--fin-unfavorable); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Income Statement Comparison</h1>
+                <div class="subtitle">FY2024 vs FY2023 — Values in CAD</div>
+            </div>
+        </div>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>FY2024</th>
+                    <th>FY2023</th>
+                    <th class="col-variance">Δ $</th>
+                    <th class="col-variance">Δ %</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Generated by JS -->
+            </tbody>
+        </table>
+        
+        <div class="footer">
+            <div class="footer__item">
+                <div class="footer__dot footer__dot--favorable"></div>
+                <span>Favorable variance</span>
+            </div>
+            <div class="footer__item">
+                <div class="footer__dot footer__dot--unfavorable"></div>
+                <span>Unfavorable variance</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data structure with favorability context
+        const data = [
+            { type: 'section', label: 'Revenue' },
+            { label: 'Tour packages', cy: 3245037, py: 3149104, favorable: 'up', indent: 1 },
+            { label: 'Gratuities', cy: 308147, py: 290404, favorable: 'up', indent: 1 },
+            { label: 'Ancillary revenue', cy: 276709, py: 294956, favorable: 'up', indent: 1 },
+            { label: 'Accommodation upgrades', cy: 106950, py: 97075, favorable: 'up', indent: 1 },
+            { label: 'Investment income', cy: 88048, py: 44680, favorable: 'up', indent: 1 },
+            { label: 'Course revenue', cy: 40751, py: 0, favorable: 'up', indent: 1 },
+            { type: 'subtotal', label: 'Total Revenue', cy: 4065642, py: 3876219, favorable: 'up' },
+            
+            { type: 'spacer' },
+            { type: 'section', label: 'Operating Expenses' },
+            { label: 'Wages and benefits', cy: 974358, py: 1128328, favorable: 'down', indent: 1 },
+            { label: 'Gratuities', cy: 308147, py: 290404, favorable: 'down', indent: 1 },
+            { label: 'Amortization', cy: 229419, py: 203205, favorable: 'down', indent: 1 },
+            { label: 'Food', cy: 175591, py: 151435, favorable: 'down', indent: 1 },
+            { label: 'Insurance & dues', cy: 166831, py: 138435, favorable: 'down', indent: 1 },
+            { label: 'Equipment repairs', cy: 149969, py: 132357, favorable: 'down', indent: 1 },
+            { label: 'Fuel', cy: 121499, py: 179252, favorable: 'down', indent: 1 },
+            { label: 'Mountain operation', cy: 110796, py: 96008, favorable: 'down', indent: 1 },
+            { label: 'Other expenses', cy: 701038, py: 604296, favorable: 'down', indent: 1 },
+            { type: 'subtotal', label: 'Total Expenses', cy: 2937648, py: 2923720, favorable: 'down' },
+            
+            { type: 'spacer' },
+            { type: 'total', label: 'Income before taxes', cy: 1127994, py: 952499, favorable: 'up' },
+            
+            { type: 'spacer' },
+            { type: 'section', label: 'Income Taxes' },
+            { label: 'Current', cy: 160557, py: 154199, favorable: 'down', indent: 1 },
+            { label: 'Future', cy: 103554, py: 8035, favorable: 'down', indent: 1 },
+            { type: 'subtotal', label: 'Total Income Taxes', cy: 264111, py: 162234, favorable: 'down' },
+            
+            { type: 'spacer' },
+            { type: 'total', label: 'Net Income', cy: 863883, py: 790265, favorable: 'up' },
+        ];
+        
+        function fmt(val) {
+            if (val === null || val === undefined) return '—';
+            const abs = Math.abs(val);
+            const formatted = abs.toLocaleString('en-US');
+            return val < 0 ? `(${formatted})` : formatted;
+        }
+        
+        function calcVariance(cy, py) {
+            return cy - py;
+        }
+        
+        function calcVariancePct(cy, py) {
+            if (py === 0) return cy > 0 ? 100 : 0;
+            return ((cy - py) / Math.abs(py)) * 100;
+        }
+        
+        function isFavorable(variance, favorableDirection) {
+            if (variance === 0) return 'neutral';
+            if (favorableDirection === 'up') {
+                return variance > 0 ? 'favorable' : 'unfavorable';
+            } else {
+                return variance < 0 ? 'favorable' : 'unfavorable';
+            }
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+            
+            data.forEach(row => {
+                if (row.type === 'section') {
+                    html += `<tr class="row-section"><td colspan="5">${row.label}</td></tr>`;
+                    return;
+                }
+                
+                if (row.type === 'spacer') {
+                    html += `<tr class="row-spacer"><td colspan="5"></td></tr>`;
+                    return;
+                }
+                
+                const rowClass = row.type === 'subtotal' ? 'row-subtotal' : 
+                                 row.type === 'total' ? 'row-total' : '';
+                const indentClass = row.indent ? `indent-${row.indent}` : '';
+                
+                const variance = calcVariance(row.cy, row.py);
+                const variancePct = calcVariancePct(row.cy, row.py);
+                const status = isFavorable(variance, row.favorable);
+                
+                const badgeClass = status === 'favorable' ? 'variance-badge--favorable' :
+                                   status === 'unfavorable' ? 'variance-badge--unfavorable' : 
+                                   'variance-badge--neutral';
+                
+                const sign = variance >= 0 ? '+' : '';
+                const pctSign = variancePct >= 0 ? '+' : '';
+                const arrow = variance > 0 ? '▲' : variance < 0 ? '▼' : '●';
+                
+                html += `
+                    <tr class="${rowClass}">
+                        <td class="${indentClass}">${row.label}</td>
+                        <td>${fmt(row.cy)}</td>
+                        <td>${fmt(row.py)}</td>
+                        <td class="col-variance">
+                            <span class="variance-badge ${badgeClass}">
+                                ${sign}${fmt(variance)}
+                            </span>
+                        </td>
+                        <td class="col-variance">
+                            <span class="variance-badge ${badgeClass}">
+                                ${arrow} ${pctSign}${variancePct.toFixed(1)}%
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        renderTable();
+    </script>
+</body>
+</html>

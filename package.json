@@ -1,0 +1,15 @@
+{
+  "name": "proxa-ui",
+  "version": "1.0.0",
+  "description": "Proxa Design System",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "xlsx": "^0.18.5"
+  }
+}

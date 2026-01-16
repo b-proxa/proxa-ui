@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Year Trend Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            
+            --fin-favorable: #4a7c59;
+            --fin-unfavorable: #b54848;
+            --fin-accent: #4a6fa5;
+            --fin-accent-2: #7c5295;
+            --fin-accent-3: #c9a227;
+            
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: 14px;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .card__header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card__title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .card__body {
+            padding: 20px;
+        }
+        
+        /* Chart containers */
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+        
+        /* Trend Table with Sparklines */
+        .trend-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .trend-table th {
+            padding: 10px 12px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--gray-500);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .trend-table th:first-child {
+            text-align: left;
+        }
+        
+        .trend-table td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-100);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .trend-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .trend-table tbody tr:hover td {
+            background: var(--gray-50);
+        }
+        
+        .trend-table__sparkline {
+            width: 80px;
+            height: 24px;
+        }
+        
+        .trend-table__trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 3px;
+        }
+        
+        .trend-table__trend--up {
+            color: var(--fin-favorable);
+            background: #eef4f0;
+        }
+        
+        .trend-table__trend--down {
+            color: var(--fin-unfavorable);
+            background: #fdf2f2;
+        }
+        
+        /* CAGR badge */
+        .cagr-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        
+        .cagr-badge--positive {
+            background: #eef4f0;
+            color: var(--fin-favorable);
+        }
+        
+        /* Stacked area chart styling */
+        .legend-custom {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 12px;
+        }
+        
+        .legend-custom__item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--gray-600);
+        }
+        
+        .legend-custom__color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>5-Year Financial Trends</h1>
+            <div class="subtitle">FY2020 — FY2024</div>
+        </div>
+        
+        <!-- Key Metrics Chart Row -->
+        <div class="chart-row">
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">Revenue & Net Income</span>
+                    <span class="cagr-badge cagr-badge--positive">CAGR: 9.9%</span>
+                </div>
+                <div class="card__body">
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">Revenue Composition</span>
+                </div>
+                <div class="card__body">
+                    <div class="chart-container">
+                        <canvas id="compositionChart"></canvas>
+                    </div>
+                    <div class="legend-custom">
+                        <div class="legend-custom__item">
+                            <div class="legend-custom__color" style="background: #4a6fa5"></div>
+                            <span>Tour Packages</span>
+                        </div>
+                        <div class="legend-custom__item">
+                            <div class="legend-custom__color" style="background: #4a7c59"></div>
+                            <span>Gratuities</span>
+                        </div>
+                        <div class="legend-custom__item">
+                            <div class="legend-custom__color" style="background: #c9a227"></div>
+                            <span>Other</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cash & Debt -->
+        <div class="chart-row">
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">Cash Position</span>
+                </div>
+                <div class="card__body">
+                    <div class="chart-container">
+                        <canvas id="cashChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">Debt Reduction</span>
+                </div>
+                <div class="card__body">
+                    <div class="chart-container">
+                        <canvas id="debtChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Trend Table -->
+        <div class="card">
+            <div class="card__header">
+                <span class="card__title">Key Metrics Summary</span>
+            </div>
+            <div class="card__body">
+                <table class="trend-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>2020</th>
+                            <th>2021</th>
+                            <th>2022</th>
+                            <th>2023</th>
+                            <th>2024</th>
+                            <th>Trend</th>
+                            <th>5Y Change</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trendTableBody">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data
+        const years = ['2020', '2021', '2022', '2023', '2024'];
+        
+        const metrics = {
+            revenue: [2784104, 2188455, 3353462, 3876219, 4065642],
+            netIncome: [345127, 315354, 826852, 790265, 863883],
+            tourPackages: [2321973, 1410705, 2531473, 3149104, 3245037],
+            gratuities: [167278, 120556, 227329, 290404, 308147],
+            otherRevenue: [294853, 657194, 594660, 436711, 512458],
+            cash: [776809, 1157180, 1553418, 1464003, 1387891],
+            totalDebt: [1124693, 1067741, 690363, 504863, 0],
+            totalAssets: [5320222, 5642587, 6286834, 6337016, 6408998],
+            shareholderEquity: [2305302, 2584656, 3315508, 3955773, 4571656],
+            expenses: [2396118, 1825722, 2370640, 2923720, 2937648],
+        };
+        
+        // Format number
+        function fmt(val, decimals = 0) {
+            if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
+            if (val >= 1000) return '$' + (val / 1000).toFixed(decimals) + 'K';
+            return '$' + val.toFixed(decimals);
+        }
+        
+        // Calculate CAGR
+        function cagr(start, end, years) {
+            return (Math.pow(end / start, 1 / years) - 1) * 100;
+        }
+        
+        // Chart defaults
+        Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = '#78716c';
+        
+        // Revenue & Net Income Chart
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: metrics.revenue,
+                        backgroundColor: '#4a6fa5',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                    },
+                    {
+                        label: 'Net Income',
+                        data: metrics.netIncome,
+                        backgroundColor: '#4a7c59',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: { boxWidth: 12, padding: 16 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: val => fmt(val)
+                        },
+                        grid: { color: '#e7e5e4' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        
+        // Revenue Composition (Stacked Area)
+        new Chart(document.getElementById('compositionChart'), {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Tour Packages',
+                        data: metrics.tourPackages,
+                        backgroundColor: 'rgba(74, 111, 165, 0.7)',
+                        borderColor: '#4a6fa5',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Gratuities',
+                        data: metrics.gratuities,
+                        backgroundColor: 'rgba(74, 124, 89, 0.7)',
+                        borderColor: '#4a7c59',
+                        fill: true,
+                        tension: 0.3,
+                    },
+                    {
+                        label: 'Other',
+                        data: metrics.otherRevenue,
+                        backgroundColor: 'rgba(201, 162, 39, 0.7)',
+                        borderColor: '#c9a227',
+                        fill: true,
+                        tension: 0.3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        stacked: true,
+                        ticks: { callback: val => fmt(val) },
+                        grid: { color: '#e7e5e4' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        
+        // Cash Chart
+        new Chart(document.getElementById('cashChart'), {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Cash & Equivalents',
+                    data: metrics.cash,
+                    borderColor: '#4a6fa5',
+                    backgroundColor: 'rgba(74, 111, 165, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#4a6fa5',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: val => fmt(val) },
+                        grid: { color: '#e7e5e4' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        
+        // Debt Chart
+        new Chart(document.getElementById('debtChart'), {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Total Debt',
+                    data: metrics.totalDebt,
+                    backgroundColor: metrics.totalDebt.map((v, i, arr) => 
+                        v <= arr[Math.max(0, i-1)] ? '#4a7c59' : '#b54848'
+                    ),
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: val => fmt(val) },
+                        grid: { color: '#e7e5e4' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+        
+        // Trend Table
+        const tableData = [
+            { name: 'Total Revenue', values: metrics.revenue },
+            { name: 'Net Income', values: metrics.netIncome },
+            { name: 'Cash Position', values: metrics.cash },
+            { name: 'Total Assets', values: metrics.totalAssets },
+            { name: 'Shareholder Equity', values: metrics.shareholderEquity },
+            { name: 'Total Debt', values: metrics.totalDebt, inverse: true },
+        ];
+        
+        function drawMiniSparkline(canvas, data, color) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth * 2;
+            const height = canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+            
+            const w = width / 2;
+            const h = height / 2;
+            const max = Math.max(...data);
+            const min = Math.min(...data);
+            const range = max - min || 1;
+            const pad = 3;
+            const stepX = (w - pad * 2) / (data.length - 1);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            
+            data.forEach((val, i) => {
+                const x = pad + i * stepX;
+                const y = pad + (1 - (val - min) / range) * (h - pad * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            
+            // End dot
+            const lastX = pad + (data.length - 1) * stepX;
+            const lastY = pad + (1 - (data[data.length - 1] - min) / range) * (h - pad * 2);
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.arc(lastX, lastY, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        const tbody = document.getElementById('trendTableBody');
+        let html = '';
+
+        tableData.forEach((row, idx) => {
+            const change5Y = ((row.values[4] - row.values[0]) / Math.abs(row.values[0]) * 100);
+            const isPositive = row.inverse ? change5Y <= 0 : change5Y >= 0;
+            const trendClass = isPositive ? 'trend-table__trend--up' : 'trend-table__trend--down';
+            const arrow = change5Y >= 0 ? '▲' : '▼';
+            const sparkColor = isPositive ? '#4a7c59' : '#b54848';
+            
+            html += `
+                <tr>
+                    <td>${row.name}</td>
+                    ${row.values.map(v => `<td>${fmt(v)}</td>`).join('')}
+                    <td><canvas class="trend-table__sparkline" id="spark-${idx}"></canvas></td>
+                    <td><span class="trend-table__trend ${trendClass}">${arrow} ${Math.abs(change5Y).toFixed(1)}%</span></td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+        
+        // Draw sparklines after DOM update
+        setTimeout(() => {
+            tableData.forEach((row, idx) => {
+                const canvas = document.getElementById(`spark-${idx}`);
+                const change5Y = ((row.values[4] - row.values[0]) / Math.abs(row.values[0]) * 100);
+                const isPositive = row.inverse ? change5Y <= 0 : change5Y >= 0;
+                drawMiniSparkline(canvas, row.values, isPositive ? '#4a7c59' : '#b54848');
+            });
+        }, 100);
+    </script>
+</body>
+</html>

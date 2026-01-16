@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Blocks Specification — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <style>
+        .doc-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .doc-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .doc-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .doc-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+        .doc-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+        .doc-content {
+            line-height: 1.7;
+        }
+        .doc-content h1 { font-size: 1.5rem; font-weight: 700; margin: var(--space-6) 0 var(--space-4); color: var(--gray-900); }
+        .doc-content h2 { font-size: 1.2rem; font-weight: 600; margin: var(--space-5) 0 var(--space-3); color: var(--gray-800); border-bottom: 1px solid var(--gray-200); padding-bottom: var(--space-2); }
+        .doc-content h3 { font-size: 1rem; font-weight: 600; margin: var(--space-4) 0 var(--space-2); color: var(--gray-700); }
+        .doc-content h4 { font-size: var(--text-sm); font-weight: 600; margin: var(--space-3) 0 var(--space-2); color: var(--gray-600); }
+        .doc-content p { margin: var(--space-3) 0; color: var(--gray-700); }
+        .doc-content ul, .doc-content ol { margin: var(--space-3) 0; padding-left: var(--space-5); color: var(--gray-700); }
+        .doc-content li { margin: var(--space-1) 0; }
+        .doc-content code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            color: var(--gray-800);
+        }
+        .doc-content pre {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: var(--space-4) 0;
+        }
+        .doc-content pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        .doc-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+            font-size: var(--text-sm);
+        }
+        .doc-content th, .doc-content td {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-200);
+            text-align: left;
+        }
+        .doc-content th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .doc-content tr:hover td {
+            background: var(--gray-50);
+        }
+        .doc-content hr {
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            margin: var(--space-6) 0;
+        }
+        .doc-content strong { font-weight: 600; color: var(--gray-800); }
+        .doc-content blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: var(--space-4);
+            margin: var(--space-4) 0;
+            color: var(--gray-600);
+            font-style: italic;
+        }
+        .loading {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--gray-500);
+        }
+        .error {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--error);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-2);
+            background: var(--warning-light, #fef3c7);
+            color: var(--warning-dark, #92400e);
+            font-size: var(--text-xs);
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header__left">
+            <span class="header__logo">Proxa</span>
+            <nav class="header__nav">
+                <a href="../index.html" class="header__nav-item">Dashboard</a>
+                <a href="../patterns/record.html" class="header__nav-item">Record</a>
+                <a href="index.html" class="header__nav-item">References</a>
+                <a href="ai-blocks.html" class="header__nav-item active">AI Blocks</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="doc-page">
+        <div class="doc-header">
+            <div>
+                <h1 class="doc-title">AI Blocks Specification</h1>
+                <p class="doc-description">Feature specification for declarative AI automation - persistent, re-runnable prompts with human-in-the-loop review.</p>
+            </div>
+            <div class="doc-actions">
+                <span class="status-badge">Planned</span>
+                <a href="AI-BLOCKS.md" download class="btn">Download</a>
+            </div>
+        </div>
+
+        <div id="content" class="doc-content">
+            <div class="loading">Loading specification...</div>
+        </div>
+    </main>
+
+    <script>
+        async function loadSpec() {
+            const content = document.getElementById('content');
+
+            try {
+                const response = await fetch('AI-BLOCKS.md?t=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const markdown = await response.text();
+                content.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
+            } catch (err) {
+                content.innerHTML = `<div class="error">Failed to load specification: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadSpec();
+    </script>
+</body>
+</html>

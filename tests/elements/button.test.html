@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test — Proxa</title>
+    <link rel="stylesheet" href="../../css/proxa.css">
+    <style>
+        .test-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .test-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .test-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-bottom: var(--space-3);
+        }
+        .test-file {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .test-section {
+            margin-bottom: var(--space-6);
+        }
+        .test-section__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+        .test-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            padding: var(--space-4);
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+        }
+        .test-item__label {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .test-item__demo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            min-height: 40px;
+        }
+        .test-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+            align-items: center;
+            padding: var(--space-4);
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-3);
+        }
+        .test-row__label {
+            width: 120px;
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .props-table {
+            width: 100%;
+            font-size: var(--text-sm);
+            border-collapse: collapse;
+        }
+        .props-table th,
+        .props-table td {
+            padding: var(--space-2) var(--space-3);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .props-table th {
+            font-weight: 600;
+            color: var(--gray-600);
+            background: var(--gray-50);
+        }
+        .props-table code {
+            font-size: var(--text-xs);
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            text-decoration: none;
+            margin-bottom: var(--space-4);
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+        .dark-bg {
+            background: var(--gray-800) !important;
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-page">
+        <a href="../index.html" class="back-link">← Back to Tests</a>
+
+        <header class="test-header">
+            <h1 class="test-title">Button</h1>
+            <p class="test-description">Interactive button elements for triggering actions. Supports multiple variants, sizes, and states.</p>
+            <span class="test-file">css/elements/buttons.css</span>
+        </header>
+
+        <!-- Variants -->
+        <section class="test-section">
+            <h2 class="test-section__title">Variants</h2>
+            <div class="test-grid">
+                <div class="test-item">
+                    <span class="test-item__label">.btn</span>
+                    <div class="test-item__demo">
+                        <button class="btn">Default</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">.btn.btn--primary</span>
+                    <div class="test-item__demo">
+                        <button class="btn btn--primary">Primary</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">.btn-ai</span>
+                    <div class="test-item__demo">
+                        <button class="btn-ai">AI</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">.btn-add</span>
+                    <div class="test-item__demo">
+                        <button class="btn-add">+</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sizes -->
+        <section class="test-section">
+            <h2 class="test-section__title">Sizes</h2>
+            <div class="test-row">
+                <span class="test-row__label">.btn--sm</span>
+                <button class="btn btn--sm">Small</button>
+                <button class="btn btn--primary btn--sm">Small Primary</button>
+            </div>
+            <div class="test-row">
+                <span class="test-row__label">.btn (default)</span>
+                <button class="btn">Default</button>
+                <button class="btn btn--primary">Default Primary</button>
+            </div>
+            <div class="test-row">
+                <span class="test-row__label">.btn--lg</span>
+                <button class="btn btn--lg">Large</button>
+                <button class="btn btn--primary btn--lg">Large Primary</button>
+            </div>
+        </section>
+
+        <!-- States -->
+        <section class="test-section">
+            <h2 class="test-section__title">States</h2>
+            <div class="test-grid">
+                <div class="test-item">
+                    <span class="test-item__label">:hover (simulated)</span>
+                    <div class="test-item__demo">
+                        <button class="btn" style="background: var(--gray-75); border-color: var(--gray-300);">Hover</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">:active (simulated)</span>
+                    <div class="test-item__demo">
+                        <button class="btn" style="background: var(--gray-100);">Active</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">:disabled</span>
+                    <div class="test-item__demo">
+                        <button class="btn" disabled>Disabled</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">.loading</span>
+                    <div class="test-item__demo">
+                        <button class="btn btn--primary loading">
+                            <span class="spinner"></span>
+                            <span class="btn-text">Loading</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- With Icons -->
+        <section class="test-section">
+            <h2 class="test-section__title">With Icons</h2>
+            <div class="test-row">
+                <span class="test-row__label">Icon + Text</span>
+                <button class="btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add Item
+                </button>
+                <button class="btn btn--primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    Continue
+                </button>
+            </div>
+            <div class="test-row">
+                <span class="test-row__label">.btn--icon</span>
+                <button class="btn btn--icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="btn btn--icon btn--primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Edge Cases -->
+        <section class="test-section">
+            <h2 class="test-section__title">Edge Cases</h2>
+            <div class="test-grid">
+                <div class="test-item">
+                    <span class="test-item__label">Long text</span>
+                    <div class="test-item__demo">
+                        <button class="btn">This is a very long button label that might overflow</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Single character</span>
+                    <div class="test-item__demo">
+                        <button class="btn">X</button>
+                        <button class="btn btn--primary">!</button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Empty (icon only)</span>
+                    <div class="test-item__demo">
+                        <button class="btn btn--icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">As link (&lt;a&gt;)</span>
+                    <div class="test-item__demo">
+                        <a href="#" class="btn">Link Button</a>
+                        <a href="#" class="btn btn--primary">Primary Link</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button Groups -->
+        <section class="test-section">
+            <h2 class="test-section__title">Button Groups</h2>
+            <div class="test-row">
+                <span class="test-row__label">Inline group</span>
+                <button class="btn">Cancel</button>
+                <button class="btn btn--primary">Save Changes</button>
+            </div>
+            <div class="test-row">
+                <span class="test-row__label">Mixed sizes</span>
+                <button class="btn btn--sm">Small</button>
+                <button class="btn">Default</button>
+                <button class="btn btn--lg">Large</button>
+            </div>
+        </section>
+
+        <!-- Props Reference -->
+        <section class="test-section">
+            <h2 class="test-section__title">Props / Classes Reference</h2>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.btn</code></td>
+                        <td>Base button class. Default transparent background with border.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.btn--primary</code></td>
+                        <td>Primary action button. Dark background, white text.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.btn--sm</code></td>
+                        <td>Small size variant. Reduced padding and font size.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.btn--lg</code></td>
+                        <td>Large size variant. Increased padding and font size.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.btn--icon</code></td>
+                        <td>Icon-only button with equal padding.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.loading</code></td>
+                        <td>Loading state. Shows spinner, hides text.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.btn-ai</code></td>
+                        <td>Mini AI trigger button.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.btn-add</code></td>
+                        <td>Mini add button (16x16).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

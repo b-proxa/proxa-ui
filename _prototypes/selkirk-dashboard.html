@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selkirk Snow Cat Skiing - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            background: #f6f5f3;
+            min-height: 100vh;
+        }
+        
+        /* Tokens as CSS variables */
+        :root {
+            --gray-50: #fafaf8;
+            --gray-75: #f8f8f6;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            --accent: #4a6fa5;
+            --success: #6b8f71;
+            --error: #b54848;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 24px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .header-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--gray-200);
+        }
+        .header-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        /* Content */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Section header */
+        .section-header {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        
+        /* Hub grid */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .hub-card {
+            display: flex;
+            flex-direction: column;
+            padding: 14px;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--gray-200);
+        }
+        .hub-card:hover {
+            background: var(--gray-75);
+        }
+        .hub-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .hub-card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .hub-card-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .badge {
+            padding: 2px 7px;
+            font-size: 0.675rem;
+            font-weight: 600;
+            color: white;
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .metric-card {
+            padding: 14px;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--gray-200);
+        }
+        .metric-card:hover {
+            background: var(--gray-75);
+        }
+        .metric-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+        .metric-change {
+            font-size: 0.675rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .metric-change.positive { color: var(--success); }
+        .metric-change.negative { color: var(--error); }
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+        }
+        
+        /* Table */
+        .table-wrap {
+            background: transparent;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            background: transparent;
+            letter-spacing: 0.5px;
+        }
+        th:not(:first-child) {
+            text-align: center;
+            padding: 10px 8px;
+        }
+        td {
+            padding: 10px 16px;
+        }
+        td:not(:first-child) {
+            text-align: center;
+            padding: 10px 8px;
+        }
+        .table-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-800);
+        }
+        .avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            font-size: 0.675rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .table-time {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        .table-dash {
+            color: var(--gray-300);
+        }
+        
+        /* Icons */
+        .icon { stroke: var(--gray-500); }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 200;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Slide-over panel */
+        .panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: var(--gray-50);
+            border-left: 1px solid var(--gray-200);
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel.active {
+            transform: translateX(0);
+        }
+        .panel--wide {
+            width: min(600px, 50vw);
+        }
+        @media (max-width: 768px) {
+            .panel--wide {
+                width: 100%;
+            }
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .panel-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .panel-close {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: all 0.15s ease;
+        }
+        .panel-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+        .panel-section {
+            margin-bottom: 24px;
+        }
+        .panel-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        /* Panel list items */
+        .panel-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .panel-item:last-child {
+            border-bottom: none;
+        }
+        .panel-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            flex-shrink: 0;
+        }
+        .panel-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .panel-item-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .panel-item-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .panel-item-time {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+            flex-shrink: 0;
+        }
+        
+        /* Team member item */
+        .member-role {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .member-status {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .member-status.offline {
+            background: var(--gray-300);
+        }
+        
+        /* Calendar event */
+        .event-date {
+            width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .event-day {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            line-height: 1;
+        }
+        .event-month {
+            font-size: 0.65rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+        }
+        
+        /* Project item */
+        .project-progress {
+            width: 100%;
+            height: 3px;
+            background: var(--gray-200);
+            border-radius: 2px;
+            margin-top: 6px;
+        }
+        .project-progress-bar {
+            height: 100%;
+            background: var(--gray-400);
+            border-radius: 2px;
+        }
+        
+        /* Metric detail panel */
+        .metric-detail-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+        .metric-detail-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .metric-detail-change.negative { color: var(--error); }
+        .metric-detail-change.positive { color: var(--success); }
+        .metric-detail-chart {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .metric-detail-description {
+            font-size: 0.8rem;
+            line-height: 1.7;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .metric-detail-description p {
+            margin-bottom: 10px;
+        }
+        .metric-detail-description p:last-child {
+            margin-bottom: 0;
+        }
+        .detail-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .detail-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .detail-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        .detail-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .detail-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+        .detail-meta-label {
+            color: var(--gray-500);
+        }
+        .detail-meta-value {
+            color: var(--gray-700);
+        }
+        .comment {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .comment:last-child {
+            margin-bottom: 0;
+        }
+        .comment-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            flex-shrink: 0;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+        .comment-author {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+        .comment-time {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+        }
+        .comment-text {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .source-link:hover {
+            text-decoration: underline;
+        }
+        .source-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* PDF Preview */
+        .pdf-preview {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            aspect-ratio: 8.5 / 11;
+            max-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        .pdf-preview-placeholder {
+            text-align: center;
+            color: var(--gray-400);
+        }
+        .pdf-preview-placeholder svg {
+            margin-bottom: 8px;
+        }
+        .pdf-preview-placeholder span {
+            font-size: 0.7rem;
+        }
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .panel-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            background: transparent;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .panel-btn:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-300);
+        }
+        .panel-btn--primary {
+            background: var(--gray-800);
+            border-color: var(--gray-800);
+            color: white;
+        }
+        .panel-btn--primary:hover {
+            background: var(--gray-700);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+            .header-title {
+                font-size: 0.8rem;
+            }
+            .content {
+                padding: 16px;
+            }
+            .hub-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .table-wrap {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 600px;
+            }
+            .panel {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 12px;
+                gap: 12px;
+            }
+            .header svg {
+                width: 36px;
+                height: 36px;
+            }
+            .header-divider {
+                display: none;
+            }
+            .header-label {
+                display: none;
+            }
+            .content {
+                padding: 12px;
+            }
+            .section-header {
+                font-size: 0.65rem;
+            }
+            .hub-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .hub-card {
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+            }
+            .hub-card-top {
+                margin-bottom: 0;
+            }
+            .hub-card-top .badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            .hub-card {
+                position: relative;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .metric-value {
+                font-size: 1.1rem;
+            }
+            .panel-header {
+                padding: 14px 16px;
+            }
+            .panel-content {
+                padding: 14px 16px;
+            }
+            .metric-detail-value {
+                font-size: 1.25rem;
+            }
+            .comment {
+                gap: 8px;
+            }
+            .comment-avatar {
+                width: 20px;
+                height: 20px;
+                font-size: 0.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="24" y="4" width="28" height="28" rx="2" transform="rotate(45 24 4)" fill="#1c1917"/>
+            <path d="M12 32 Q18 28, 24 26 Q30 24, 36 16" stroke="#e8e8e6" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M14 34 Q20 30, 26 28 Q32 26, 38 18" stroke="#6b8f71" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="header-divider"></div>
+        <div>
+            <div class="header-label">Proxa Workspace</div>
+            <div class="header-title">Selkirk Snow Cat Skiing</div>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+        <!-- Hub Section -->
+        <div class="section-header">Hub</div>
+        <div class="hub-grid">
+            <div class="hub-card" onclick="openPanel('updates')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span class="badge">4</span>
+                </div>
+                <div class="hub-card-title">Updates</div>
+                <div class="hub-card-meta">12 new this week</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('team')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="7" r="3"/>
+                        <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                        <circle cx="17" cy="7" r="2.5"/>
+                        <path d="M21 20v-1.5a3 3 0 0 0-2.5-2.96"/>
+                    </svg>
+                </div>
+                <div class="hub-card-title">Team</div>
+                <div class="hub-card-meta">8 members</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('calendar')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="17" rx="2"/>
+                        <path d="M3 9h18"/>
+                        <path d="M8 2v4"/>
+                        <path d="M16 2v4"/>
+                    </svg>
+                </div>
+                <div class="hub-card-title">Calendar</div>
+                <div class="hub-card-meta">3 tours scheduled</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('projects')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <div class="hub-card-title">Projects</div>
+                <div class="hub-card-meta">5 active</div>
+            </div>
+        </div>
+        
+        <!-- Metrics Section -->
+        <div class="section-header">Metrics</div>
+        <div class="metrics-grid">
+            <div class="metric-card" onclick="openPanel('revenue')" style="cursor: pointer;">
+                <div class="metric-top">
+                    <span class="metric-label">Revenue</span>
+                    <span class="metric-change negative">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        -70.88%
+                    </span>
+                </div>
+                <div class="metric-value">$14.3K</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/><stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,18 L11,12 L20,16 L29,10 L38,14 L47,20 L56,16 L65,8 L74,12 L83,6 L92,10 L98,4 L98,26 Z" fill="url(#grad-red)"/>
+                    <polyline points="2,18 11,12 20,16 29,10 38,14 47,20 56,16 65,8 74,12 83,6 92,10 98,4" fill="none" stroke="#b54848" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('sales')">
+                <div class="metric-top">
+                    <span class="metric-label">Sales</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +97.16%
+                    </span>
+                </div>
+                <div class="metric-value">$11.5K</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/><stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,20 L11,18 L20,14 L29,16 L38,10 L47,6 L56,8 L65,4 L74,6 L83,3 L92,5 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,20 11,18 20,14 29,16 38,10 47,6 56,8 65,4 74,6 83,3 92,5 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('profit')">
+                <div class="metric-top">
+                    <span class="metric-label">Profit</span>
+                    <span class="metric-change negative">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        -63.55%
+                    </span>
+                </div>
+                <div class="metric-value">$6.69K</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-red2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/><stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,10 L11,14 L20,18 L29,12 L38,16 L47,20 L56,14 L65,6 L74,4 L83,8 L92,12 L98,14 L98,26 Z" fill="url(#grad-red2)"/>
+                    <polyline points="2,10 11,14 20,18 29,12 38,16 47,20 56,14 65,6 74,4 83,8 92,12 98,14" fill="none" stroke="#b54848" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('bookings')">
+                <div class="metric-top">
+                    <span class="metric-label">Bookings</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +12.5%
+                    </span>
+                </div>
+                <div class="metric-value">47</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <path d="M2,26 L2,22 L11,20 L20,16 L29,18 L38,12 L47,8 L56,10 L65,4 L74,6 L83,8 L92,4 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,22 11,20 20,16 29,18 38,12 47,8 56,10 65,4 74,6 83,8 92,4 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('guests')">
+                <div class="metric-top">
+                    <span class="metric-label">Guests</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +8.2%
+                    </span>
+                </div>
+                <div class="metric-value">184</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <path d="M2,26 L2,20 L11,16 L20,18 L29,12 L38,14 L47,8 L56,10 L65,4 L74,6 L83,3 L92,2 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,20 11,16 20,18 29,12 38,14 47,8 56,10 65,4 74,6 83,3 92,2 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('satisfaction')">
+                <div class="metric-top">
+                    <span class="metric-label">Satisfaction</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +2.3%
+                    </span>
+                </div>
+                <div class="metric-value">94%</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <path d="M2,26 L2,16 L11,14 L20,15 L29,12 L38,10 L47,12 L56,8 L65,10 L74,6 L83,8 L92,4 L98,5 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,16 11,14 20,15 29,12 38,10 47,12 56,8 65,10 74,6 83,8 92,4 98,5" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Files Section -->
+        <div class="section-header">Files</div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TITLE</th>
+                        <th>OWNER</th>
+                        <th title="Verified">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon" stroke-width="1.5"><path d="M3 7L6 10L11 4"/></svg>
+                        </th>
+                        <th title="Priority">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3"/></svg>
+                        </th>
+                        <th>STATUS</th>
+                        <th title="Last updated">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>
+                        </th>
+                        <th style="width: 40px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5V14C2 15.1 2.9 16 4 16H14C15.1 16 16 15.1 16 14V7C16 5.9 15.1 5 14 5H9L7 3H4C2.9 3 2 3.9 2 5Z"/></svg>
+                                New Record
+                            </div>
+                        </td>
+                        <td><span class="avatar">JD</span></td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#6b8f71"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">24 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5V14C2 15.1 2.9 16 4 16H14C15.1 16 16 15.1 16 14V7C16 5.9 15.1 5 14 5H9L7 3H4C2.9 3 2 3.9 2 5Z"/></svg>
+                                Library
+                            </div>
+                        </td>
+                        <td><span class="avatar">JD</span></td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#6b8f71"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">24 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                    <tr onclick="openPanel('pdf')" style="cursor: pointer;">
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#b54848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="10" height="14" rx="2"/><path d="M7 6h4M7 9h4M7 12h2"/></svg>
+                                2021 Financial Statements
+                            </div>
+                        </td>
+                        <td><span class="avatar">B</span></td>
+                        <td class="table-dash">—</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">25 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="10" height="14" rx="2"/><path d="M7 6h4M7 9h4M7 12h2"/></svg>
+                                Expenses
+                            </div>
+                        </td>
+                        <td><span class="avatar">JD</span></td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#6b8f71"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">25 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" onclick="closePanel()"></div>
+    
+    <!-- Updates Panel -->
+    <div class="panel" id="panel-updates">
+        <div class="panel-header">
+            <span class="panel-title">Updates</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-section">
+                <div class="panel-section-title">Today</div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">JD</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Equipment maintenance completed</div>
+                        <div class="panel-item-meta">Snow cat #3 serviced and ready</div>
+                    </div>
+                    <div class="panel-item-time">2h ago</div>
+                </div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">MR</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">New booking confirmed</div>
+                        <div class="panel-item-meta">Group of 6 for Jan 15</div>
+                    </div>
+                    <div class="panel-item-time">4h ago</div>
+                </div>
+            </div>
+            <div class="panel-section">
+                <div class="panel-section-title">Yesterday</div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">KL</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Weather report updated</div>
+                        <div class="panel-item-meta">40cm fresh snow expected</div>
+                    </div>
+                    <div class="panel-item-time">1d ago</div>
+                </div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">JD</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Safety checklist completed</div>
+                        <div class="panel-item-meta">All zones cleared for operation</div>
+                    </div>
+                    <div class="panel-item-time">1d ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Team Panel -->
+    <div class="panel" id="panel-team">
+        <div class="panel-header">
+            <span class="panel-title">Team</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-item">
+                <div class="panel-item-icon">JD</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Jake Donovan</div>
+                    <div class="member-role">Operations Manager</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">MR</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Maria Rodriguez</div>
+                    <div class="member-role">Lead Guide</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">KL</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Kevin Lee</div>
+                    <div class="member-role">Snow Safety</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">SB</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Sarah Bennett</div>
+                    <div class="member-role">Guide</div>
+                </div>
+                <div class="member-status offline"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">TM</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Tom Mitchell</div>
+                    <div class="member-role">Mechanic</div>
+                </div>
+                <div class="member-status offline"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">AL</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Amy Liu</div>
+                    <div class="member-role">Bookings</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">RK</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Ryan Kim</div>
+                    <div class="member-role">Guide</div>
+                </div>
+                <div class="member-status offline"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">EP</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Emma Park</div>
+                    <div class="member-role">Guest Services</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Calendar Panel -->
+    <div class="panel" id="panel-calendar">
+        <div class="panel-header">
+            <span class="panel-title">Calendar</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-section">
+                <div class="panel-section-title">Upcoming Tours</div>
+                <div class="panel-item">
+                    <div class="event-date">
+                        <div class="event-day">12</div>
+                        <div class="event-month">Jan</div>
+                    </div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Morning Tour — North Bowl</div>
+                        <div class="panel-item-meta">8 guests · Departs 8:00 AM</div>
+                    </div>
+                </div>
+                <div class="panel-item">
+                    <div class="event-date">
+                        <div class="event-day">15</div>
+                        <div class="event-month">Jan</div>
+                    </div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Full Day — Summit Ridge</div>
+                        <div class="panel-item-meta">6 guests · Departs 7:30 AM</div>
+                    </div>
+                </div>
+                <div class="panel-item">
+                    <div class="event-date">
+                        <div class="event-day">18</div>
+                        <div class="event-month">Jan</div>
+                    </div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Afternoon Tour — East Glades</div>
+                        <div class="panel-item-meta">4 guests · Departs 12:00 PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Projects Panel -->
+    <div class="panel" id="panel-projects">
+        <div class="panel-header">
+            <span class="panel-title">Projects</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Website Redesign</div>
+                    <div class="panel-item-meta">4 tasks remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 75%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Equipment Upgrade</div>
+                    <div class="panel-item-meta">2 tasks remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 60%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Safety Training Program</div>
+                    <div class="panel-item-meta">6 tasks remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 40%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Lodge Renovation</div>
+                    <div class="panel-item-meta">On hold</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 20%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Marketing Campaign</div>
+                    <div class="panel-item-meta">1 task remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 90%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Revenue Panel -->
+    <div class="panel" id="panel-revenue">
+        <div class="panel-header">
+            <span class="panel-title">Revenue</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">$14.3K</div>
+            <div class="metric-detail-change negative">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                70.88% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="revenue-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,65 L30,50 L60,58 L90,42 L120,54 L150,70 L180,58 L210,35 L240,46 L270,28 L300,38 L330,22 L360,18 L360,100 L0,100 Z" fill="url(#revenue-grad)"/>
+                    <polyline points="0,65 30,50 60,58 90,42 120,54 150,70 180,58 210,35 240,46 270,28 300,38 330,22 360,18" fill="none" stroke="#b54848" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Revenue has declined significantly compared to the previous period, driven primarily by reduced group bookings during the early season and unseasonably warm weather in November.</p>
+                <p>December typically accounts for 35% of winter revenue, but this year saw a 40% reduction in advance bookings. The trend began stabilizing in late December as conditions improved.</p>
+                <p>Forecasts suggest recovery in Q1 as snow conditions normalize and marketing efforts targeting corporate groups take effect.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Jake Donovan</span>
+                            <span class="comment-time">2 days ago</span>
+                        </div>
+                        <div class="comment-text">We should revisit pricing for group bookings. Early bird discounts may help recover lost ground in Q1.</div>
+                    </div>
+                </div>
+                <div class="comment">
+                    <div class="comment-avatar">AL</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Amy Liu</span>
+                            <span class="comment-time">5 days ago</span>
+                        </div>
+                        <div class="comment-text">January inquiries are up 15% week-over-week. Looks like snow reports are driving interest.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Jake Donovan</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 8, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    revenue-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sales Panel -->
+    <div class="panel" id="panel-sales">
+        <div class="panel-header">
+            <span class="panel-title">Sales</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">$11.5K</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                97.16% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="sales-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,75 L30,70 L60,62 L90,65 L120,55 L150,48 L180,50 L210,42 L240,45 L270,38 L300,40 L330,32 L360,28 L360,100 L0,100 Z" fill="url(#sales-grad)"/>
+                    <polyline points="0,75 30,70 60,62 90,65 120,55 150,48 180,50 210,42 240,45 270,38 300,40 330,32 360,28" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Sales have nearly doubled compared to the same period last year, driven by successful group booking initiatives and partnerships with regional ski clubs.</p>
+                <p>The corporate retreat program launched in October has exceeded expectations, with 12 bookings from tech companies in Vancouver and Seattle. Average group size increased from 6 to 9 guests.</p>
+                <p>Online booking conversion improved 23% following the website refresh in November.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">AL</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Amy Liu</span>
+                            <span class="comment-time">1 day ago</span>
+                        </div>
+                        <div class="comment-text">Corporate retreat program is performing above forecast. Recommending we expand marketing budget for Q2.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Amy Liu</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 8, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    sales-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profit Panel -->
+    <div class="panel" id="panel-profit">
+        <div class="panel-header">
+            <span class="panel-title">Profit</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">$6.69K</div>
+            <div class="metric-detail-change negative">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                63.55% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="profit-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,45 L30,52 L60,58 L90,50 L120,55 L150,62 L180,54 L210,38 L240,35 L270,42 L300,48 L330,52 L360,55 L360,100 L0,100 Z" fill="url(#profit-grad)"/>
+                    <polyline points="0,45 30,52 60,58 90,50 120,55 150,62 180,54 210,38 240,35 270,42 300,48 330,52 360,55" fill="none" stroke="#b54848" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Profit margins contracted due to planned equipment investments and rising fuel costs. The decline was anticipated as part of the fleet modernization initiative.</p>
+                <p>Two new snow cats were acquired in November, adding $45K to operating costs. Fuel costs increased 18% due to extended terrain grooming requirements following variable snowfall.</p>
+                <p>Margins are expected to recover in Q2 as the new equipment reduces maintenance costs and fuel efficiency improves.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">TM</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Tom Mitchell</span>
+                            <span class="comment-time">3 days ago</span>
+                        </div>
+                        <div class="comment-text">New cats are running 15% more fuel efficient than the old fleet. Should see savings by February.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Jake Donovan</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 7, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    profit-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bookings Panel -->
+    <div class="panel" id="panel-bookings">
+        <div class="panel-header">
+            <span class="panel-title">Bookings</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">47</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                12.5% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="bookings-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,78 L30,72 L60,65 L90,68 L120,58 L150,52 L180,55 L210,45 L240,48 L270,42 L300,38 L330,35 L360,30 L360,100 L0,100 Z" fill="url(#bookings-grad)"/>
+                    <polyline points="0,78 30,72 60,65 90,68 120,58 150,52 180,55 210,45 240,48 270,42 300,38 330,35 360,30" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Total bookings continue to trend upward with 47 confirmed reservations for the period. Group bookings account for 60% of total volume, up from 45% last year.</p>
+                <p>The new online booking system has reduced abandonment rate by 28%. Average lead time increased to 21 days, giving operations better planning visibility.</p>
+                <p>Weekend slots are at 94% capacity through February. Midweek availability remains open with opportunity for targeted promotions.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">EP</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Emma Park</span>
+                            <span class="comment-time">1 day ago</span>
+                        </div>
+                        <div class="comment-text">Seeing strong interest for Valentine's weekend. May want to consider a couples package.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Emma Park</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 9, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Daily</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    bookings-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Guests Panel -->
+    <div class="panel" id="panel-guests">
+        <div class="panel-header">
+            <span class="panel-title">Guests</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">184</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                8.2% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="guests-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,72 L30,65 L60,68 L90,58 L120,55 L150,50 L180,52 L210,42 L240,45 L270,38 L300,35 L330,30 L360,28 L360,100 L0,100 Z" fill="url(#guests-grad)"/>
+                    <polyline points="0,72 30,65 60,68 90,58 120,55 150,50 180,52 210,42 240,45 270,38 300,35 330,30 360,28" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Guest count reached 184 for the period, with an average of 3.9 guests per booking. Return guest rate improved to 34%, up from 28% last season.</p>
+                <p>Demographics shifted slightly younger, with 18-35 age group representing 42% of guests compared to 35% previously. This aligns with social media marketing efforts on Instagram and TikTok.</p>
+                <p>Guest origin: 45% BC, 30% Alberta, 15% Washington State, 10% other.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">MR</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Maria Rodriguez</span>
+                            <span class="comment-time">4 days ago</span>
+                        </div>
+                        <div class="comment-text">Noticing more first-timers this season. We should consider an intro package with extra guide support.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Maria Rodriguez</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 8, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    guests-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Satisfaction Panel -->
+    <div class="panel" id="panel-satisfaction">
+        <div class="panel-header">
+            <span class="panel-title">Satisfaction</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">94%</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                2.3% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="satisfaction-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,55 L30,52 L60,54 L90,48 L120,45 L150,48 L180,42 L210,45 L240,38 L270,40 L300,35 L330,32 L360,30 L360,100 L0,100 Z" fill="url(#satisfaction-grad)"/>
+                    <polyline points="0,55 30,52 60,54 90,48 120,45 150,48 180,42 210,45 240,38 270,40 300,35 330,32 360,30" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Guest satisfaction reached 94% based on post-trip surveys (n=156). This represents the highest score in company history and exceeds the industry benchmark of 87%.</p>
+                <p>Top positive mentions: guide expertise (92%), terrain variety (89%), safety protocols (88%), lodge amenities (85%). Areas for improvement: parking logistics (72%), cell coverage (68%).</p>
+                <p>Net Promoter Score improved to +67, with 78% of guests indicating they would recommend Selkirk to friends.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">KL</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Kevin Lee</span>
+                            <span class="comment-time">2 days ago</span>
+                        </div>
+                        <div class="comment-text">Safety scores are up after the new beacon training protocol. Team is doing great work.</div>
+                    </div>
+                </div>
+                <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Jake Donovan</span>
+                            <span class="comment-time">6 days ago</span>
+                        </div>
+                        <div class="comment-text">Looking into Starlink for improved cell coverage at the lodge. Should have proposal ready next week.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Maria Rodriguez</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 6, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    satisfaction-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PDF Panel -->
+    <div class="panel panel--wide" id="panel-pdf">
+        <div class="panel-header">
+            <span class="panel-title">2021 Financial Statements</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="pdf-preview" style="aspect-ratio: 8.5/11; max-height: 320px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-start; background: white;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 48px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#57534e" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v2M12 16v2M6 12h2M16 12h2"/></svg>
+                    <span style="font-size: 1.1rem; color: #44403c;">Grant Thornton</span>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 1.3rem; color: #292524; margin-bottom: 8px;">Financial Statements</div>
+                    <div style="font-size: 1rem; color: #57534e; margin-bottom: 4px;">Selkirk Wilderness Skiing Ltd.</div>
+                    <div style="font-size: 0.85rem; color: #78716c;">June 30, 2021</div>
+                </div>
+                <div style="position: absolute; bottom: 12px; right: 12px; font-size: 0.65rem; color: #a8a29e;">Page 1 of 13</div>
+            </div>
+            
+            <div class="panel-actions">
+                <a href="2021-financial-statements.pdf" download class="panel-btn panel-btn--primary" style="text-decoration: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    Download
+                </a>
+                <a href="2021-financial-statements.pdf" target="_blank" class="panel-btn" style="text-decoration: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                    Open
+                </a>
+                <button class="panel-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+                    Share
+                </button>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Audited financial statements for Selkirk Wilderness Skiing Ltd. for the fiscal year ended June 30, 2021. Prepared by Grant Thornton LLP, Nelson, BC.</p>
+                <p>Includes Balance Sheet, Statement of Income and Retained Earnings, Statement of Cash Flows, and Notes to the Financial Statements.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Jake Donovan</span>
+                            <span class="comment-time">Sep 2021</span>
+                        </div>
+                        <div class="comment-text">Filed and archived. Net income of $315K despite COVID impacts — solid year considering reduced operations.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Prepared by</span>
+                        <span class="detail-meta-value">Grant Thornton LLP</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Year ended June 30, 2021</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Pages</span>
+                        <span class="detail-meta-value">13</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Uploaded</span>
+                        <span class="detail-meta-value">Sep 24, 2021</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Related files</div>
+                <a href="#" class="source-link" style="margin-bottom: 8px; display: flex;">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#b54848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    2020-financial-statements.pdf
+                </a>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    2021-budget-vs-actual.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openPanel(panel) {
+            document.querySelector('.overlay').classList.add('active');
+            document.getElementById('panel-' + panel).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePanel() {
+            document.querySelector('.overlay').classList.remove('active');
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.body.style.overflow = '';
+        }
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePanel();
+        });
+    </script>
+</body>
+</html>

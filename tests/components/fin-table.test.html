@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Table Test — Proxa</title>
+    <link rel="stylesheet" href="../../css/proxa.css">
+    <style>
+        .test-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .test-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .test-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-bottom: var(--space-3);
+        }
+        .test-file {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .test-section {
+            margin-bottom: var(--space-6);
+        }
+        .test-section__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .table-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        .controls-label {
+            font-size: var(--text-xs);
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .mode-toggle {
+            display: flex;
+            gap: var(--space-1);
+            background: white;
+            padding: 2px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+        }
+        .mode-btn {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--gray-500);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .mode-btn:hover { color: var(--gray-700); }
+        .mode-btn.active { background: var(--gray-800); color: white; }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            text-decoration: none;
+            margin-bottom: var(--space-4);
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+        .props-table {
+            width: 100%;
+            font-size: var(--text-sm);
+            border-collapse: collapse;
+            margin-top: var(--space-4);
+        }
+        .props-table th,
+        .props-table td {
+            padding: var(--space-2) var(--space-3);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .props-table th {
+            font-weight: 600;
+            color: var(--gray-600);
+            background: var(--gray-50);
+        }
+        .props-table code {
+            font-size: var(--text-xs);
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-page">
+        <a href="../index.html" class="back-link">← Back to Tests</a>
+
+        <header class="test-header">
+            <h1 class="test-title">Financial Table</h1>
+            <p class="test-description">Base component for financial data tables with row types, indent levels, and view modes. Used in financial statements, comparison tables, and trend analysis.</p>
+            <span class="test-file">css/components/fin-table.css</span>
+        </header>
+
+        <!-- Financial Statement Example -->
+        <section class="test-section">
+            <h2 class="test-section__title">Financial Statement (with view modes)</h2>
+            <div class="table-container">
+                <div class="controls">
+                    <span class="controls-label">View:</span>
+                    <div class="mode-toggle">
+                        <button class="mode-btn" data-mode="raw">Raw</button>
+                        <button class="mode-btn active" data-mode="statement">Statement</button>
+                        <button class="mode-btn" data-mode="summary">Summary</button>
+                    </div>
+                </div>
+                <table class="fin-table fin-table--statement" id="statementTable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>2024</th>
+                            <th>2023</th>
+                            <th>2022</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fin-row--section"><td colspan="4">Revenue</td></tr>
+                        <tr class="fin-row--data"><td class="fin-indent-1">Tour packages</td><td>3,245,037</td><td>3,149,104</td><td>2,531,473</td></tr>
+                        <tr class="fin-row--data"><td class="fin-indent-1">Gratuities</td><td>308,147</td><td>290,404</td><td>227,329</td></tr>
+                        <tr class="fin-row--detail"><td class="fin-indent-2">Investment income</td><td>88,048</td><td>44,680</td><td>2,277</td></tr>
+                        <tr class="fin-row--detail"><td class="fin-indent-2">Course revenue</td><td>40,751</td><td>—</td><td>—</td></tr>
+                        <tr class="fin-row--subtotal"><td>Total Revenue</td><td>4,065,642</td><td>3,876,219</td><td>3,353,462</td></tr>
+                        <tr class="fin-row--spacer"><td colspan="4"></td></tr>
+                        <tr class="fin-row--section"><td colspan="4">Expenses</td></tr>
+                        <tr class="fin-row--data"><td class="fin-indent-1">Wages and benefits</td><td>974,358</td><td>1,128,328</td><td>980,061</td></tr>
+                        <tr class="fin-row--data"><td class="fin-indent-1">Amortization</td><td>229,419</td><td>203,205</td><td>202,229</td></tr>
+                        <tr class="fin-row--detail"><td class="fin-indent-2">Lodge maintenance</td><td>52,932</td><td>160,249</td><td>6,201</td></tr>
+                        <tr class="fin-row--subtotal"><td>Total Expenses</td><td>2,937,648</td><td>2,923,720</td><td>2,370,640</td></tr>
+                        <tr class="fin-row--spacer"><td colspan="4"></td></tr>
+                        <tr class="fin-row--total"><td>Income before taxes</td><td>1,127,994</td><td>952,499</td><td>982,822</td></tr>
+                        <tr class="fin-row--spacer"><td colspan="4"></td></tr>
+                        <tr class="fin-row--grandtotal"><td>Net Income</td><td>863,883</td><td>790,265</td><td>826,852</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Comparison Table Example -->
+        <section class="test-section">
+            <h2 class="test-section__title">Comparison Table (with variance badges)</h2>
+            <div class="table-container">
+                <table class="fin-table fin-table--comparison">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>FY2024</th>
+                            <th>FY2023</th>
+                            <th class="col-variance">Δ $</th>
+                            <th class="col-variance">Δ %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fin-row--section"><td colspan="5">Revenue</td></tr>
+                        <tr class="fin-row--data">
+                            <td class="fin-indent-1">Tour packages</td>
+                            <td>3,245,037</td>
+                            <td>3,149,104</td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--favorable">+95,933</span></td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--favorable">▲ +3.0%</span></td>
+                        </tr>
+                        <tr class="fin-row--data">
+                            <td class="fin-indent-1">Ancillary revenue</td>
+                            <td>276,709</td>
+                            <td>294,956</td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--unfavorable">(18,247)</span></td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--unfavorable">▼ -6.2%</span></td>
+                        </tr>
+                        <tr class="fin-row--subtotal">
+                            <td>Total Revenue</td>
+                            <td>4,065,642</td>
+                            <td>3,876,219</td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--favorable">+189,423</span></td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--favorable">▲ +4.9%</span></td>
+                        </tr>
+                        <tr class="fin-row--spacer"><td colspan="5"></td></tr>
+                        <tr class="fin-row--total">
+                            <td>Net Income</td>
+                            <td>863,883</td>
+                            <td>790,265</td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--favorable">+73,618</span></td>
+                            <td class="col-variance"><span class="variance-badge variance-badge--favorable">▲ +9.3%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Value States -->
+        <section class="test-section">
+            <h2 class="test-section__title">Value States</h2>
+            <div class="table-container">
+                <table class="fin-table">
+                    <thead>
+                        <tr><th>Description</th><th>Value</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Favorable value</td><td class="fin-value--favorable">+125,000</td></tr>
+                        <tr><td>Unfavorable value</td><td class="fin-value--unfavorable">(85,000)</td></tr>
+                        <tr><td>Muted value</td><td class="fin-value--muted">—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Props Reference -->
+        <section class="test-section">
+            <h2 class="test-section__title">Classes Reference</h2>
+            <table class="props-table">
+                <thead>
+                    <tr><th>Class</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>.fin-table</code></td><td>Base table class with financial styling</td></tr>
+                    <tr><td><code>.fin-table--statement</code></td><td>View mode: hides detail rows</td></tr>
+                    <tr><td><code>.fin-table--raw</code></td><td>View mode: shows all rows</td></tr>
+                    <tr><td><code>.fin-table--summary</code></td><td>View mode: hides data and detail rows</td></tr>
+                    <tr><td><code>.fin-table--comparison</code></td><td>Variant: adds variance column styling</td></tr>
+                    <tr><td><code>.fin-row--section</code></td><td>Section header row</td></tr>
+                    <tr><td><code>.fin-row--data</code></td><td>Standard data row</td></tr>
+                    <tr><td><code>.fin-row--detail</code></td><td>Detail row (less prominent, can be hidden)</td></tr>
+                    <tr><td><code>.fin-row--subtotal</code></td><td>Subtotal row</td></tr>
+                    <tr><td><code>.fin-row--total</code></td><td>Total row (highlighted)</td></tr>
+                    <tr><td><code>.fin-row--grandtotal</code></td><td>Grand total row (dark background)</td></tr>
+                    <tr><td><code>.fin-row--spacer</code></td><td>Empty spacer row</td></tr>
+                    <tr><td><code>.fin-indent-1</code></td><td>First level indent</td></tr>
+                    <tr><td><code>.fin-indent-2</code></td><td>Second level indent</td></tr>
+                    <tr><td><code>.fin-value--favorable</code></td><td>Green text for positive variance</td></tr>
+                    <tr><td><code>.fin-value--unfavorable</code></td><td>Red text for negative variance</td></tr>
+                    <tr><td><code>.variance-badge</code></td><td>Badge for variance values</td></tr>
+                    <tr><td><code>.variance-badge--favorable</code></td><td>Green badge</td></tr>
+                    <tr><td><code>.variance-badge--unfavorable</code></td><td>Red badge</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+        // View mode toggle
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const table = document.getElementById('statementTable');
+                table.className = 'fin-table fin-table--' + btn.dataset.mode;
+            });
+        });
+    </script>
+</body>
+</html>

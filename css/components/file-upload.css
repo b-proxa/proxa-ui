@@ -1,0 +1,101 @@
+/* ============================================================
+   FILE UPLOAD
+   Drag-and-drop file upload zone
+   ============================================================ */
+
+.file-upload {
+    margin-bottom: var(--space-3);
+}
+
+.file-upload__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--gray-50);
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.file-upload__dropzone:hover,
+.file-upload__dropzone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.file-upload__icon {
+    font-size: var(--text-lg);
+    color: var(--gray-400);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+}
+
+.file-upload__text {
+    font-size: var(--text-sm);
+    color: var(--gray-600);
+}
+
+.file-upload__browse {
+    color: var(--accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: inherit;
+    padding: 0;
+}
+
+.file-upload__browse:hover {
+    color: var(--accent-dark);
+}
+
+.file-upload__hint {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+}
+
+/* File preview table */
+.file-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-xs);
+}
+
+.file-preview-table th,
+.file-preview-table td {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--gray-200);
+    text-align: left;
+}
+
+.file-preview-table th {
+    background: var(--gray-50);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.file-preview-table tr:hover td {
+    background: var(--gray-50);
+}
+
+.file-preview-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+}
+
+.file-preview-message {
+    padding: var(--space-4);
+    text-align: center;
+    color: var(--gray-500);
+}

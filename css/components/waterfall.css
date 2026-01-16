@@ -1,0 +1,142 @@
+/* ============================================================
+   WATERFALL CHART
+   Revenue-to-profit bridge visualization
+   ============================================================ */
+
+.waterfall {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    padding-bottom: 60px;
+}
+
+.waterfall__bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    height: 100%;
+}
+
+.waterfall__bar-wrapper {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.waterfall__bar {
+    width: 70%;
+    max-width: 60px;
+    border-radius: 3px 3px 0 0;
+    position: relative;
+    transition: opacity 0.2s;
+}
+
+.waterfall__bar:hover {
+    opacity: 0.85;
+}
+
+.waterfall__bar--increase {
+    background: var(--fin-favorable);
+}
+
+.waterfall__bar--decrease {
+    background: var(--fin-unfavorable);
+}
+
+.waterfall__bar--total {
+    background: var(--fin-total);
+    border-radius: 3px;
+}
+
+.waterfall__bar--subtotal {
+    background: var(--fin-subtotal);
+}
+
+.waterfall__connector {
+    position: absolute;
+    height: 1px;
+    background: var(--gray-300);
+    z-index: 1;
+}
+
+.waterfall__value {
+    position: absolute;
+    top: -20px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-600);
+    white-space: nowrap;
+}
+
+.waterfall__bar--total .waterfall__value,
+.waterfall__bar--subtotal .waterfall__value {
+    color: var(--gray-800);
+}
+
+.waterfall__label {
+    position: absolute;
+    bottom: -55px;
+    font-size: 10px;
+    color: var(--gray-600);
+    text-align: center;
+    width: 100%;
+    line-height: 1.3;
+}
+
+.waterfall__label strong {
+    display: block;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.waterfall__axis {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    height: 1px;
+    background: var(--gray-300);
+}
+
+/* Chart legend */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px 24px;
+    border-top: var(--border);
+    background: var(--gray-50);
+}
+
+.chart-legend__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--gray-600);
+}
+
+.chart-legend__color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.chart-legend__color--increase {
+    background: var(--fin-favorable);
+}
+
+.chart-legend__color--decrease {
+    background: var(--fin-unfavorable);
+}
+
+.chart-legend__color--total {
+    background: var(--fin-total);
+}

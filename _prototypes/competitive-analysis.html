@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitive Analysis - BC Snowcat Skiing Industry</title>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-75: #f8f8f6;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            --accent: #4a6fa5;
+            --accent-light: #eef2f7;
+            --success: #6b8f71;
+            --warning: #c9a227;
+            --error: #b54848;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 24px;
+            --space-6: 32px;
+            --font-family: system-ui, -apple-system, sans-serif;
+            --text-xs: 0.675rem;
+            --text-sm: 0.8rem;
+            --text-base: 0.9rem;
+            --text-lg: 1.1rem;
+            --radius-sm: 4px;
+            --radius-lg: 10px;
+            --border: 1px solid var(--gray-200);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-family); font-size: var(--text-base); line-height: 1.5; color: var(--gray-800); background: var(--gray-100); min-height: 100vh; }
+        .header { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5); background: var(--gray-100); border-bottom: var(--border); position: sticky; top: 0; z-index: 100; }
+        .header-logo svg { stroke: var(--gray-500); }
+        .header-divider { width: 1px; height: 24px; background: var(--gray-200); }
+        .header-label { font-size: var(--text-xs); font-weight: 500; color: var(--gray-500); letter-spacing: 0.5px; text-transform: uppercase; }
+        .header-title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-900); }
+        .header-meta { margin-left: auto; font-size: var(--text-xs); color: var(--gray-500); }
+        .content { max-width: 1200px; margin: 0 auto; padding: var(--space-5); }
+        .section-header { font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.5px; color: var(--gray-500); text-transform: uppercase; margin-bottom: var(--space-3); margin-top: var(--space-5); }
+        .section-header:first-child { margin-top: 0; }
+        .company-hero { background: transparent; border: var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-bottom: var(--space-5); }
+        .company-hero-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-4); }
+        .company-hero-title { font-size: var(--text-lg); font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-1); }
+        .company-hero-subtitle { font-size: var(--text-sm); color: var(--gray-500); }
+        .company-hero-badge { display: inline-flex; align-items: center; gap: var(--space-1); padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: 500; color: var(--accent); background: var(--accent-light); border-radius: var(--radius-sm); }
+        .company-hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+        .stat-item { display: flex; flex-direction: column; gap: var(--space-1); }
+        .stat-value { font-size: var(--text-lg); font-weight: 600; color: var(--gray-800); }
+        .stat-label { font-size: var(--text-xs); color: var(--gray-500); }
+        .news-alert { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); background: transparent; border: 1px solid var(--warning); border-radius: var(--radius-lg); margin-bottom: var(--space-5); }
+        .news-alert-icon { flex-shrink: 0; width: 20px; height: 20px; stroke: var(--warning); }
+        .news-alert-content { flex: 1; }
+        .news-alert-title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); margin-bottom: var(--space-1); }
+        .news-alert-text { font-size: var(--text-sm); color: var(--gray-600); line-height: 1.5; }
+        .news-alert-date { font-size: var(--text-xs); color: var(--gray-400); margin-top: var(--space-2); }
+        .competitor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-4); }
+        .competitor-card { background: transparent; border: var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: background 0.15s ease; }
+        .competitor-card:hover { background: var(--gray-75); }
+        .competitor-header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: var(--border); }
+        .competitor-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--gray-200); display: flex; align-items: center; justify-content: center; }
+        .competitor-icon svg { stroke: var(--gray-500); }
+        .competitor-name { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); }
+        .competitor-location { font-size: var(--text-xs); color: var(--gray-500); }
+        .competitor-body { padding: var(--space-4); }
+        .competitor-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-bottom: var(--space-3); }
+        .competitor-stat { text-align: center; }
+        .competitor-stat-value { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); }
+        .competitor-stat-label { font-size: var(--text-xs); color: var(--gray-400); }
+        .competitor-desc { font-size: var(--text-sm); color: var(--gray-600); line-height: 1.5; margin-bottom: var(--space-3); }
+        .competitor-tags { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+        .tag { display: inline-flex; padding: var(--space-1) var(--space-2); font-size: var(--text-xs); color: var(--gray-600); background: var(--gray-200); border-radius: var(--radius-sm); }
+        .tag--success { background: rgba(107, 143, 113, 0.15); color: var(--success); }
+        .tag--warning { background: rgba(201, 162, 39, 0.15); color: #9a7b1d; }
+        .tag--accent { background: var(--accent-light); color: var(--accent); }
+        .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+        .news-card { background: transparent; border: var(--border); border-radius: var(--radius-lg); padding: var(--space-4); transition: background 0.15s ease; }
+        .news-card:hover { background: var(--gray-75); }
+        .news-card-date { font-size: var(--text-xs); color: var(--gray-400); margin-bottom: var(--space-2); }
+        .news-card-title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); margin-bottom: var(--space-2); line-height: 1.25; }
+        .news-card-text { font-size: var(--text-sm); color: var(--gray-600); line-height: 1.5; }
+        .news-card-source { font-size: var(--text-xs); color: var(--gray-400); margin-top: var(--space-2); }
+        .trends-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+        .trend-card { background: transparent; border: var(--border); border-radius: var(--radius-lg); padding: var(--space-4); }
+        .trend-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--gray-100); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-3); }
+        .trend-icon svg { stroke: var(--gray-500); }
+        .trend-title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); margin-bottom: var(--space-2); }
+        .trend-text { font-size: var(--text-xs); color: var(--gray-500); line-height: 1.5; }
+        .comparison-wrap { background: transparent; border: var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+        .comparison-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+        .comparison-table th { text-align: left; padding: var(--space-2) var(--space-3); font-size: var(--text-xs); font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: var(--border); background: var(--gray-50); }
+        .comparison-table td { padding: var(--space-3); border-bottom: var(--border); color: var(--gray-700); }
+        .comparison-table tr:hover td { background: var(--gray-75); }
+        .comparison-table .highlight { background: var(--accent-light); }
+        .comparison-table .highlight td { color: var(--gray-800); font-weight: 500; }
+        .rating { display: flex; gap: 2px; }
+        .rating-star { width: 12px; height: 12px; fill: var(--gray-300); }
+        .rating-star.filled { fill: var(--warning); }
+        .summary-card { background: transparent; border: var(--border); border-radius: var(--radius-lg); padding: var(--space-5); }
+        .summary-title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); margin-bottom: var(--space-3); }
+        .summary-list { list-style: none; }
+        .summary-list li { display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-2) 0; font-size: var(--text-sm); color: var(--gray-600); border-bottom: 1px solid var(--gray-100); }
+        .summary-list li:last-child { border-bottom: none; }
+        .summary-list svg { flex-shrink: 0; width: 16px; height: 16px; stroke: var(--gray-500); margin-top: 2px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+        <div class="header-divider"></div>
+        <div>
+            <div class="header-label">Competitive Analysis</div>
+            <div class="header-title">BC Snowcat Skiing Industry</div>
+        </div>
+        <div class="header-meta">Updated January 12, 2026</div>
+    </header>
+    <main class="content">
+        <div class="news-alert">
+            <svg class="news-alert-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div class="news-alert-content">
+                <div class="news-alert-title">Major Industry News: Selkirk Snowcat Skiing Sold</div>
+                <div class="news-alert-text">After being listed for sale in November 2024, Selkirk Snowcat Skiing—the world's first cat skiing operation—has been acquired by a U.S. consortium led by Brandon Miles of Beaver Creek, Colorado. The deal closed in October 2025. New ownership has expressed commitment to preserving the classic ski experience for future generations.</div>
+                <div class="news-alert-date">October 2025 • Nelson Star</div>
+            </div>
+        </div>
+        <div class="section-header">Our Company</div>
+        <div class="company-hero">
+            <div class="company-hero-header">
+                <div>
+                    <div class="company-hero-title">Selkirk Snowcat Skiing</div>
+                    <div class="company-hero-subtitle">Meadow Creek, British Columbia • Est. 1975</div>
+                </div>
+                <div class="company-hero-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    Pioneer • First Cat Ski Operation
+                </div>
+            </div>
+            <div class="company-hero-stats">
+                <div class="stat-item"><div class="stat-value">12,000</div><div class="stat-label">Acres of Terrain</div></div>
+                <div class="stat-item"><div class="stat-value">24</div><div class="stat-label">Guests Per Day</div></div>
+                <div class="stat-item"><div class="stat-value">32 ft</div><div class="stat-label">Avg Annual Snowfall</div></div>
+                <div class="stat-item"><div class="stat-value">90%</div><div class="stat-label">Return Booking Rate</div></div>
+            </div>
+        </div>
+        <div class="section-header">Key Competitors</div>
+        <div class="competitor-grid">
+            <div class="competitor-card">
+                <div class="competitor-header">
+                    <div class="competitor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+                    <div><div class="competitor-name">Island Lake Catskiing</div><div class="competitor-location">Fernie, BC</div></div>
+                </div>
+                <div class="competitor-body">
+                    <div class="competitor-stats">
+                        <div class="competitor-stat"><div class="competitor-stat-value">7,000</div><div class="competitor-stat-label">Acres</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">45 ft</div><div class="competitor-stat-label">Snowfall</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">3,000 ft</div><div class="competitor-stat-label">Vertical</div></div>
+                    </div>
+                    <div class="competitor-desc">Premier luxury catskiing in the Lizard Range. Known for exceptional lodge amenities, full-service spa, and gourmet dining. New CEO Ted Funston appointed Oct 2024. New ownership by Chad Byers.</div>
+                    <div class="competitor-tags">
+                        <span class="tag tag--accent">Luxury Segment</span>
+                        <span class="tag">New Leadership</span>
+                        <span class="tag tag--success">Strong Brand</span>
+                    </div>
+                </div>
+            </div>
+            <div class="competitor-card">
+                <div class="competitor-header">
+                    <div class="competitor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+                    <div><div class="competitor-name">Baldface Lodge</div><div class="competitor-location">Nelson, BC</div></div>
+                </div>
+                <div class="competitor-body">
+                    <div class="competitor-stats">
+                        <div class="competitor-stat"><div class="competitor-stat-value">32,000</div><div class="competitor-stat-label">Acres</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">500+ in</div><div class="competitor-stat-label">Snowfall</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">Heli</div><div class="competitor-stat-label">Access</div></div>
+                    </div>
+                    <div class="competitor-desc">Largest catski tenure in the region. Helicopter transfer from Nelson. Strong snowboard culture, younger demographic. Known for steep terrain and pillow lines. Recently acquired new tenure.</div>
+                    <div class="competitor-tags">
+                        <span class="tag tag--warning">Direct Competitor</span>
+                        <span class="tag">Snowboard Focus</span>
+                        <span class="tag tag--success">Expanding</span>
+                    </div>
+                </div>
+            </div>
+            <div class="competitor-card">
+                <div class="competitor-header">
+                    <div class="competitor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+                    <div><div class="competitor-name">Retallack</div><div class="competitor-location">Kootenays, BC</div></div>
+                </div>
+                <div class="competitor-body">
+                    <div class="competitor-stats">
+                        <div class="competitor-stat"><div class="competitor-stat-value">10,000</div><div class="competitor-stat-label">Acres</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">45 ft</div><div class="competitor-stat-label">Snowfall</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">4,200 ft</div><div class="competitor-stat-label">Vertical</div></div>
+                    </div>
+                    <div class="competitor-desc">Advanced to expert terrain in the Selkirk Mountains. Famous for consistent powder, steep tree skiing with 800-year-old cedars, and pillow lines. Strong guiding reputation.</div>
+                    <div class="competitor-tags">
+                        <span class="tag tag--warning">Expert Terrain</span>
+                        <span class="tag">Advanced Skiers</span>
+                        <span class="tag">Tree Skiing</span>
+                    </div>
+                </div>
+            </div>
+            <div class="competitor-card">
+                <div class="competitor-header">
+                    <div class="competitor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+                    <div><div class="competitor-name">White Grizzly</div><div class="competitor-location">Meadow Creek, BC</div></div>
+                </div>
+                <div class="competitor-body">
+                    <div class="competitor-stats">
+                        <div class="competitor-stat"><div class="competitor-stat-value">12</div><div class="competitor-stat-label">Max Guests</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">20+</div><div class="competitor-stat-label">Years Operating</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">Adv+</div><div class="competitor-stat-label">Skill Level</div></div>
+                    </div>
+                    <div class="competitor-desc">Boutique operation with maximum 12 guests. Family atmosphere, personal service. Focus on steep terrain with highest safety standards. Located in same region as Selkirk.</div>
+                    <div class="competitor-tags">
+                        <span class="tag tag--warning">Same Region</span>
+                        <span class="tag">Boutique</span>
+                        <span class="tag tag--success">Top Safety</span>
+                    </div>
+                </div>
+            </div>
+            <div class="competitor-card">
+                <div class="competitor-header">
+                    <div class="competitor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+                    <div><div class="competitor-name">Chatter Creek</div><div class="competitor-location">Golden, BC</div></div>
+                </div>
+                <div class="competitor-body">
+                    <div class="competitor-stats">
+                        <div class="competitor-stat"><div class="competitor-stat-value">58,000</div><div class="competitor-stat-label">Acres</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">4,000 ft</div><div class="competitor-stat-label">Vertical</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">200 km</div><div class="competitor-stat-label">Cat Roads</div></div>
+                    </div>
+                    <div class="competitor-desc">Largest tenure among competitors. Helicopter access from Donald, BC. Alpine bowls, glaciers, and endless tree runs. Known for lightest, driest powder due to unique air mass location.</div>
+                    <div class="competitor-tags">
+                        <span class="tag">Largest Tenure</span>
+                        <span class="tag tag--accent">Premium</span>
+                        <span class="tag">Glacier Access</span>
+                    </div>
+                </div>
+            </div>
+            <div class="competitor-card">
+                <div class="competitor-header">
+                    <div class="competitor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
+                    <div><div class="competitor-name">Great Northern Snowcat</div><div class="competitor-location">Selkirk Mountains</div></div>
+                </div>
+                <div class="competitor-body">
+                    <div class="competitor-stats">
+                        <div class="competitor-stat"><div class="competitor-stat-value">1979</div><div class="competitor-stat-label">Est.</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">18</div><div class="competitor-stat-label">Rooms</div></div>
+                        <div class="competitor-stat"><div class="competitor-stat-value">Int+</div><div class="competitor-stat-label">Skill Level</div></div>
+                    </div>
+                    <div class="competitor-desc">Second oldest cat ski operation. Best rated for intermediate skiers. All-inclusive 3, 4, and 7-day packages. Strong value proposition with loyal repeat clientele. Near Revelstoke.</div>
+                    <div class="competitor-tags">
+                        <span class="tag tag--success">Best Value</span>
+                        <span class="tag">Intermediate Friendly</span>
+                        <span class="tag">All-Inclusive</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section-header">Feature Comparison</div>
+        <div class="comparison-wrap">
+            <table class="comparison-table">
+                <thead><tr><th>Operator</th><th>Terrain</th><th>Capacity</th><th>Best For</th><th>Price</th><th>Rating</th></tr></thead>
+                <tbody>
+                    <tr class="highlight"><td><strong>Selkirk Snowcat</strong></td><td>12,000 ac</td><td>24/day</td><td>Int–Advanced</td><td>$$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                    <tr><td>Island Lake</td><td>7,000 ac</td><td>36/day</td><td>Luxury</td><td>$$$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                    <tr><td>Baldface Lodge</td><td>32,000 ac</td><td>48/day</td><td>Advanced</td><td>$$$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                    <tr><td>Retallack</td><td>10,000 ac</td><td>24/day</td><td>Expert</td><td>$$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                    <tr><td>White Grizzly</td><td>N/A</td><td>12/day</td><td>Expert</td><td>$$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                    <tr><td>Chatter Creek</td><td>58,000 ac</td><td>24/day</td><td>Int–Adv</td><td>$$$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                    <tr><td>Great Northern</td><td>N/A</td><td>18/day</td><td>Intermediate</td><td>$$</td><td><div class="rating"><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star filled" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="rating-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="section-header">Recent Industry News</div>
+        <div class="news-grid">
+            <div class="news-card"><div class="news-card-date">October 2025</div><div class="news-card-title">Selkirk Snowcat Skiing Acquired by U.S. Consortium</div><div class="news-card-text">Brandon Miles and partners purchase the world's first cat skiing operation, committing to preserve the classic experience.</div><div class="news-card-source">Nelson Star</div></div>
+            <div class="news-card"><div class="news-card-date">October 2024</div><div class="news-card-title">Island Lake Lodge Appoints New CEO</div><div class="news-card-text">Ted Funston takes helm with 20+ years of ski industry experience from Resorts of the Canadian Rockies.</div><div class="news-card-source">Fernie.com</div></div>
+            <div class="news-card"><div class="news-card-date">September 2024</div><div class="news-card-title">Island Lake Lodge Changes Ownership</div><div class="news-card-text">Chad Byers, co-founder of Susa Ventures, acquires the 7,000-acre catski resort from Patrick Callahan.</div><div class="news-card-source">Fernie.com</div></div>
+            <div class="news-card"><div class="news-card-date">December 2024</div><div class="news-card-title">Strong Early Season Snowfall</div><div class="news-card-text">Fernie and Island Lake report 220cm snowpack at 2000m, signaling excellent 2024-25 conditions.</div><div class="news-card-source">Resort Tours</div></div>
+            <div class="news-card"><div class="news-card-date">January 2024</div><div class="news-card-title">Heli-Cat Industry Rebounds Post-Pandemic</div><div class="news-card-text">Strong demand returns with near-pre-pandemic operating levels. HeliCat Canada reports growth potential.</div><div class="news-card-source">Vertical Mag</div></div>
+            <div class="news-card"><div class="news-card-date">2024</div><div class="news-card-title">Baldface Lodge Expands Tenure</div><div class="news-card-text">Baldface acquires new tenure in adjacent valley, expanding their 32,000-acre operating area.</div><div class="news-card-source">Powder Canada</div></div>
+        </div>
+        <div class="section-header">Industry Trends</div>
+        <div class="trends-grid">
+            <div class="trend-card"><div class="trend-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="trend-title">Strong Demand Recovery</div><div class="trend-text">Post-pandemic recovery with near-record booking rates. 90% of heli-cat skiers from US and international markets.</div></div>
+            <div class="trend-card"><div class="trend-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="trend-title">Climate Adaptation</div><div class="trend-text">14-18% projected season decline by mid-century. Operators investing in elevation-based terrain access.</div></div>
+            <div class="trend-card"><div class="trend-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div><div class="trend-title">Consolidation Wave</div><div class="trend-text">Multiple ownership changes in 2024-25. Well-capitalized investors acquiring legacy operations.</div></div>
+            <div class="trend-card"><div class="trend-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="trend-title">Experience Premium</div><div class="trend-text">Shift toward experience-driven purchases. Luxury amenities commanding higher prices.</div></div>
+        </div>
+        <div class="section-header">Key Takeaways</div>
+        <div class="summary-card">
+            <div class="summary-title">Competitive Position Summary</div>
+            <ul class="summary-list">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Heritage Advantage:</strong> Selkirk's position as "birthplace of cat skiing" provides unmatched brand equity and industry recognition</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Loyalty Leadership:</strong> 90% return booking rate exceeds industry average; customers book year-over-year</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Terrain Quality:</strong> Recognized as having the best overall terrain, snow quality, and guiding by Powderhounds ratings</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span><strong>Watch:</strong> Baldface's expansion and tenure acquisition positions them for significant market share growth</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span><strong>Watch:</strong> Island Lake's new leadership may drive operational changes and increased competition in luxury segment</span></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><strong>Opportunity:</strong> New ownership provides fresh capital for potential infrastructure and marketing investments</span></li>
+            </ul>
+        </div>
+    </main>
+</body>
+</html>

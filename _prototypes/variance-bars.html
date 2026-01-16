@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variance Analysis — YoY Changes</title>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            
+            --fin-favorable: #4a7c59;
+            --fin-favorable-light: #e8f0ea;
+            --fin-unfavorable: #b54848;
+            --fin-unfavorable-light: #faeaea;
+            
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: 14px;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: var(--width-medium, 900px);
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+        
+        .chart-container {
+            padding: 24px;
+        }
+        
+        /* Variance Bar Chart */
+        .variance-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .variance-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 80px;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .variance-row__label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gray-700);
+            text-align: right;
+        }
+        
+        .variance-row__bar-container {
+            position: relative;
+            height: 28px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .variance-row__zero-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--gray-300);
+        }
+        
+        .variance-row__bar {
+            position: absolute;
+            height: 20px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            transition: width 0.3s ease;
+        }
+        
+        .variance-row__bar--positive {
+            left: 50%;
+            background: var(--fin-favorable);
+        }
+        
+        .variance-row__bar--negative {
+            right: 50%;
+            background: var(--fin-unfavorable);
+        }
+        
+        .variance-row__value {
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .variance-row__value--positive {
+            color: var(--fin-favorable);
+        }
+        
+        .variance-row__value--negative {
+            color: var(--fin-unfavorable);
+        }
+        
+        /* Section divider */
+        .section-divider {
+            padding: 16px 0 8px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            border-top: 1px solid var(--gray-200);
+            margin-top: 8px;
+        }
+        
+        .section-divider:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+        
+        /* Highlight row */
+        .variance-row--highlight {
+            background: var(--gray-50);
+            margin: 0 -24px;
+            padding: 8px 24px;
+            border-radius: 0;
+        }
+        
+        .variance-row--highlight .variance-row__label {
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+        
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .legend__item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--gray-600);
+        }
+        
+        .legend__color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+        
+        .legend__color--positive { background: var(--fin-favorable); }
+        .legend__color--negative { background: var(--fin-unfavorable); }
+        
+        /* Scale markers */
+        .scale-markers {
+            display: grid;
+            grid-template-columns: 140px 1fr 80px;
+            gap: 16px;
+            margin-bottom: 16px;
+            font-size: 9px;
+            color: var(--gray-400);
+        }
+        
+        .scale-markers__bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Year-over-Year Variance Analysis</h1>
+            <div class="subtitle">FY2024 vs FY2023 — Percentage Change</div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="scale-markers">
+                <div></div>
+                <div class="scale-markers__bar">
+                    <span>-50%</span>
+                    <span>-25%</span>
+                    <span>0%</span>
+                    <span>+25%</span>
+                    <span>+50%</span>
+                </div>
+                <div></div>
+            </div>
+            
+            <div class="variance-chart" id="varianceChart">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend__item">
+                <div class="legend__color legend__color--positive"></div>
+                <span>Favorable / Increase</span>
+            </div>
+            <div class="legend__item">
+                <div class="legend__color legend__color--negative"></div>
+                <span>Unfavorable / Decrease</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const data = [
+            { section: 'Revenue' },
+            { label: 'Tour Packages', current: 3245037, prior: 3149104, favorable: 'up' },
+            { label: 'Gratuities', current: 308147, prior: 290404, favorable: 'up' },
+            { label: 'Ancillary', current: 276709, prior: 294956, favorable: 'up' },
+            { label: 'Accommodation', current: 106950, prior: 97075, favorable: 'up' },
+            { label: 'Investment Income', current: 88048, prior: 44680, favorable: 'up' },
+            { label: 'Total Revenue', current: 4065642, prior: 3876219, favorable: 'up', highlight: true },
+            
+            { section: 'Key Expenses' },
+            { label: 'Wages & Benefits', current: 974358, prior: 1128328, favorable: 'down' },
+            { label: 'Fuel', current: 121499, prior: 179252, favorable: 'down' },
+            { label: 'Lodge Maintenance', current: 52932, prior: 160249, favorable: 'down' },
+            { label: 'Food', current: 175591, prior: 151435, favorable: 'down' },
+            { label: 'Insurance', current: 166831, prior: 138435, favorable: 'down' },
+            { label: 'Total Expenses', current: 2937648, prior: 2923720, favorable: 'down', highlight: true },
+            
+            { section: 'Bottom Line' },
+            { label: 'Income Before Tax', current: 1127994, prior: 952499, favorable: 'up', highlight: true },
+            { label: 'Income Taxes', current: 264111, prior: 162234, favorable: 'down' },
+            { label: 'Net Income', current: 863883, prior: 790265, favorable: 'up', highlight: true },
+        ];
+        
+        function calculateVariance(current, prior) {
+            if (prior === 0) return current > 0 ? 100 : -100;
+            return ((current - prior) / Math.abs(prior)) * 100;
+        }
+        
+        function renderChart() {
+            const container = document.getElementById('varianceChart');
+            let html = '';
+            const maxPct = 50; // Scale: -50% to +50%
+            
+            data.forEach(item => {
+                if (item.section) {
+                    html += `<div class="section-divider">${item.section}</div>`;
+                    return;
+                }
+                
+                const variance = calculateVariance(item.current, item.prior);
+                const clampedVariance = Math.max(-maxPct, Math.min(maxPct, variance));
+                const barWidth = Math.abs(clampedVariance) / maxPct * 50; // 50% of container width
+                
+                // Determine if favorable
+                let isFavorable;
+                if (item.favorable === 'up') {
+                    isFavorable = variance >= 0;
+                } else {
+                    isFavorable = variance <= 0;
+                }
+                
+                const barClass = variance >= 0 ? 'variance-row__bar--positive' : 'variance-row__bar--negative';
+                const valueClass = isFavorable ? 'variance-row__value--positive' : 'variance-row__value--negative';
+                const rowClass = item.highlight ? 'variance-row variance-row--highlight' : 'variance-row';
+                
+                const sign = variance >= 0 ? '+' : '';
+                const displayVariance = sign + variance.toFixed(1) + '%';
+                
+                html += `
+                    <div class="${rowClass}">
+                        <div class="variance-row__label">${item.label}</div>
+                        <div class="variance-row__bar-container">
+                            <div class="variance-row__zero-line"></div>
+                            <div class="variance-row__bar ${barClass}" style="width: ${barWidth}%"></div>
+                        </div>
+                        <div class="variance-row__value ${valueClass}">${displayVariance}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        renderChart();
+    </script>
+</body>
+</html>

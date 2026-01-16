@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script>
+        // Hide header when loaded in iframe
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('in-iframe');
+        }
+    </script>
+    <style>
+        /* Hide header when in iframe */
+        .in-iframe .app-header { display: none; }
+        body { padding: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: var(--space-6); }
+        .section { margin-top: var(--space-8); }
+        .section__header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+        .section__title { font-size: var(--text-xs); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-400); }
+
+        /* Override slide grid for simpler layout */
+        .slide { grid-template-columns: var(--col-split, 35%) 6px 1fr; }
+        .slide__title h1 { margin: 0; }
+
+        /* Editable Markdown */
+        .editable-markdown {
+            position: relative; min-height: 80px; background: white;
+            border: 1px solid var(--gray-100); border-radius: var(--radius-sm);
+            cursor: text; transition: all var(--transition-fast);
+        }
+        .editable-markdown:hover { border-color: var(--gray-300); background: var(--gray-50); }
+        .editable-markdown__display { padding: var(--space-3); min-height: 80px; }
+        .editable-markdown__display:empty::before { content: 'Click to add description...'; color: var(--gray-400); }
+        .editable-markdown__editor { display: none; min-height: 80px; border: none; border-radius: var(--radius-sm); }
+        .editable-markdown.editing { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+        .editable-markdown.editing .editable-markdown__display { display: none; }
+        .editable-markdown.editing .editable-markdown__editor { display: block; }
+
+        /* Style Palette */
+        .style-palette { background: white; border: 1px solid var(--gray-100); border-radius: var(--radius-sm); padding: var(--space-3); }
+        .palette-swatches { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+        .palette-swatch {
+            width: 28px; height: 28px; border-radius: var(--radius-sm);
+            border: 2px solid transparent; cursor: pointer; transition: all var(--transition-fast);
+            display: flex; align-items: center; justify-content: center;
+            font-size: var(--text-sm); color: var(--gray-400);
+        }
+        .palette-swatch:hover { transform: scale(1.1); }
+        .palette-swatch.active { border-color: var(--gray-800); }
+
+        /* Comments Section */
+        .comments-section { border-top: var(--border); padding-top: var(--space-4); margin-top: var(--space-4); }
+        .comments-table-empty { padding: var(--space-3); text-align: center; font-size: var(--text-sm); color: var(--gray-400); }
+
+        /* Spreadsheet styles - mimics Claude.ai artifact viewer */
+        .spreadsheet {
+            display: flex; flex-direction: column; height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        .spreadsheet__tabs {
+            display: flex; gap: 2px; padding: 8px 12px;
+            background: #f9f9f9; border-bottom: 1px solid #e5e5e5;
+        }
+        .spreadsheet__tab {
+            padding: 4px 12px;
+            font-size: 12px; color: #666;
+            background: #eee; border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+        }
+        .spreadsheet__tab:hover { background: #ddd; }
+        .spreadsheet__tab.active {
+            background: white; color: #333; font-weight: 500;
+        }
+        .spreadsheet__grid {
+            flex: 1;
+            overflow: auto;
+        }
+        .spreadsheet__table {
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+        .spreadsheet__table th,
+        .spreadsheet__table td {
+            border: 1px solid #eee;
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .spreadsheet__table th {
+            background: #fafafa;
+            font-weight: 400;
+            color: #666;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .spreadsheet__table td {
+            background: white;
+        }
+        .spreadsheet__row-num {
+            background: #fafafa !important;
+            color: #999;
+            text-align: center !important;
+            width: 40px;
+            min-width: 40px;
+            font-weight: 400;
+            border-right: 1px solid #ddd;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .spreadsheet__corner {
+            background: #fafafa !important;
+            width: 40px;
+            min-width: 40px;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        .spreadsheet__table th:first-child {
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        /* Financial table formatting */
+        .spreadsheet--financial .spreadsheet__table td:not(.spreadsheet__row-num) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .spreadsheet--financial .spreadsheet__table td:nth-child(2) {
+            text-align: left;
+        }
+        .source-loading {
+            display: flex; align-items: center; justify-content: center;
+            padding: var(--space-6); color: var(--gray-400);
+        }
+        .file-item--clickable {
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        .file-item--clickable:hover {
+            background: var(--gray-50);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <span class="app-header__logo">Proxa</span>
+        <div class="app-header__divider"></div>
+        <span class="app-header__title">Record</span>
+        <nav class="app-tabs">
+            <a href="../index.html" class="app-tab">Style Guide</a>
+            <a href="record.html" class="app-tab active">Record</a>
+            <a href="../pages/dashboard.html" class="app-tab">Dashboard</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- =====================================================
+             SLIDE SECTION
+             ===================================================== -->
+        <div class="section__header">
+            <span class="section__title">Slide</span>
+            <div class="toolbar">
+                <div class="tabs" id="view-tabs">
+                    <button class="tab active" data-view="output">Output</button>
+                    <button class="tab" data-view="table">Table</button>
+                    <button class="tab" data-view="notes">Notes <span class="tab__count" id="notes-count">4</span></button>
+                </div>
+                <select class="select" id="chart-type-select" style="width: auto; padding: var(--space-1) var(--space-2); font-size: var(--text-xs);">
+                    <option value="line">Line</option>
+                    <option value="bar">Bar</option>
+                    <option value="area">Area</option>
+                </select>
+                <div class="toolbar__divider"></div>
+                <div class="dropdown">
+                    <button class="btn btn--sm" id="export-btn">Export ▾</button>
+                    <div class="dropdown__menu" id="export-dropdown">
+                        <div class="dropdown__section">
+                            <div class="dropdown__label">Export As</div>
+                            <button class="dropdown__item">PNG Image</button>
+                            <button class="dropdown__item">PDF Document</button>
+                            <button class="dropdown__item">PowerPoint</button>
+                        </div>
+                        <div class="dropdown__divider"></div>
+                        <div class="dropdown__section">
+                            <div class="dropdown__label">Copy</div>
+                            <button class="dropdown__item">CSV</button>
+                            <button class="dropdown__item">JSON</button>
+                        </div>
+                    </div>
+                </div>
+                <span class="toolbar__status toolbar__status--saved" id="save-status">Saved</span>
+            </div>
+        </div>
+
+        <div class="slide" id="slide">
+            <div class="slide__title">
+                <div class="slide__title-content">
+                    <span class="slide__section-header" id="slide-section-header">Fall 2025 Management Presentation</span>
+                    <h1 id="slide-title">Financial Performance 2024</h1>
+                </div>
+            </div>
+            <div class="slide__description">
+                <div class="slide__description-content">
+                    <div class="markdown" id="slide-description"></div>
+                </div>
+            </div>
+            <div class="resize-handle resize-handle--col"></div>
+            <div class="slide__viz">
+                <div class="slide__viz-header">
+                    <span class="slide__viz-unit">USD $</span>
+                    <div class="slide__viz-legend" id="chart-legend"></div>
+                </div>
+                <div class="slide__viz-content">
+                    <div class="viz-view active" id="viz-view-output">
+                        <div class="chart-container">
+                            <canvas id="chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="viz-view" id="viz-view-table">
+                        <div class="viz-table-container" id="viz-table-display"></div>
+                    </div>
+                    <div class="viz-view" id="viz-view-notes">
+                        <div class="viz-notes-container" id="viz-notes-display"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             DATA SECTION
+             ===================================================== -->
+        <div class="section">
+            <div class="section__header">
+                <span class="section__title">Data</span>
+            </div>
+
+            <!-- Title Card -->
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">Title</span>
+                </div>
+                <div class="card__body">
+                    <div class="field-row">
+                        <div class="field field--inline" style="width: 380px; flex-shrink: 0;">
+                            <label class="field__label">Section Header</label>
+                            <input type="text" class="input input--underline input--muted" id="field-section-header" placeholder="e.g. Fall 2025 Presentation" value="Fall 2025 Management Presentation">
+                        </div>
+                        <div class="field field--inline" style="flex: 1;">
+                            <label class="field__label">
+                                Title
+                                <button class="btn-ai" data-ai="title">AI</button>
+                            </label>
+                            <input type="text" class="input input--underline" id="field-title" placeholder="Enter slide title..." value="Financial Performance 2024">
+                        </div>
+                    </div>
+                    <div class="ai-panel" id="ai-panel-title">
+                        <textarea class="textarea ai-panel__input" placeholder="Describe the title you want..."></textarea>
+                        <div class="ai-panel__actions">
+                            <button class="btn btn--primary btn--sm">
+                                <span class="btn-text">Generate</span>
+                                <span class="spinner"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Card -->
+            <div class="card" style="margin-top: var(--space-4);">
+                <div class="card__header">
+                    <span class="card__title">Description</span>
+                </div>
+                <div class="card__body">
+                    <div class="field">
+                        <div class="field__label">
+                            Content
+                            <button class="btn-ai" data-ai="description">AI</button>
+                            <select class="ai-size-select" style="margin-left: var(--space-2);">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                        <div class="ai-panel" id="ai-panel-description">
+                            <textarea class="textarea ai-panel__input" placeholder="Describe what to write..."></textarea>
+                            <div class="ai-panel__actions">
+                                <button class="btn btn--primary btn--sm">
+                                    <span class="btn-text">Generate</span>
+                                    <span class="spinner"></span>
+                                </button>
+                                <button class="btn btn--sm">Save Prompt</button>
+                            </div>
+                        </div>
+                        <div class="editable-markdown" id="field-description-container">
+                            <div class="editable-markdown__display markdown" id="field-description-display"></div>
+                            <textarea class="editable-markdown__editor textarea" id="field-description" placeholder="Enter description (supports markdown)...">## Key Highlights
+
+**Revenue growth** of 108% year-over-year demonstrates strong market position.
+
+### Trends
+- Consistent upward trajectory across all quarters
+- Expenses scaling efficiently with revenue
+- Profit margins expanding in H2</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Card -->
+            <div class="card" style="margin-top: var(--space-4);">
+                <div class="card__header">
+                    <span class="card__title">Visualization</span>
+                </div>
+                <div class="card__body">
+                    <div class="field">
+                        <div class="field__label">
+                            Data
+                            <button class="btn-ai" data-ai="visualization">AI</button>
+                        </div>
+                        <div class="ai-panel" id="ai-panel-visualization">
+                            <div class="field" style="margin-bottom: var(--space-2);">
+                                <label class="field__label">Attachment</label>
+                                <select class="select" style="max-width: 300px;">
+                                    <option value="">None — describe data manually</option>
+                                </select>
+                            </div>
+                            <textarea class="textarea ai-panel__input" placeholder="e.g. Extract monthly revenue and expenses..."></textarea>
+                            <div class="ai-panel__actions">
+                                <button class="btn btn--primary btn--sm">
+                                    <span class="btn-text">Extract</span>
+                                    <span class="spinner"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="data-table-container"></div>
+                    </div>
+
+                    <div class="comments-section">
+                        <div class="field__label" style="margin-bottom: var(--space-2);">
+                            Comments
+                            <button class="btn-add" id="add-comment-btn" title="Add general comment">+</button>
+                        </div>
+                        <div class="comments-table" id="comments-table"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             SETTINGS SECTION
+             ===================================================== -->
+        <div class="section">
+            <div class="section__header">
+                <span class="section__title">Settings</span>
+            </div>
+
+            <!-- AI Settings -->
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">AI</span>
+                </div>
+                <div class="card__body">
+                    <div class="field">
+                        <div class="field__label">Context & Instructions</div>
+                        <textarea class="textarea" id="ai-context" rows="3" placeholder="Add custom context for AI generation..."></textarea>
+                        <div class="field__hint">This context will be included in all AI generation prompts.</div>
+                    </div>
+                    <div class="field" style="margin-top: var(--space-4);">
+                        <div class="field__label">Tone</div>
+                        <select class="select" id="ai-tone" style="max-width: 200px;">
+                            <option value="professional" selected>Professional</option>
+                            <option value="formal">Formal</option>
+                            <option value="casual">Casual</option>
+                            <option value="technical">Technical</option>
+                            <option value="executive">Executive Summary</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Settings -->
+            <div class="card" style="margin-top: var(--space-4);">
+                <div class="card__header">
+                    <span class="card__title">Style</span>
+                </div>
+                <div class="card__body">
+                    <div style="display: flex; gap: var(--space-6); flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 240px;">
+                            <div class="field">
+                                <div class="field__label">Color Palette</div>
+                                <div class="style-palette">
+                                    <div class="palette-swatches">
+                                        <div class="palette-swatch active" style="background: #4a6fa5;"></div>
+                                        <div class="palette-swatch" style="background: #6b8f71;"></div>
+                                        <div class="palette-swatch" style="background: #c9a227;"></div>
+                                        <div class="palette-swatch" style="background: #b54848;"></div>
+                                        <div class="palette-swatch" style="background: #8b5cf6;"></div>
+                                        <div class="palette-swatch" style="background: var(--gray-200); color: var(--gray-500);">+</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field" style="margin-top: var(--space-4);">
+                                <div class="field__label">Chart Style</div>
+                                <div style="display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-2);">
+                                    <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--gray-600); cursor: pointer;">
+                                        <input type="checkbox" id="style-gridlines" checked> Show gridlines
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--gray-600); cursor: pointer;">
+                                        <input type="checkbox" id="style-points" checked> Show data points
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--gray-600); cursor: pointer;">
+                                        <input type="checkbox" id="style-smooth" checked> Smooth lines
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: 240px;">
+                            <div class="field">
+                                <div class="field__label">Layout</div>
+                                <div class="field-row gap-3" style="margin-top: var(--space-2);">
+                                    <div class="field field--inline" style="flex: 1;">
+                                        <label class="field__label">Description Width</label>
+                                        <select class="select" id="style-desc-width">
+                                            <option value="25">25%</option>
+                                            <option value="35" selected>35%</option>
+                                            <option value="45">45%</option>
+                                        </select>
+                                    </div>
+                                    <div class="field field--inline" style="flex: 1;">
+                                        <label class="field__label">Aspect Ratio</label>
+                                        <select class="select" id="style-aspect">
+                                            <option value="16/9" selected>16:9</option>
+                                            <option value="4/3">4:3</option>
+                                            <option value="1/1">1:1</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attachments -->
+            <div class="card" style="margin-top: var(--space-4);">
+                <div class="card__header">
+                    <span class="card__title">Attachments</span>
+                </div>
+                <div class="card__body">
+                    <div class="field">
+                        <div class="field__label">Upload Files</div>
+                        <div class="file-upload">
+                            <input type="file" id="file-input" multiple hidden>
+                            <div class="file-upload__dropzone" id="file-dropzone">
+                                <div class="file-upload__icon">+</div>
+                                <div class="file-upload__text">Drop files here or <button class="file-upload__browse" id="file-browse-btn">browse</button></div>
+                                <div class="file-upload__hint">Max 2MB per file • Images, PDFs, Excel, CSV</div>
+                            </div>
+                        </div>
+                        <div class="file-list" id="file-list"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal__header">
+                <span class="modal__title">Confirm</span>
+                <button class="modal__close" onclick="closeConfirmModal(false)">×</button>
+            </div>
+            <div class="modal__body">
+                <p id="confirm-modal-message" style="margin: 0; color: var(--gray-700);"></p>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--sm" onclick="closeConfirmModal(false)">Cancel</button>
+                <button class="btn btn--sm" id="confirm-modal-confirm" onclick="closeConfirmModal(true)">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div class="modal-overlay" id="comment-modal">
+        <div class="modal">
+            <div class="modal__header">
+                <span class="modal__title">Cell Comment</span>
+                <span class="badge" id="comment-modal-context"></span>
+                <button class="modal__close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal__body">
+                <textarea class="textarea" id="comment-modal-text" placeholder="Add a comment for this cell..."></textarea>
+            </div>
+            <div class="modal__footer">
+                <button class="btn" id="comment-modal-delete">Delete</button>
+                <button class="btn btn--primary" id="comment-modal-save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for panels -->
+    <div class="overlay" id="panel-overlay"></div>
+
+    <!-- File Detail Panel -->
+    <div class="panel panel--sheet" id="file-panel">
+        <div class="panel__header">
+            <span class="panel__title" id="file-panel-title">File</span>
+            <button class="panel__close" onclick="closeFilePanel()">×</button>
+        </div>
+        <div class="panel__content">
+            <!-- Source Viewer -->
+            <div class="panel__source">
+                <div class="panel__source-header">
+                    <span id="file-panel-type">XLSX</span>
+                    <span class="panel__source-meta" id="file-panel-dims"></span>
+                    <label style="margin-left: auto; display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--gray-600); cursor: pointer;">
+                        <input type="checkbox" id="file-panel-financial" style="cursor: pointer;">
+                        Financial Table
+                    </label>
+                </div>
+                <div class="panel__source-content" id="file-panel-source">
+                    <div class="source-loading">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Metadata -->
+            <div class="detail-section">
+                <div class="detail-section__title">Metadata</div>
+                <div class="meta-list" id="file-panel-meta">
+                    <div class="meta-row">
+                        <span class="meta-row__label">Size</span>
+                        <span class="meta-row__value" id="file-meta-size">--</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-row__label">Uploaded</span>
+                        <span class="meta-row__value" id="file-meta-date">--</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-row__label">Location</span>
+                        <span class="meta-row__value" id="file-meta-path">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="detail-section">
+                <div class="detail-section__title">Comments</div>
+                <div id="file-panel-comments"></div>
+                <div style="margin-top: var(--space-3); display: flex; gap: var(--space-2); flex-direction: column;">
+                    <textarea class="textarea" id="file-panel-comment-input" placeholder="Add a comment..." rows="2" style="font-size: var(--text-sm);"></textarea>
+                    <button class="btn btn--sm btn--primary" id="file-panel-add-comment" style="align-self: flex-start;">Add Comment</button>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="detail-section" style="margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--gray-200);">
+                <button class="btn btn--sm" id="file-panel-delete" style="color: var(--error);">Delete File</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inline dropdown initialization (avoids module loading issues on file://)
+        function initDropdowns() {
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown__menu.open').forEach(menu => {
+                        menu.classList.remove('open');
+                    });
+                }
+            });
+            document.querySelectorAll('.dropdown').forEach(dropdown => {
+                const trigger = dropdown.querySelector('.btn, .dropdown__trigger');
+                const menu = dropdown.querySelector('.dropdown__menu');
+                if (trigger && menu) {
+                    trigger.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        document.querySelectorAll('.dropdown__menu.open').forEach(m => {
+                            if (m !== menu) m.classList.remove('open');
+                        });
+                        menu.classList.toggle('open');
+                    });
+                }
+            });
+        }
+
+        // Inline toast function (avoids module loading issues on file://)
+        let toastTimeout = null;
+        function showToast(message, options = {}) {
+            const { duration = 3000, type = 'default' } = options;
+            let toast = document.querySelector('.toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.classList.remove('toast--success', 'toast--error', 'toast--warning');
+            if (type !== 'default') toast.classList.add(`toast--${type}`);
+            toast.textContent = message;
+            toast.classList.add('show');
+            if (duration > 0) {
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+        }
+
+        initDropdowns();
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        const state = {
+            sectionHeader: 'Fall 2025 Management Presentation',
+            title: 'Financial Performance 2024',
+            description: `## Key Highlights
+
+**Revenue growth** of 108% year-over-year demonstrates strong market position.
+
+### Trends
+- Consistent upward trajectory across all quarters
+- Expenses scaling efficiently with revenue
+- Profit margins expanding in H2`,
+            chart: {
+                type: 'line',
+                labels: ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'],
+                series: [
+                    { name: 'Revenue', color: '#4a6fa5', data: [1236577, 1425890, 1312445, 1567234, 1489012, 1723456, 1856789, 1645321, 1934567, 2123456, 2345678, 2567890] },
+                    { name: 'Expenses', color: '#6b8f71', data: [856234, 912456, 878901, 1023456, 989123, 1145678, 1234567, 1098765, 1289012, 1412345, 1534567, 1678901] },
+                    { name: 'Profit', color: '#c9a227', data: [380343, 513434, 433544, 543778, 499889, 577778, 622222, 546556, 645555, 711111, 811111, 888989] }
+                ],
+                cellComments: {
+                    '0-2': { text: 'Q1 close - slight revenue dip due to seasonal adjustment', author: 'You', time: 'Jan 15' },
+                    '0-5': { text: 'New product launch drove revenue spike', author: 'You', time: 'Jun 20' },
+                    '2-11': { text: 'Year-end strong performance, exceeded targets', author: 'Finance Team', time: 'Dec 1' }
+                }
+            },
+            comments: [
+                { text: 'Great progress on cost management this quarter.', author: 'Finance Team', time: 'Dec 1' }
+            ]
+        };
+
+        let chart = null;
+
+        // ============================================================
+        // UTILITIES
+        // ============================================================
+        const formatNumber = (num) => num.toLocaleString('en-US');
+        const parseNumber = (str) => parseFloat(String(str).replace(/,/g, '')) || 0;
+        const hexToRgba = (hex, alpha) => {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+
+        function formatLabel(iso) {
+            if (!iso) return '';
+            const [y, m] = iso.split('-');
+            return `${MONTHS[parseInt(m) - 1]} '${y.slice(2)}`;
+        }
+
+        // ============================================================
+        // RENDER FUNCTIONS
+        // ============================================================
+        function renderSlide() {
+            document.getElementById('slide-section-header').textContent = state.sectionHeader;
+            document.getElementById('slide-title').textContent = state.title;
+            document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('chart').getContext('2d');
+            const labels = state.chart.labels.map(formatLabel);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const chartType = state.chart.type;
+            chart = new Chart(ctx, {
+                type: chartType === 'area' ? 'line' : chartType,
+                data: {
+                    labels: labels,
+                    datasets: state.chart.series.map(s => ({
+                        label: s.name,
+                        data: s.data,
+                        borderColor: s.color,
+                        backgroundColor: chartType === 'area' ? hexToRgba(s.color, 0.3) : chartType === 'bar' ? s.color : hexToRgba(s.color, 0.15),
+                        borderWidth: chartType === 'bar' ? 0 : 2,
+                        fill: chartType === 'area',
+                        tension: 0.3,
+                        pointBackgroundColor: s.color,
+                        pointRadius: 3,
+                        pointHoverRadius: 5
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 10, right: 10, bottom: 5, left: 5 } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { titleFont: { size: 12 }, bodyFont: { size: 11 }, padding: 10 }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 }, color: '#78716c' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#e7e5e4' },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#78716c',
+                                callback: v => '$' + (v / 1000000).toFixed(1) + 'M'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Legend
+            document.getElementById('chart-legend').innerHTML = state.chart.series
+                .map(s => `<div class="legend-item"><span class="legend-color" style="background:${s.color}"></span><span>${s.name}</span></div>`)
+                .join('');
+        }
+
+        function renderDataTable() {
+            const container = document.getElementById('data-table-container');
+            const { labels, series, cellComments } = state.chart;
+
+            let html = '<div class="data-table-wrap" style="display: block; width: 100%; margin-top: var(--space-3);"><table class="data-table" style="width: 100%;"><thead><tr><th></th>';
+
+            labels.forEach((l, i) => {
+                html += `<th class="col-header">${formatLabel(l)}</th>`;
+            });
+            html += '<th class="col-header total-col">Total</th></tr></thead><tbody>';
+
+            series.forEach((s, si) => {
+                const total = s.data.reduce((a, b) => a + b, 0);
+                html += `<tr><td><div class="series-label">
+                    <input type="color" class="color-picker" data-series="${si}" value="${s.color}">
+                    <input type="text" class="series-name-input" data-series="${si}" value="${s.name}">
+                </div></td>`;
+
+                s.data.forEach((v, ci) => {
+                    const key = `${si}-${ci}`;
+                    const hasComment = cellComments[key];
+                    const cls = hasComment ? 'value-cell has-comment' : 'value-cell';
+                    html += `<td class="${cls}" data-cell="${key}">
+                        <input type="text" data-series="${si}" data-col="${ci}" value="${formatNumber(v)}">
+                        ${hasComment ? '<span class="comment-dot"></span>' : ''}
+                    </td>`;
+                });
+
+                html += `<td class="total-col">${formatNumber(total)}</td></tr>`;
+            });
+
+            html += '</tbody></table></div>';
+            html += '<div style="display: flex; gap: var(--space-2); margin-top: var(--space-3);"><button class="btn btn--sm" id="add-row-btn">+ Add Row</button><button class="btn btn--sm" id="add-col-btn">+ Add Column</button></div>';
+            container.innerHTML = html;
+
+            // Event listeners for data inputs
+            container.querySelectorAll('input[data-series][data-col]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const si = parseInt(e.target.dataset.series);
+                    const ci = parseInt(e.target.dataset.col);
+                    state.chart.series[si].data[ci] = parseNumber(e.target.value);
+                    renderChart();
+                    renderVizTable();
+                    showToast('Data updated');
+                });
+            });
+
+            // Color picker
+            container.querySelectorAll('.color-picker').forEach(picker => {
+                picker.addEventListener('change', (e) => {
+                    const si = parseInt(e.target.dataset.series);
+                    state.chart.series[si].color = e.target.value;
+                    renderChart();
+                    renderDataTable();
+                    showToast('Color updated');
+                });
+            });
+
+            // Series name
+            container.querySelectorAll('.series-name-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const si = parseInt(e.target.dataset.series);
+                    state.chart.series[si].name = e.target.value;
+                    renderChart();
+                    showToast('Series renamed');
+                });
+            });
+
+            // Cell click for comments
+            container.querySelectorAll('.value-cell').forEach(cell => {
+                cell.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'INPUT') return;
+                    openCommentModal(cell.dataset.cell);
+                });
+            });
+        }
+
+        function renderVizTable() {
+            const container = document.getElementById('viz-table-display');
+            const { labels, series } = state.chart;
+
+            let html = '<div class="data-table-wrap" style="border: none; display: block; width: 100%;"><table class="data-table" style="width: 100%;"><thead><tr><th></th>';
+            labels.forEach(l => { html += `<th class="col-header">${formatLabel(l)}</th>`; });
+            html += '<th class="col-header total-col">Total</th></tr></thead><tbody>';
+
+            series.forEach(s => {
+                const total = s.data.reduce((a, b) => a + b, 0);
+                html += `<tr><td><div class="series-label"><span class="series-dot" style="background:${s.color}"></span><span>${s.name}</span></div></td>`;
+                s.data.forEach(v => { html += `<td>${formatNumber(v)}</td>`; });
+                html += `<td class="total-col">${formatNumber(total)}</td></tr>`;
+            });
+
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        function renderVizNotes() {
+            const container = document.getElementById('viz-notes-display');
+            const { cellComments } = state.chart;
+
+            const entries = Object.entries(cellComments).map(([key, comment]) => {
+                const [si, ci] = key.split('-').map(Number);
+                return {
+                    seriesName: state.chart.series[si]?.name || 'Unknown',
+                    seriesColor: state.chart.series[si]?.color || '#999',
+                    month: formatLabel(state.chart.labels[ci]),
+                    ...comment
+                };
+            });
+
+            // Add general comments
+            state.comments.forEach(c => {
+                entries.push({ type: 'general', seriesColor: 'var(--gray-400)', ...c });
+            });
+
+            document.getElementById('notes-count').textContent = entries.length;
+
+            if (!entries.length) {
+                container.innerHTML = '<div class="viz-notes-empty">No comments yet</div>';
+                return;
+            }
+
+            container.innerHTML = entries.map(e => `
+                <div class="viz-note-item">
+                    <div class="viz-note-item__header">
+                        <span class="viz-note-item__dot" style="background:${e.seriesColor}"></span>
+                        <span class="viz-note-item__context">${e.type === 'general' ? 'General' : `${e.seriesName}, ${e.month}`}</span>
+                        <span class="viz-note-item__meta">${e.author} • ${e.time}</span>
+                    </div>
+                    <div class="viz-note-item__text">${e.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderComments() {
+            const container = document.getElementById('comments-table');
+            const { cellComments } = state.chart;
+
+            const entries = Object.entries(cellComments).map(([key, comment]) => {
+                const [si, ci] = key.split('-').map(Number);
+                return {
+                    key,
+                    seriesName: state.chart.series[si]?.name || 'Unknown',
+                    seriesColor: state.chart.series[si]?.color || '#999',
+                    month: formatLabel(state.chart.labels[ci]),
+                    ...comment
+                };
+            });
+
+            // Add general comments
+            state.comments.forEach((c, i) => {
+                entries.push({ type: 'general', key: `general-${i}`, seriesColor: 'var(--gray-400)', ...c });
+            });
+
+            if (!entries.length) {
+                container.innerHTML = '<div class="comments-table-empty">No comments yet</div>';
+                return;
+            }
+
+            container.innerHTML = entries.map(e => `
+                <div class="comment-row" data-key="${e.key}">
+                    <div class="comment-row__context">
+                        <span class="comment-row__dot" style="background: ${e.seriesColor}"></span>
+                        ${e.type === 'general' ? 'General' : `${e.seriesName}, ${e.month}`}
+                    </div>
+                    <div class="comment-row__text">${e.text}</div>
+                    <div class="comment-row__meta">${e.author} • ${e.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================================
+        // COMMENT MODAL
+        // ============================================================
+        let currentCell = null;
+
+        function openCommentModal(cellKey) {
+            currentCell = cellKey;
+            const comment = state.chart.cellComments[cellKey];
+            const [si, ci] = cellKey.split('-').map(Number);
+
+            document.getElementById('comment-modal-context').textContent =
+                `${state.chart.series[si]?.name}, ${formatLabel(state.chart.labels[ci])}`;
+            document.getElementById('comment-modal-text').value = comment?.text || '';
+            document.getElementById('comment-modal').classList.add('open');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('comment-modal').classList.remove('open');
+            currentCell = null;
+        };
+
+        document.getElementById('comment-modal-save').addEventListener('click', () => {
+            if (!currentCell) return;
+            const text = document.getElementById('comment-modal-text').value.trim();
+            if (text) {
+                state.chart.cellComments[currentCell] = { text, author: 'You', time: 'Just now' };
+            } else {
+                delete state.chart.cellComments[currentCell];
+            }
+            renderDataTable();
+            renderComments();
+            renderVizNotes();
+            closeModal();
+            showToast('Comment saved');
+        });
+
+        document.getElementById('comment-modal-delete').addEventListener('click', () => {
+            if (!currentCell) return;
+            delete state.chart.cellComments[currentCell];
+            renderDataTable();
+            renderComments();
+            renderVizNotes();
+            closeModal();
+            showToast('Comment deleted');
+        });
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+
+        // Title inputs
+        document.getElementById('field-section-header').addEventListener('input', (e) => {
+            state.sectionHeader = e.target.value;
+            document.getElementById('slide-section-header').textContent = e.target.value;
+        });
+
+        document.getElementById('field-title').addEventListener('input', (e) => {
+            state.title = e.target.value;
+            document.getElementById('slide-title').textContent = e.target.value;
+        });
+
+        // Editable markdown
+        const descContainer = document.getElementById('field-description-container');
+        const descDisplay = document.getElementById('field-description-display');
+        const descEditor = document.getElementById('field-description');
+
+        descDisplay.innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+
+        descContainer.addEventListener('click', () => {
+            descContainer.classList.add('editing');
+            descEditor.focus();
+        });
+
+        descEditor.addEventListener('blur', () => {
+            descContainer.classList.remove('editing');
+            state.description = descEditor.value;
+            descDisplay.innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+            document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+            showToast('Description updated');
+        });
+
+        // AI panel toggles
+        document.querySelectorAll('[data-ai]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const panel = document.getElementById('ai-panel-' + btn.dataset.ai);
+                panel.classList.toggle('open');
+            });
+        });
+
+        // View tabs
+        document.querySelectorAll('#view-tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const view = tab.dataset.view;
+                document.querySelectorAll('#view-tabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                document.querySelectorAll('.viz-view').forEach(v => v.classList.remove('active'));
+                document.getElementById('viz-view-' + view).classList.add('active');
+
+                const slide = document.getElementById('slide');
+                slide.classList.remove('view-output', 'view-table', 'view-notes');
+                if (view !== 'output') {
+                    slide.classList.add('view-' + view);
+                }
+            });
+        });
+
+        // Chart type
+        document.getElementById('chart-type-select').addEventListener('change', (e) => {
+            state.chart.type = e.target.value;
+            renderChart();
+        });
+
+        // Layout settings
+        document.getElementById('style-desc-width').addEventListener('change', (e) => {
+            document.getElementById('slide').style.setProperty('--col-split', e.target.value + '%');
+        });
+
+        document.getElementById('style-aspect').addEventListener('change', (e) => {
+            document.getElementById('slide').style.aspectRatio = e.target.value;
+        });
+
+        // File upload / Attachments
+        const fileDropzone = document.getElementById('file-dropzone');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+
+        document.getElementById('file-browse-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleAttachments(e.target.files);
+        });
+
+        fileDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileDropzone.classList.add('dragover');
+        });
+
+        fileDropzone.addEventListener('dragleave', () => fileDropzone.classList.remove('dragover'));
+
+        fileDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileDropzone.classList.remove('dragover');
+            handleAttachments(e.dataTransfer.files);
+        });
+
+        async function handleAttachments(files) {
+            for (const file of files) {
+                await uploadAttachment(file);
+            }
+            loadAttachments();
+        }
+
+        async function uploadAttachment(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/attachments', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showToast(`Uploaded: ${file.name}`, { type: 'success' });
+                } else {
+                    const data = await response.json();
+                    showToast(`Error: ${data.error}`, { type: 'error' });
+                }
+            } catch (err) {
+                showToast(`Upload failed: ${err.message}`, { type: 'error' });
+            }
+        }
+
+        async function loadAttachments() {
+            try {
+                const response = await fetch('/api/attachments');
+                const files = await response.json();
+
+                if (files.length === 0) {
+                    fileList.innerHTML = '<div class="file-list__empty" style="padding: var(--space-3); text-align: center; font-size: var(--text-sm); color: var(--gray-400);">No attachments yet</div>';
+                    return;
+                }
+
+                const typeColors = {
+                    'pdf': '#b54848',
+                    'xlsx': '#6b8f71',
+                    'csv': '#6b8f71',
+                    'png': '#4a6fa5',
+                    'jpg': '#4a6fa5',
+                    'jpeg': '#4a6fa5',
+                    'gif': '#8b5cf6'
+                };
+
+                fileList.innerHTML = files.map(file => {
+                    const absolutePath = '/' + file.path; // Make path absolute
+                    // Escape all user data for safe HTML insertion
+                    const safeName = escapeHtml(file.name);
+                    const safeType = escapeHtml(file.type);
+                    const safeSize = escapeHtml(file.size);
+                    const safeDate = escapeHtml(file.date);
+                    // Store file data as escaped JSON in data attribute (must escape quotes for attribute context)
+                    const fileDataJson = escapeAttr(JSON.stringify({ path: absolutePath, name: file.name, type: file.type, size: file.size, date: file.date }));
+
+                    return `
+                    <div class="file-item file-item--clickable" data-action="view" data-file="${fileDataJson}">
+                        <span class="file-item__icon" style="background: ${typeColors[file.type] || '#78716c'};">${safeType.toUpperCase()}</span>
+                        <div class="file-item__info">
+                            <div class="file-item__name">${safeName}</div>
+                            <div class="file-item__meta">${safeSize} • ${safeDate}</div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Attach event delegation for file actions
+                attachFileListeners();
+            } catch (err) {
+                fileList.innerHTML = '<div class="file-list__empty" style="padding: var(--space-3); text-align: center; font-size: var(--text-sm); color: var(--gray-400);">Run "npm run dev" to enable attachments</div>';
+            }
+        }
+
+        async function deleteAttachment(filename) {
+            const confirmed = await showConfirmModal(`Delete "${filename}"?`, { danger: true });
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch(`/api/attachments/${encodeURIComponent(filename)}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast(`Deleted: ${filename}`, { type: 'success' });
+                    loadAttachments();
+                }
+            } catch (err) {
+                showToast(`Delete failed: ${err.message}`, { type: 'error' });
+            }
+        }
+
+        // Confirm modal
+        let confirmModalResolve = null;
+
+        function showConfirmModal(message, options = {}) {
+            return new Promise((resolve) => {
+                confirmModalResolve = resolve;
+                const modal = document.getElementById('confirm-modal');
+                const messageEl = document.getElementById('confirm-modal-message');
+                const confirmBtn = document.getElementById('confirm-modal-confirm');
+
+                messageEl.textContent = message;
+                confirmBtn.textContent = options.confirmText || 'Delete';
+                confirmBtn.className = options.danger ? 'btn btn--sm btn--danger' : 'btn btn--sm btn--primary';
+
+                modal.classList.add('open');
+            });
+        }
+
+        window.closeConfirmModal = function(result) {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('open');
+            if (confirmModalResolve) {
+                confirmModalResolve(result);
+                confirmModalResolve = null;
+            }
+        };
+
+        // Event delegation for file list actions (prevents XSS from inline handlers)
+        let fileListenersAttached = false;
+        function attachFileListeners() {
+            if (fileListenersAttached) return;
+            fileListenersAttached = true;
+
+            fileList.addEventListener('click', (e) => {
+                const fileItem = e.target.closest('[data-action="view"]');
+
+                if (fileItem) {
+                    const fileData = JSON.parse(fileItem.dataset.file);
+                    openFilePanel(fileData);
+                }
+            });
+        }
+
+        // ============================================================
+        // FILE PANEL (Detail View)
+        // ============================================================
+        let currentWorkbook = null;
+        let activePanel = null;
+        let currentFileData = null;
+
+        window.openFilePanel = async function(fileData) {
+            currentFileData = fileData;
+            const panel = document.getElementById('file-panel');
+            const overlay = document.getElementById('panel-overlay');
+            const source = document.getElementById('file-panel-source');
+
+            // Update panel header and metadata
+            document.getElementById('file-panel-title').textContent = fileData.name;
+            document.getElementById('file-panel-type').textContent = fileData.type.toUpperCase();
+            document.getElementById('file-panel-dims').textContent = '';
+            document.getElementById('file-meta-size').textContent = fileData.size;
+            document.getElementById('file-meta-date').textContent = fileData.date;
+            document.getElementById('file-meta-path').textContent = fileData.path;
+
+            // Show loading
+            source.innerHTML = '<div class="source-loading">Loading...</div>';
+
+            // Open panel
+            panel.classList.add('active');
+            overlay.classList.add('active');
+            activePanel = panel;
+            document.body.style.overflow = 'hidden';
+
+            // Load comments
+            renderFileComments(fileData.name);
+            document.getElementById('file-panel-comment-input').value = '';
+
+            // Load financial setting
+            const settings = getFileSettings(fileData.name);
+            document.getElementById('file-panel-financial').checked = settings.financial || false;
+
+            // Load content
+            try {
+                if (['png', 'jpg', 'jpeg', 'gif'].includes(fileData.type)) {
+                    // Create image element safely without innerHTML
+                    const img = document.createElement('img');
+                    img.className = 'panel__source-image';
+                    img.src = fileData.path;
+                    img.alt = fileData.name;
+                    source.innerHTML = '';
+                    source.appendChild(img);
+                } else if (['xlsx', 'xls'].includes(fileData.type)) {
+                    const response = await fetch(fileData.path);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                    const arrayBuffer = await response.arrayBuffer();
+                    currentWorkbook = XLSX.read(arrayBuffer, { type: 'array', cellStyles: true });
+                    renderSpreadsheet(currentWorkbook, 0);
+                } else if (fileData.type === 'csv') {
+                    const response = await fetch(fileData.path);
+                    const text = await response.text();
+                    renderCSV(text);
+                }
+            } catch (err) {
+                // Escape error message before inserting
+                source.innerHTML = `<div class="source-loading">Failed to load: ${escapeHtml(err.message)}</div>`;
+            }
+        };
+
+        window.closeFilePanel = function() {
+            const panel = document.getElementById('file-panel');
+            const overlay = document.getElementById('panel-overlay');
+
+            panel.classList.remove('active');
+            overlay.classList.remove('active');
+            activePanel = null;
+            document.body.style.overflow = '';
+        };
+
+        // Close panel on overlay click
+        document.getElementById('panel-overlay').addEventListener('click', closeFilePanel);
+
+        // Close panel on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && activePanel) closeFilePanel();
+        });
+
+        // Delete from panel
+        document.getElementById('file-panel-delete').addEventListener('click', () => {
+            if (currentFileData) {
+                deleteAttachment(currentFileData.name);
+                closeFilePanel();
+            }
+        });
+
+        // Comments persistence
+        function getFileComments(filename) {
+            const stored = localStorage.getItem('fileComments');
+            const all = stored ? JSON.parse(stored) : {};
+            return all[filename] || [];
+        }
+
+        function saveFileComment(filename, text) {
+            const stored = localStorage.getItem('fileComments');
+            const all = stored ? JSON.parse(stored) : {};
+            if (!all[filename]) all[filename] = [];
+            all[filename].push({
+                text: text,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+            });
+            localStorage.setItem('fileComments', JSON.stringify(all));
+        }
+
+        function renderFileComments(filename) {
+            const container = document.getElementById('file-panel-comments');
+            const comments = getFileComments(filename);
+
+            if (comments.length === 0) {
+                container.innerHTML = '<div style="font-size: var(--text-sm); color: var(--gray-400);">No comments yet</div>';
+                return;
+            }
+
+            container.innerHTML = comments.map((c, i) => `
+                <div style="padding: var(--space-2) 0; border-bottom: 1px solid var(--gray-100); font-size: var(--text-sm); display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2);">
+                    <div style="flex: 1;">
+                        <div style="color: var(--gray-700);">${escapeHtml(c.text)}</div>
+                        <div style="color: var(--gray-400); font-size: var(--text-xs); margin-top: var(--space-1);">${c.date} at ${c.time}</div>
+                    </div>
+                    <button class="btn btn--sm" style="padding: 2px 6px; font-size: 10px; color: var(--gray-400);" data-delete-comment="${i}">×</button>
+                </div>
+            `).join('');
+
+            // Attach delete handlers
+            container.querySelectorAll('[data-delete-comment]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const index = parseInt(btn.dataset.deleteComment);
+                    const confirmed = await showConfirmModal('Delete this comment?', { danger: true });
+                    if (confirmed) {
+                        deleteFileComment(filename, index);
+                        renderFileComments(filename);
+                        showToast('Comment deleted', { type: 'success' });
+                    }
+                });
+            });
+        }
+
+        function deleteFileComment(filename, index) {
+            const stored = localStorage.getItem('fileComments');
+            const all = stored ? JSON.parse(stored) : {};
+            if (all[filename] && all[filename][index] !== undefined) {
+                all[filename].splice(index, 1);
+                localStorage.setItem('fileComments', JSON.stringify(all));
+            }
+        }
+
+        document.getElementById('file-panel-add-comment').addEventListener('click', () => {
+            const input = document.getElementById('file-panel-comment-input');
+            const text = input.value.trim();
+            if (text && currentFileData) {
+                saveFileComment(currentFileData.name, text);
+                renderFileComments(currentFileData.name);
+                input.value = '';
+                showToast('Comment added', { type: 'success' });
+            }
+        });
+
+        // Financial table setting persistence
+        function getFileSettings(filename) {
+            const stored = localStorage.getItem('fileSettings');
+            const all = stored ? JSON.parse(stored) : {};
+            return all[filename] || {};
+        }
+
+        function saveFileSetting(filename, key, value) {
+            const stored = localStorage.getItem('fileSettings');
+            const all = stored ? JSON.parse(stored) : {};
+            if (!all[filename]) all[filename] = {};
+            all[filename][key] = value;
+            localStorage.setItem('fileSettings', JSON.stringify(all));
+        }
+
+        document.getElementById('file-panel-financial').addEventListener('change', (e) => {
+            if (currentFileData) {
+                saveFileSetting(currentFileData.name, 'financial', e.target.checked);
+                // Re-render with new setting
+                if (currentWorkbook) {
+                    renderSpreadsheet(currentWorkbook, 0);
+                }
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Escape for use in HTML attributes (includes quote escaping)
+        function escapeAttr(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function getColumnLetter(index) {
+            let letter = '';
+            while (index >= 0) {
+                letter = String.fromCharCode(65 + (index % 26)) + letter;
+                index = Math.floor(index / 26) - 1;
+            }
+            return letter;
+        }
+
+        function renderSpreadsheet(workbook, sheetIndex) {
+            const source = document.getElementById('file-panel-source');
+            const sheetNames = workbook.SheetNames;
+            const sheetName = sheetNames[sheetIndex];
+            const sheet = workbook.Sheets[sheetName];
+
+            // Convert to JSON
+            const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            // Calculate dimensions
+            const rowCount = data.length;
+            const colCount = Math.max(...data.map(row => row ? row.length : 0), 0);
+
+            if (rowCount === 0) {
+                source.innerHTML = '<div class="source-loading">No data in spreadsheet</div>';
+                return;
+            }
+
+            // Update panel header with dimensions
+            document.getElementById('file-panel-dims').textContent = `${rowCount} rows × ${colCount} columns`;
+
+            // Check if financial mode is enabled
+            const settings = currentFileData ? getFileSettings(currentFileData.name) : {};
+            const isFinancial = settings.financial || false;
+
+            // Build spreadsheet HTML
+            let html = `<div class="spreadsheet${isFinancial ? ' spreadsheet--financial' : ''}">`;
+
+            // Sheet tabs (only if multiple sheets)
+            if (sheetNames.length > 1) {
+                html += '<div class="spreadsheet__tabs">';
+                sheetNames.forEach((name, i) => {
+                    const activeClass = i === sheetIndex ? ' active' : '';
+                    html += `<button class="spreadsheet__tab${activeClass}" onclick="renderSpreadsheet(currentWorkbook, ${i})">${escapeHtml(name)}</button>`;
+                });
+                html += '</div>';
+            }
+
+            // Grid
+            html += '<div class="spreadsheet__grid"><table class="spreadsheet__table">';
+
+            // Column header row (A, B, C, D...)
+            html += '<thead><tr><th class="spreadsheet__corner"></th>';
+            for (let c = 0; c < colCount; c++) {
+                html += `<th>${getColumnLetter(c)}</th>`;
+            }
+            html += '</tr></thead>';
+
+            // Data rows
+            html += '<tbody>';
+            data.forEach((row, r) => {
+                html += `<tr><td class="spreadsheet__row-num">${r + 1}</td>`;
+                for (let c = 0; c < colCount; c++) {
+                    const cell = row && row[c] !== undefined ? row[c] : '';
+                    let displayValue;
+                    if (typeof cell === 'number') {
+                        // In financial mode, don't add commas to years (4-digit numbers 1900-2100)
+                        const isYear = isFinancial && cell >= 1900 && cell <= 2100 && Number.isInteger(cell);
+                        displayValue = isYear ? cell.toString() : cell.toLocaleString();
+                    } else {
+                        displayValue = escapeHtml(String(cell));
+                    }
+                    html += `<td>${displayValue}</td>`;
+                }
+                html += '</tr>';
+            });
+            html += '</tbody></table></div></div>';
+
+            source.innerHTML = html;
+        }
+
+        function renderCSV(text) {
+            const source = document.getElementById('file-panel-source');
+            const dims = document.getElementById('file-panel-dims');
+            const rows = text.split('\n').map(row => row.split(','));
+
+            const rowCount = rows.length;
+            const colCount = Math.max(...rows.map(r => r.length), 0);
+            dims.textContent = `${rowCount} rows × ${colCount} columns`;
+
+            // Check if financial mode is enabled
+            const settings = currentFileData ? getFileSettings(currentFileData.name) : {};
+            const isFinancial = settings.financial || false;
+
+            let html = `<div class="spreadsheet${isFinancial ? ' spreadsheet--financial' : ''}"><div class="spreadsheet__grid"><table class="spreadsheet__table">`;
+
+            // Header row with column letters
+            html += '<thead><tr><th class="spreadsheet__corner"></th>';
+            for (let c = 0; c < colCount; c++) {
+                html += `<th>${getColumnLetter(c)}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+
+            rows.forEach((row, r) => {
+                if (row.length > 1 || row[0].trim()) {
+                    html += `<tr><td class="spreadsheet__row-num">${r + 1}</td>`;
+                    for (let c = 0; c < colCount; c++) {
+                        const cell = row[c] ? row[c].trim() : '';
+                        const num = parseFloat(cell.replace(/,/g, ''));
+                        let displayValue;
+                        if (!isNaN(num) && cell !== '') {
+                            const isYear = isFinancial && num >= 1900 && num <= 2100 && Number.isInteger(num);
+                            displayValue = isYear ? num.toString() : num.toLocaleString();
+                        } else {
+                            displayValue = escapeHtml(cell);
+                        }
+                        html += `<td>${displayValue}</td>`;
+                    }
+                    html += '</tr>';
+                }
+            });
+
+            html += '</tbody></table></div></div>';
+            source.innerHTML = html;
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        renderSlide();
+        renderChart();
+        renderDataTable();
+        renderVizTable();
+        renderVizNotes();
+        renderComments();
+        loadAttachments();
+    </script>
+</body>
+</html>

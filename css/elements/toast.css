@@ -1,0 +1,50 @@
+/* ============================================================
+   TOAST
+   Notification messages
+   ============================================================ */
+
+.toast {
+    position: fixed;
+    bottom: var(--space-6);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: white;
+    background: var(--gray-800);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: all var(--transition-base);
+    pointer-events: none;
+    z-index: 1001;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Inline toast (not fixed positioned) */
+.toast--inline {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    display: inline-flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Semantic variants */
+.toast--success {
+    background: var(--success);
+}
+
+.toast--error {
+    background: var(--error);
+}
+
+.toast--warning {
+    background: var(--warning);
+}

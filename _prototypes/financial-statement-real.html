@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Statements — 5 Year View</title>
+    <style>
+        :root {
+            /* Base Design System */
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            
+            /* Financial Semantics */
+            --fin-favorable: #4a7c59;
+            --fin-favorable-bg: #eef4f0;
+            --fin-unfavorable: #b54848;
+            --fin-unfavorable-bg: #fdf2f2;
+            --fin-neutral: var(--gray-600);
+            --fin-muted: var(--gray-400);
+            
+            /* Row Backgrounds */
+            --fin-header-bg: var(--gray-100);
+            --fin-section-bg: var(--gray-50);
+            --fin-total-bg: var(--gray-100);
+            --fin-subtotal-bg: transparent;
+            --fin-hover-bg: #fafaf8;
+            
+            /* Borders */
+            --fin-border: var(--gray-200);
+            --fin-border-heavy: var(--gray-400);
+            
+            /* Typography */
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--fin-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .header .subtitle {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--gray-100);
+            padding: 3px;
+            border-radius: 6px;
+        }
+        
+        .tab-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--gray-600);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .tab-btn:hover { color: var(--gray-800); }
+        .tab-btn.active { background: white; color: var(--gray-800); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--fin-border);
+            background: var(--gray-50);
+        }
+        
+        .controls-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            gap: 4px;
+            background: white;
+            padding: 2px;
+            border-radius: 4px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .mode-btn {
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--gray-500);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .mode-btn:hover { color: var(--gray-700); }
+        .mode-btn.active { background: var(--gray-800); color: white; }
+        
+        .statement-panel {
+            display: none;
+        }
+        
+        .statement-panel.active {
+            display: block;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        /* ============================================================
+           FINANCIAL TABLE
+           ============================================================ */
+        .fin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .fin-table thead th {
+            padding: 10px 16px;
+            font-weight: 600;
+            text-align: right;
+            color: var(--gray-600);
+            background: var(--fin-header-bg);
+            border-bottom: 2px solid var(--fin-border);
+            white-space: nowrap;
+        }
+        
+        .fin-table thead th:first-child {
+            text-align: left;
+            width: 45%;
+        }
+        
+        .fin-table tbody td {
+            padding: 7px 16px;
+            text-align: right;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-100);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .fin-table tbody td:first-child {
+            text-align: left;
+        }
+        
+        .fin-table tbody tr:hover td {
+            background: var(--fin-hover-bg);
+        }
+        
+        /* Row types */
+        .fin-row--statement td {
+            padding: 14px 16px 8px;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--gray-800);
+            background: white !important;
+            border-bottom: 2px solid var(--fin-border);
+        }
+        
+        .fin-row--section td {
+            padding: 12px 16px 6px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--gray-500);
+            background: var(--fin-section-bg) !important;
+            border-bottom: 1px solid var(--fin-border);
+        }
+        
+        .fin-row--data td:first-child {
+            font-weight: 400;
+        }
+        
+        .fin-row--detail td {
+            color: var(--fin-muted);
+            font-size: 11px;
+        }
+        
+        .fin-row--subtotal td {
+            font-weight: 600;
+            border-top: 1px solid var(--fin-border);
+        }
+        
+        .fin-row--total td {
+            font-weight: 700;
+            background: var(--fin-total-bg) !important;
+            border-top: 2px solid var(--fin-border-heavy);
+        }
+        
+        .fin-row--grandtotal td {
+            font-weight: 700;
+            font-size: 13px;
+            background: var(--gray-800) !important;
+            color: white !important;
+            border-top: 2px solid var(--gray-800);
+        }
+        
+        .fin-row--spacer td {
+            padding: 8px;
+            background: white !important;
+            border: none;
+        }
+        
+        /* Indent levels */
+        .fin-indent-1 { padding-left: 28px !important; }
+        .fin-indent-2 { padding-left: 44px !important; }
+        
+        /* Value states */
+        .fin-value--favorable { color: var(--fin-favorable); }
+        .fin-value--unfavorable { color: var(--fin-unfavorable); }
+        .fin-value--muted { color: var(--fin-muted); }
+        
+        /* Mode visibility */
+        .fin-table--raw .fin-row--detail { display: table-row; }
+        .fin-table--statement .fin-row--detail { display: none; }
+        .fin-table--summary .fin-row--data { display: none; }
+        .fin-table--summary .fin-row--detail { display: none; }
+        
+        /* Footer */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            border-top: 1px solid var(--fin-border);
+            background: var(--gray-50);
+            font-size: 10px;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Consolidated Financial Statements</h1>
+                <div class="subtitle">Fiscal Years 2020–2024 (CAD)</div>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" data-statement="income">Income Statement</button>
+                <button class="tab-btn" data-statement="balance">Balance Sheet</button>
+                <button class="tab-btn" data-statement="cashflow">Cash Flow</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <span class="controls-label">View:</span>
+            <div class="mode-toggle">
+                <button class="mode-btn" data-mode="raw">Raw</button>
+                <button class="mode-btn active" data-mode="statement">Statement</button>
+                <button class="mode-btn" data-mode="summary">Summary</button>
+            </div>
+        </div>
+        
+        <!-- Income Statement -->
+        <div class="statement-panel active" id="panel-income">
+            <div class="table-wrapper">
+                <table class="fin-table fin-table--statement" id="table-income">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>2024</th>
+                            <th>2023</th>
+                            <th>2022</th>
+                            <th>2021</th>
+                            <th>2020</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Balance Sheet -->
+        <div class="statement-panel" id="panel-balance">
+            <div class="table-wrapper">
+                <table class="fin-table fin-table--statement" id="table-balance">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>2024</th>
+                            <th>2023</th>
+                            <th>2022</th>
+                            <th>2021</th>
+                            <th>2020</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Cash Flow -->
+        <div class="statement-panel" id="panel-cashflow">
+            <div class="table-wrapper">
+                <table class="fin-table fin-table--statement" id="table-cashflow">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>2024</th>
+                            <th>2023</th>
+                            <th>2022</th>
+                            <th>2021</th>
+                            <th>2020</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <span>Financial Design System — Statement Mode</span>
+            <span>Values in CAD</span>
+        </div>
+    </div>
+
+    <script>
+        // Format number with accounting style
+        function fmt(value) {
+            if (value === null || value === undefined || value === '') return '—';
+            const num = typeof value === 'string' ? parseFloat(value.replace(/[$,]/g, '')) : value;
+            if (isNaN(num)) return '—';
+            if (num === 0) return '—';
+            
+            const abs = Math.abs(num);
+            const formatted = abs.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            return num < 0 ? `(${formatted})` : formatted;
+        }
+        
+        // Build table HTML from row definitions
+        function buildTable(tableId, rows) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            let html = '';
+            
+            rows.forEach(row => {
+                const rowClass = `fin-row--${row.type}`;
+                const indentClass = row.indent ? `fin-indent-${row.indent}` : '';
+                
+                html += `<tr class="${rowClass}">`;
+                html += `<td class="${indentClass}">${row.label}</td>`;
+                
+                if (row.values) {
+                    row.values.forEach(val => {
+                        const num = typeof val === 'string' ? parseFloat(val.replace(/[$,]/g, '')) : val;
+                        const valueClass = !isNaN(num) && num < 0 ? 'fin-value--unfavorable' : '';
+                        html += `<td class="${valueClass}">${fmt(val)}</td>`;
+                    });
+                } else {
+                    html += '<td></td><td></td><td></td><td></td><td></td>';
+                }
+                
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        // Income Statement Data
+        const incomeRows = [
+            { type: 'section', label: 'Revenue' },
+            { type: 'data', label: 'Tour packages', values: [3245037, 3149104, 2531473, 1410705, 2321973], indent: 1 },
+            { type: 'data', label: 'Gratuities', values: [308147, 290404, 227329, 120556, 167278], indent: 1 },
+            { type: 'data', label: 'Ancillary revenue', values: [276709, 294956, 273664, 151510, 207803], indent: 1 },
+            { type: 'data', label: 'Accommodation upgrade revenue', values: [106950, 97075, 0, 0, 0], indent: 1 },
+            { type: 'detail', label: 'Investment income', values: [88048, 44680, 2277, 4737, 11913], indent: 2 },
+            { type: 'detail', label: 'Course revenue', values: [40751, 0, 0, 0, 0], indent: 2 },
+            { type: 'detail', label: 'Government assistance', values: [0, 0, 297349, 489195, 75137], indent: 2 },
+            { type: 'detail', label: 'Gain on sale of capital assets', values: [0, 0, 21370, 11752, 0], indent: 2 },
+            { type: 'subtotal', label: 'Total Revenue', values: [4065642, 3876219, 3353462, 2188455, 2784104] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: 'Expenses' },
+            { type: 'data', label: 'Wages and benefits', values: [974358, 1128328, 980061, 813270, 869344], indent: 1 },
+            { type: 'data', label: 'Gratuities', values: [308147, 290404, 227043, 122314, 167300], indent: 1 },
+            { type: 'data', label: 'Amortization', values: [229419, 203205, 202229, 217995, 265320], indent: 1 },
+            { type: 'data', label: 'Food', values: [175591, 151435, 134538, 85295, 120530], indent: 1 },
+            { type: 'data', label: 'Insurance, licenses, and dues', values: [166831, 138435, 124688, 112693, 108953], indent: 1 },
+            { type: 'data', label: 'Mobile equipment repairs', values: [149969, 132357, 103098, 48897, 42397], indent: 1 },
+            { type: 'data', label: 'Fuel', values: [121499, 179252, 88612, 58282, 84094], indent: 1 },
+            { type: 'data', label: 'Mountain operation', values: [110796, 96008, 97807, 77439, 103917], indent: 1 },
+            { type: 'detail', label: 'Office supplies and rental', values: [66193, 81214, 75390, 62610, 83471], indent: 2 },
+            { type: 'detail', label: 'Cost of retail sales', values: [53978, 67808, 65275, 33571, 83267], indent: 2 },
+            { type: 'detail', label: 'Lodge maintenance', values: [52932, 160249, 6201, 5410, 208660], indent: 2 },
+            { type: 'detail', label: 'Subcontracting fees', values: [46270, 42283, 40449, 23393, 42913], indent: 2 },
+            { type: 'detail', label: 'Staff events/advertising', values: [37439, 15411, 18998, 10491, 33931], indent: 2 },
+            { type: 'detail', label: 'Bank charges/credit card', values: [35963, 36849, 34150, 24488, 34461], indent: 2 },
+            { type: 'detail', label: 'Land tenure expenses', values: [35022, 20761, 31206, 3047, 6412], indent: 2 },
+            { type: 'detail', label: 'Professional fees', values: [33655, 28225, 31450, 22436, 16100], indent: 2 },
+            { type: 'detail', label: 'Interest on long-term debt', values: [33027, 33454, 31747, 40739, 46162], indent: 2 },
+            { type: 'detail', label: 'Interest on shareholder loan', values: [32862, 31651, 16815, 26126, 22695], indent: 2 },
+            { type: 'detail', label: 'WorkSafeBC', values: [39010, 31993, 24704, 19856, 22857], indent: 2 },
+            { type: 'detail', label: 'Travel, meals and entertainment', values: [22263, 45479, 22833, 10192, 21012], indent: 2 },
+            { type: 'detail', label: 'Telephone', values: [7562, 5322, 6004, 5546, 6492], indent: 2 },
+            { type: 'detail', label: 'Education', values: [5353, 3597, 7342, 1632, 3392], indent: 2 },
+            { type: 'subtotal', label: 'Total Expenses', values: [2937648, 2923720, 2370640, 1825722, 2396118] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'total', label: 'Income before income taxes', values: [1127994, 952499, 982822, 362733, 387986] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: 'Income Taxes' },
+            { type: 'data', label: 'Current', values: [160557, 154199, 146999, 38572, 41859], indent: 1 },
+            { type: 'detail', label: 'Future', values: [103554, 8035, 8971, 8807, 1000], indent: 2 },
+            { type: 'subtotal', label: 'Total Income Taxes', values: [264111, 162234, 155970, 47379, 42859] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'grandtotal', label: 'Net Income', values: [863883, 790265, 826852, 315354, 345127] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: 'Retained Earnings' },
+            { type: 'data', label: 'Beginning of year', values: [3955772, 3315507, 2584655, 2305301, 1960174], indent: 1 },
+            { type: 'data', label: 'Net income', values: [863883, 790265, 826852, 315354, 345127], indent: 1 },
+            { type: 'data', label: 'Dividends paid', values: [-248000, -150000, -96000, -36000, 0], indent: 1 },
+            { type: 'total', label: 'End of year', values: [4571655, 3955772, 3315507, 2584655, 2305301] },
+        ];
+        
+        // Balance Sheet Data
+        const balanceRows = [
+            { type: 'section', label: 'Assets' },
+            { type: 'data', label: 'Current Assets', values: [null, null, null, null, null], indent: 1 },
+            { type: 'detail', label: 'Cash and cash equivalents', values: [1387891, 1464003, 1553418, 1157180, 776809], indent: 2 },
+            { type: 'detail', label: 'Accounts receivable', values: [2580, 3499, 69353, 42984, 35711], indent: 2 },
+            { type: 'detail', label: 'Inventory', values: [199298, 112400, 115442, 118748, 114118], indent: 2 },
+            { type: 'detail', label: 'Prepaid expenses and deposits', values: [80340, 116092, 55520, 50996, 39856], indent: 2 },
+            { type: 'detail', label: 'Income taxes recoverable', values: [8694, 0, 0, 0, 0], indent: 2 },
+            { type: 'subtotal', label: 'Total Current Assets', values: [1678803, 1695994, 1793733, 1369908, 966494], indent: 1 },
+            { type: 'data', label: 'Property and equipment', values: [1777532, 1688359, 1540438, 1320016, 1401065], indent: 1 },
+            { type: 'data', label: 'Goodwill', values: [2952663, 2952663, 2952663, 2952663, 2952663], indent: 1 },
+            { type: 'total', label: 'Total Assets', values: [6408998, 6337016, 6286834, 5642587, 5320222] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: 'Liabilities' },
+            { type: 'data', label: 'Current Liabilities', values: [null, null, null, null, null], indent: 1 },
+            { type: 'detail', label: 'Accounts payable', values: [22169, 38629, 51905, 33792, 25402], indent: 2 },
+            { type: 'detail', label: 'Wages payable', values: [571, 8321, 4068, 8274, 2389], indent: 2 },
+            { type: 'detail', label: 'Customer deposits', values: [1172674, 1136261, 1145868, 989420, 872810], indent: 2 },
+            { type: 'detail', label: 'Government remittances payable', values: [11386, 17158, 12835, 20538, 10859], indent: 2 },
+            { type: 'detail', label: 'Income taxes payable', values: [0, 10849, 108046, 4895, 1318], indent: 2 },
+            { type: 'detail', label: 'Due to shareholder', values: [496475, 634649, 935763, 919064, 942749], indent: 2 },
+            { type: 'detail', label: 'Current portion of long-term debt', values: [0, 66500, 66500, 116700, 105800], indent: 2 },
+            { type: 'subtotal', label: 'Total Current Liabilities', values: [1703275, 1912367, 2324985, 2092683, 1961327], indent: 1 },
+            { type: 'data', label: 'Long-term debt', values: [0, 438363, 623863, 911741, 1018893], indent: 1 },
+            { type: 'detail', label: 'Future income tax liability', values: [134067, 30513, 22478, 13507, 4700], indent: 2 },
+            { type: 'detail', label: 'Government of Canada loan', values: [0, 0, 0, 40000, 30000], indent: 2 },
+            { type: 'subtotal', label: 'Total Liabilities', values: [1837342, 2381243, 2971326, 3057931, 3014920] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: "Shareholder's Equity" },
+            { type: 'data', label: 'Share capital', values: [1, 1, 1, 1, 1], indent: 1 },
+            { type: 'data', label: 'Retained earnings', values: [4571655, 3955772, 3315507, 2584655, 2305301], indent: 1 },
+            { type: 'subtotal', label: "Total Shareholder's Equity", values: [4571656, 3955773, 3315508, 2584656, 2305302] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'grandtotal', label: 'Total Liabilities and Equity', values: [6408998, 6337016, 6286834, 5642587, 5320222] },
+        ];
+        
+        // Cash Flow Data
+        const cashflowRows = [
+            { type: 'section', label: 'Operating Activities' },
+            { type: 'data', label: 'Net income', values: [863883, 790265, 826852, 315354, 345127], indent: 1 },
+            { type: 'data', label: 'Items not affecting cash:', values: [null, null, null, null, null], indent: 1 },
+            { type: 'detail', label: 'Amortization', values: [229419, 203205, 202229, 217995, 265320], indent: 2 },
+            { type: 'detail', label: 'Future income taxes', values: [103554, 8035, 8971, 8807, 1000], indent: 2 },
+            { type: 'detail', label: 'Gain on sale of property', values: [0, 0, -21370, -11752, 0], indent: 2 },
+            { type: 'subtotal', label: 'Total Operating Activities', values: [1196856, 1001505, 1016682, 530404, 611447], indent: 1 },
+            
+            { type: 'spacer', label: '' },
+            { type: 'data', label: 'Changes in working capital:', values: [null, null, null, null, null], indent: 1 },
+            { type: 'detail', label: 'Accounts receivable', values: [919, 65854, -26369, -7273, -31233], indent: 2 },
+            { type: 'detail', label: 'Inventory', values: [-86898, 3042, 3306, -4630, 3261], indent: 2 },
+            { type: 'detail', label: 'Prepaid expenses and deposits', values: [35752, -60572, -4524, -11140, 264], indent: 2 },
+            { type: 'detail', label: 'Accounts payable', values: [-16460, -13275, 18113, 8390, -6239], indent: 2 },
+            { type: 'detail', label: 'Wages payable', values: [-7750, 4253, -4206, 5885, -1200], indent: 2 },
+            { type: 'detail', label: 'Customer deposits', values: [36413, -9607, 156448, 116610, 100749], indent: 2 },
+            { type: 'detail', label: 'Income taxes and remittances', values: [-25315, -92874, 95849, 13256, 26993], indent: 2 },
+            { type: 'total', label: 'Cash from operations', values: [1133517, 898326, 1254899, 651502, 704042] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: 'Financing Activities' },
+            { type: 'data', label: 'Advances (to) from shareholder', values: [-138174, -301114, 16699, -23685, -105601], indent: 1 },
+            { type: 'data', label: 'Repayment of long-term debt', values: [-504863, -185500, -96252, -96252, -100436], indent: 1 },
+            { type: 'detail', label: 'Proceeds of long-term debt', values: [0, 0, 0, 10000, 30000], indent: 2 },
+            { type: 'detail', label: 'Repayment of CEBA loan', values: [0, 0, -40000, 0, 0], indent: 2 },
+            { type: 'data', label: 'Dividends paid', values: [-248000, -150000, -96000, -36000, 0], indent: 1 },
+            { type: 'subtotal', label: 'Cash used in financing', values: [-891037, -636614, -145937, -145937, -176037] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'section', label: 'Investing Activities' },
+            { type: 'data', label: 'Purchase of property and equipment', values: [-318592, -351127, -435352, -137194, -121418], indent: 1 },
+            { type: 'detail', label: 'Proceeds on disposal', values: [0, 0, 34070, 12000, 0], indent: 2 },
+            { type: 'subtotal', label: 'Cash used in investing', values: [-318592, -351127, -401282, -125194, -121418] },
+            
+            { type: 'spacer', label: '' },
+            { type: 'total', label: 'Net change in cash', values: [-76112, -89415, 396238, 380371, 406587] },
+            { type: 'data', label: 'Cash, beginning of year', values: [1464003, 1553418, 1157180, 776809, 370222], indent: 1 },
+            { type: 'grandtotal', label: 'Cash, end of year', values: [1387891, 1464003, 1553418, 1157180, 776809] },
+        ];
+        
+        // Initialize tables
+        buildTable('table-income', incomeRows);
+        buildTable('table-balance', balanceRows);
+        buildTable('table-cashflow', cashflowRows);
+        
+        // Statement tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.statement-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('panel-' + btn.dataset.statement).classList.add('active');
+            });
+        });
+        
+        // Mode toggle
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                document.querySelectorAll('.fin-table').forEach(table => {
+                    table.className = 'fin-table fin-table--' + btn.dataset.mode;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

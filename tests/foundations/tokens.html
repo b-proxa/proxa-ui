@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tokens — Proxa</title>
+    <link rel="stylesheet" href="../../css/proxa.css">
+    <style>
+        .doc-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .doc-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .doc-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .doc-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-bottom: var(--space-3);
+            line-height: 1.6;
+        }
+        .doc-file {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .doc-section {
+            margin-bottom: var(--space-6);
+        }
+        .doc-section__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .token-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+        }
+        .token-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+        .token-label {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .color-swatch {
+            width: 80px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+        }
+        .color-swatch--wide {
+            width: 120px;
+        }
+        .spacing-demo {
+            height: 24px;
+            background: var(--accent);
+            border-radius: var(--radius-sm);
+        }
+        .type-row {
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+        .type-demo {
+            color: var(--gray-800);
+        }
+        .shadow-demo {
+            width: 80px;
+            height: 48px;
+            background: white;
+            border-radius: var(--radius-md);
+        }
+        .radius-demo {
+            width: 60px;
+            height: 40px;
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-page">
+        <header class="doc-header">
+            <h1 class="doc-title">Tokens</h1>
+            <p class="doc-description">Design tokens are the foundational variables that define the visual language. Colors, spacing, typography, shadows, and border radius values used throughout the system.</p>
+            <span class="doc-file">css/tokens.css</span>
+        </header>
+
+        <!-- Colors: Grays -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Colors — Gray Scale</h2>
+            <div class="token-grid">
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-50);"></div>
+                    <span class="token-label">--gray-50</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-75);"></div>
+                    <span class="token-label">--gray-75</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-100);"></div>
+                    <span class="token-label">--gray-100</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-200);"></div>
+                    <span class="token-label">--gray-200</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-300);"></div>
+                    <span class="token-label">--gray-300</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-400);"></div>
+                    <span class="token-label">--gray-400</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-500);"></div>
+                    <span class="token-label">--gray-500</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-600);"></div>
+                    <span class="token-label">--gray-600</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-700);"></div>
+                    <span class="token-label">--gray-700</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-800);"></div>
+                    <span class="token-label">--gray-800</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch" style="background: var(--gray-900);"></div>
+                    <span class="token-label">--gray-900</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Colors: Accent & Semantic -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Colors — Accent & Semantic</h2>
+            <div class="token-grid">
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--accent);"></div>
+                    <span class="token-label">--accent</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--accent-light);"></div>
+                    <span class="token-label">--accent-light</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--accent-dark);"></div>
+                    <span class="token-label">--accent-dark</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--success);"></div>
+                    <span class="token-label">--success</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--warning);"></div>
+                    <span class="token-label">--warning</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--error);"></div>
+                    <span class="token-label">--error</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Colors: Financial -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Colors — Financial</h2>
+            <div class="token-grid">
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--fin-favorable);"></div>
+                    <span class="token-label">--fin-favorable</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--fin-favorable-bg);"></div>
+                    <span class="token-label">--fin-favorable-bg</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--fin-unfavorable);"></div>
+                    <span class="token-label">--fin-unfavorable</span>
+                </div>
+                <div class="token-item">
+                    <div class="color-swatch color-swatch--wide" style="background: var(--fin-unfavorable-bg);"></div>
+                    <span class="token-label">--fin-unfavorable-bg</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacing -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Spacing</h2>
+            <div class="token-grid" style="align-items: flex-end;">
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 4px;"></div>
+                    <span class="token-label">--space-1 (4px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 8px;"></div>
+                    <span class="token-label">--space-2 (8px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 12px;"></div>
+                    <span class="token-label">--space-3 (12px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 16px;"></div>
+                    <span class="token-label">--space-4 (16px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 24px;"></div>
+                    <span class="token-label">--space-5 (24px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 32px;"></div>
+                    <span class="token-label">--space-6 (32px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="spacing-demo" style="width: 48px;"></div>
+                    <span class="token-label">--space-8 (48px)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Typography -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Typography</h2>
+            <div class="type-row">
+                <span class="type-demo" style="font-size: var(--text-xs);">Text XS</span>
+                <span class="token-label">--text-xs (0.675rem)</span>
+            </div>
+            <div class="type-row">
+                <span class="type-demo" style="font-size: var(--text-sm);">Text SM</span>
+                <span class="token-label">--text-sm (0.8rem)</span>
+            </div>
+            <div class="type-row">
+                <span class="type-demo" style="font-size: var(--text-base);">Text Base</span>
+                <span class="token-label">--text-base (0.9rem)</span>
+            </div>
+            <div class="type-row">
+                <span class="type-demo" style="font-size: var(--text-lg);">Text LG</span>
+                <span class="token-label">--text-lg (1.1rem)</span>
+            </div>
+            <div class="type-row">
+                <span class="type-demo" style="font-size: var(--text-xl);">Text XL</span>
+                <span class="token-label">--text-xl (1.35rem)</span>
+            </div>
+        </section>
+
+        <!-- Shadows -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Shadows</h2>
+            <div class="token-grid">
+                <div class="token-item">
+                    <div class="shadow-demo" style="box-shadow: var(--shadow-sm);"></div>
+                    <span class="token-label">--shadow-sm</span>
+                </div>
+                <div class="token-item">
+                    <div class="shadow-demo" style="box-shadow: var(--shadow-md);"></div>
+                    <span class="token-label">--shadow-md</span>
+                </div>
+                <div class="token-item">
+                    <div class="shadow-demo" style="box-shadow: var(--shadow-lg);"></div>
+                    <span class="token-label">--shadow-lg</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Border Radius -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Border Radius</h2>
+            <div class="token-grid">
+                <div class="token-item">
+                    <div class="radius-demo" style="border-radius: var(--radius-sm);"></div>
+                    <span class="token-label">--radius-sm (4px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="radius-demo" style="border-radius: var(--radius-md);"></div>
+                    <span class="token-label">--radius-md (6px)</span>
+                </div>
+                <div class="token-item">
+                    <div class="radius-demo" style="border-radius: var(--radius-lg);"></div>
+                    <span class="token-label">--radius-lg (10px)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transitions -->
+        <section class="doc-section">
+            <h2 class="doc-section__title">Transitions</h2>
+            <div class="token-grid" style="flex-direction: column; gap: var(--space-2);">
+                <div class="type-row">
+                    <span class="token-label" style="width: 160px;">--transition-fast</span>
+                    <span style="font-size: var(--text-sm); color: var(--gray-600);">0.1s ease</span>
+                </div>
+                <div class="type-row">
+                    <span class="token-label" style="width: 160px;">--transition-base</span>
+                    <span style="font-size: var(--text-sm); color: var(--gray-600);">0.15s ease</span>
+                </div>
+                <div class="type-row">
+                    <span class="token-label" style="width: 160px;">--transition-slide</span>
+                    <span style="font-size: var(--text-sm); color: var(--gray-600);">0.25s ease</span>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

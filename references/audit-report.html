@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Report — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <style>
+        .doc-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .doc-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .doc-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .doc-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+        .doc-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+        .doc-content {
+            line-height: 1.7;
+        }
+        .doc-content h1 { font-size: 1.5rem; font-weight: 700; margin: var(--space-6) 0 var(--space-4); color: var(--gray-900); }
+        .doc-content h2 { font-size: 1.2rem; font-weight: 600; margin: var(--space-5) 0 var(--space-3); color: var(--gray-800); border-bottom: 1px solid var(--gray-200); padding-bottom: var(--space-2); }
+        .doc-content h3 { font-size: 1rem; font-weight: 600; margin: var(--space-4) 0 var(--space-2); color: var(--gray-700); }
+        .doc-content h4 { font-size: var(--text-sm); font-weight: 600; margin: var(--space-3) 0 var(--space-2); color: var(--gray-600); }
+        .doc-content p { margin: var(--space-3) 0; color: var(--gray-700); }
+        .doc-content ul, .doc-content ol { margin: var(--space-3) 0; padding-left: var(--space-5); color: var(--gray-700); }
+        .doc-content li { margin: var(--space-1) 0; }
+        .doc-content code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            color: var(--gray-800);
+        }
+        .doc-content pre {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: var(--space-4) 0;
+        }
+        .doc-content pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        .doc-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-4) 0;
+            font-size: var(--text-sm);
+        }
+        .doc-content th, .doc-content td {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-200);
+            text-align: left;
+        }
+        .doc-content th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .doc-content tr:hover td {
+            background: var(--gray-50);
+        }
+        .doc-content hr {
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            margin: var(--space-6) 0;
+        }
+        .doc-content strong { font-weight: 600; color: var(--gray-800); }
+        .doc-content blockquote {
+            border-left: 3px solid var(--accent);
+            padding-left: var(--space-4);
+            margin: var(--space-4) 0;
+            color: var(--gray-600);
+            font-style: italic;
+        }
+        .loading {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--gray-500);
+        }
+        .error {
+            text-align: center;
+            padding: var(--space-6);
+            color: var(--error);
+        }
+        .toast {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            padding: var(--space-3) var(--space-4);
+            background: var(--gray-800);
+            color: white;
+            font-size: var(--text-sm);
+            border-radius: var(--radius-md);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast--success { background: var(--success); }
+        .toast--error { background: var(--error); }
+        #run-audit-btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header__left">
+            <span class="header__logo">Proxa</span>
+            <nav class="header__nav">
+                <a href="../index.html" class="header__nav-item">Dashboard</a>
+                <a href="../patterns/record.html" class="header__nav-item">Record</a>
+                <a href="index.html" class="header__nav-item">References</a>
+                <a href="audit-report.html" class="header__nav-item active">Audit</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="doc-page">
+        <div class="doc-header">
+            <div>
+                <h1 class="doc-title">Code Audit Report</h1>
+                <p class="doc-description">Comprehensive audit of the Proxa UI design system covering consistency, components, code quality, and design system alignment.</p>
+            </div>
+            <div class="doc-actions">
+                <button class="btn btn--primary" id="run-audit-btn" onclick="runAudit()">Run Audit</button>
+                <button class="btn btn--secondary" onclick="loadReport()">Refresh</button>
+                <a href="../AUDIT-REPORT.md" download class="btn btn--secondary">Download</a>
+            </div>
+        </div>
+
+        <div id="content" class="doc-content">
+            <div class="loading">Loading report...</div>
+        </div>
+    </main>
+
+    <script>
+        async function loadReport() {
+            const content = document.getElementById('content');
+
+            try {
+                // Add cache-busting to ensure fresh content
+                const response = await fetch('../AUDIT-REPORT.md?t=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const markdown = await response.text();
+                // Sanitize markdown output to prevent XSS
+                content.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
+            } catch (err) {
+                content.innerHTML = `<div class="error">Failed to load report: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        async function runAudit() {
+            const btn = document.getElementById('run-audit-btn');
+            const content = document.getElementById('content');
+
+            btn.disabled = true;
+            btn.textContent = 'Running...';
+
+            try {
+                const response = await fetch('/api/audit/run', { method: 'POST' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const result = await response.json();
+
+                // Show quick summary toast
+                showToast(`Audit complete: ${result.audit.summary.total} issues found`);
+
+                // Reload the markdown report
+                await loadReport();
+            } catch (err) {
+                showToast(`Audit failed: ${escapeHtml(err.message)}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Run Audit';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            // Create toast if it doesn't exist
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+
+            toast.textContent = message;
+            toast.className = 'toast show' + (type === 'error' ? ' toast--error' : ' toast--success');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadReport();
+    </script>
+</body>
+</html>

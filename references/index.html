@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>References — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        .doc-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .doc-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .doc-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .doc-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-bottom: var(--space-3);
+            line-height: 1.6;
+        }
+        .doc-file {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .doc-section {
+            margin-bottom: var(--space-6);
+        }
+        .doc-section__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .upload-zone {
+            padding: var(--space-5);
+            text-align: center;
+            background: var(--gray-50);
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-4);
+        }
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+        .upload-zone__icon {
+            margin-bottom: var(--space-2);
+            color: var(--gray-400);
+        }
+        .pages-sidebar__title {
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-2);
+        }
+        .pages-sidebar__list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .page-link {
+            display: block;
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        .page-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+        .page-link.active {
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .upload-zone__text {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        .upload-zone__hint {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            margin-top: var(--space-2);
+        }
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+        .empty-state {
+            padding: var(--space-6);
+            text-align: center;
+            color: var(--gray-400);
+        }
+        .empty-state__text {
+            font-size: var(--text-sm);
+        }
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+        .file-item--clickable {
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        .file-item--clickable:hover {
+            background: var(--gray-50);
+        }
+        .toast {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            padding: var(--space-3) var(--space-4);
+            background: var(--gray-800);
+            color: white;
+            font-size: var(--text-sm);
+            border-radius: var(--radius-md);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all var(--transition-base);
+            z-index: 1000;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast--success { background: var(--success); }
+        .toast--error { background: var(--error); }
+
+        /* Spreadsheet styles - mimics Claude.ai artifact viewer */
+        .spreadsheet {
+            display: flex; flex-direction: column; height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        .spreadsheet__tabs {
+            display: flex; gap: 2px; padding: 8px 12px;
+            background: #f9f9f9; border-bottom: 1px solid #e5e5e5;
+        }
+        .spreadsheet__tab {
+            padding: 4px 12px;
+            font-size: 12px; color: #666;
+            background: #eee; border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+        }
+        .spreadsheet__tab:hover { background: #ddd; }
+        .spreadsheet__tab.active {
+            background: white; color: #333; font-weight: 500;
+        }
+        .spreadsheet__grid {
+            flex: 1;
+            overflow: auto;
+        }
+        .spreadsheet__table {
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+        .spreadsheet__table th,
+        .spreadsheet__table td {
+            border: 1px solid #eee;
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .spreadsheet__table th {
+            background: #fafafa;
+            font-weight: 400;
+            color: #666;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .spreadsheet__table td {
+            background: white;
+        }
+        .spreadsheet__row-num {
+            background: #fafafa !important;
+            color: #999;
+            text-align: center !important;
+            width: 40px;
+            min-width: 40px;
+            font-weight: 400;
+            border-right: 1px solid #ddd;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .spreadsheet__corner {
+            background: #fafafa !important;
+            width: 40px;
+            min-width: 40px;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        .spreadsheet__table th:first-child {
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        /* Financial table formatting */
+        .spreadsheet--financial .spreadsheet__table td:not(.spreadsheet__row-num) {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .spreadsheet--financial .spreadsheet__table td:nth-child(2) {
+            text-align: left;
+        }
+        .source-loading {
+            display: flex; align-items: center; justify-content: center;
+            padding: var(--space-6); color: var(--gray-400);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-page">
+        <header class="doc-header">
+            <h1 class="doc-title">References</h1>
+            <p class="doc-description">Source materials, specifications, and reference documents. Upload presentations, spreadsheets, and PDFs.</p>
+        </header>
+
+        <div style="display: flex; gap: var(--space-5);">
+            <!-- Side Menu -->
+            <aside style="width: 160px; flex-shrink: 0;">
+                <div class="pages-sidebar__list" id="filter-menu">
+                    <a href="#" class="page-link active" data-filter="all">All Files</a>
+                    <a href="#" class="page-link" data-filter="spreadsheets">Spreadsheets</a>
+                    <a href="#" class="page-link" data-filter="documents">Documents</a>
+                    <a href="#" class="page-link" data-filter="presentations">Presentations</a>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div style="flex: 1; min-width: 0;">
+                <div class="upload-zone" id="uploadZone" style="margin-bottom: var(--space-4);">
+                    <div class="upload-zone__icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <div class="upload-zone__text">Drop files here or click to browse</div>
+                    <div class="upload-zone__hint">PDF, XLSX, PPTX up to 50MB</div>
+                    <input type="file" id="fileInput" accept=".pdf,.xlsx,.xls,.csv,.pptx,.ppt,.key,.doc,.docx" multiple>
+                </div>
+
+                <h2 class="doc-section__title" id="files-title">All Files</h2>
+                <div id="fileList" class="file-list">
+                    <div class="empty-state">
+                        <div class="empty-state__text">No files uploaded yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal__header">
+                <span class="modal__title">Confirm</span>
+                <button class="modal__close" onclick="closeConfirmModal(false)">×</button>
+            </div>
+            <div class="modal__body">
+                <p id="confirm-modal-message" style="margin: 0; color: var(--gray-700);"></p>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--sm" onclick="closeConfirmModal(false)">Cancel</button>
+                <button class="btn btn--sm" id="confirm-modal-confirm" onclick="closeConfirmModal(true)">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for panels -->
+    <div class="overlay" id="panel-overlay"></div>
+
+    <!-- File Detail Panel -->
+    <div class="panel panel--sheet" id="file-panel">
+        <div class="panel__header">
+            <span class="panel__title" id="file-panel-title">File</span>
+            <button class="panel__close" onclick="closeFilePanel()">×</button>
+        </div>
+        <div class="panel__content">
+            <!-- Source Viewer -->
+            <div class="panel__source">
+                <div class="panel__source-header">
+                    <span id="file-panel-type">XLSX</span>
+                    <span class="panel__source-meta" id="file-panel-dims"></span>
+                    <label style="margin-left: auto; display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--gray-600); cursor: pointer;">
+                        <input type="checkbox" id="file-panel-financial" style="cursor: pointer;">
+                        Financial Table
+                    </label>
+                </div>
+                <div class="panel__source-content" id="file-panel-source">
+                    <div class="source-loading">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Metadata -->
+            <div class="detail-section">
+                <div class="detail-section__title">Metadata</div>
+                <div class="meta-list">
+                    <div class="meta-row">
+                        <span class="meta-row__label">Size</span>
+                        <span class="meta-row__value" id="file-meta-size">--</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-row__label">Uploaded</span>
+                        <span class="meta-row__value" id="file-meta-date">--</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-row__label">Category</span>
+                        <span class="meta-row__value" id="file-meta-category">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="detail-section">
+                <div class="detail-section__title">Comments</div>
+                <div id="file-panel-comments"></div>
+                <div style="margin-top: var(--space-3); display: flex; gap: var(--space-2); flex-direction: column;">
+                    <textarea class="textarea" id="file-panel-comment-input" placeholder="Add a comment..." rows="2" style="font-size: var(--text-sm);"></textarea>
+                    <button class="btn btn--sm btn--primary" id="file-panel-add-comment" style="align-self: flex-start;">Add Comment</button>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="detail-section" style="margin-top: auto; padding-top: var(--space-4); border-top: 1px solid var(--gray-200);">
+                <button class="btn btn--sm" id="file-panel-delete" style="color: var(--error);">Delete File</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const toast = document.getElementById('toast');
+
+        // Current filter state
+        let currentFilter = 'all';
+        let listenersAttached = false;
+
+        // Filter menu
+        document.querySelectorAll('#filter-menu .page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('#filter-menu .page-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                currentFilter = link.dataset.filter;
+
+                // Update section title
+                const titles = {
+                    'all': 'All Files',
+                    'spreadsheets': 'Spreadsheets',
+                    'documents': 'Documents',
+                    'presentations': 'Presentations'
+                };
+                document.getElementById('files-title').textContent = titles[currentFilter];
+
+                loadFiles();
+            });
+        });
+
+        // Load files on page load
+        loadFiles();
+
+        // Attach file list event listeners once
+        attachFileListeners();
+
+        // Click to browse
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        async function handleFiles(files) {
+            for (const file of files) {
+                await uploadFile(file);
+            }
+            loadFiles();
+        }
+
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showToast(`Uploaded: ${file.name}`, 'success');
+                } else {
+                    const data = await response.json();
+                    showToast(`Error: ${data.error}`, 'error');
+                }
+            } catch (err) {
+                showToast(`Upload failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function loadFiles() {
+            try {
+                const response = await fetch('/api/files');
+                let files = await response.json();
+
+                // Filter files based on current filter
+                if (currentFilter !== 'all') {
+                    files = files.filter(file => file.category === currentFilter);
+                }
+
+                if (files.length === 0) {
+                    const emptyMessages = {
+                        'all': 'No files uploaded yet',
+                        'spreadsheets': 'No spreadsheets uploaded yet',
+                        'documents': 'No documents uploaded yet',
+                        'presentations': 'No presentations uploaded yet'
+                    };
+                    fileList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state__text">${emptyMessages[currentFilter]}</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                fileList.innerHTML = files.map(file => {
+                    const absolutePath = '/' + file.path;
+                    // Escape all user data for safe HTML insertion
+                    const safeName = escapeHtml(file.name);
+                    const safeType = escapeHtml(file.type);
+                    const safeSize = escapeHtml(file.size);
+                    const safeDate = escapeHtml(file.date);
+                    // Store file data as escaped JSON in data attribute (must escape quotes for attribute context)
+                    const fileDataJson = escapeAttr(JSON.stringify({ path: absolutePath, name: file.name, type: file.type, size: file.size, date: file.date, category: file.category }));
+
+                    return `
+                    <div class="file-item file-item--clickable" data-action="view" data-file="${fileDataJson}">
+                        <span class="file-item__icon file-item__icon--${safeType}">${safeType.toUpperCase()}</span>
+                        <div class="file-item__info">
+                            <div class="file-item__name">${safeName}</div>
+                            <div class="file-item__meta">${safeSize} • ${safeDate}</div>
+                        </div>
+                    </div>
+                `}).join('');
+            } catch (err) {
+                fileList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state__text">Run "npm run dev" to enable file uploads</div>
+                    </div>
+                `;
+            }
+        }
+
+        async function deleteFile(filename) {
+            const confirmed = await showConfirmModal(`Delete "${filename}"?`, { danger: true });
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch(`/api/files/${encodeURIComponent(filename)}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showToast(`Deleted: ${filename}`, 'success');
+                    loadFiles();
+                }
+            } catch (err) {
+                showToast(`Delete failed: ${err.message}`, 'error');
+            }
+        }
+
+        // Confirm modal
+        let confirmModalResolve = null;
+
+        function showConfirmModal(message, options = {}) {
+            return new Promise((resolve) => {
+                confirmModalResolve = resolve;
+                const modal = document.getElementById('confirm-modal');
+                const messageEl = document.getElementById('confirm-modal-message');
+                const confirmBtn = document.getElementById('confirm-modal-confirm');
+
+                messageEl.textContent = message;
+                confirmBtn.textContent = options.confirmText || 'Delete';
+                confirmBtn.className = options.danger ? 'btn btn--sm btn--danger' : 'btn btn--sm btn--primary';
+
+                modal.classList.add('open');
+            });
+        }
+
+        window.closeConfirmModal = function(result) {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('open');
+            if (confirmModalResolve) {
+                confirmModalResolve(result);
+                confirmModalResolve = null;
+            }
+        };
+
+        // Event delegation for file list actions (prevents XSS from inline handlers)
+        function attachFileListeners() {
+            fileList.addEventListener('click', (e) => {
+                const fileItem = e.target.closest('[data-action="view"]');
+
+                if (fileItem) {
+                    try {
+                        const fileData = JSON.parse(fileItem.dataset.file);
+                        openFilePanel(fileData);
+                    } catch (err) {
+                        console.error('Failed to parse file data:', err, fileItem.dataset.file);
+                    }
+                }
+            });
+        }
+
+        function showToast(message, type = 'default') {
+            toast.textContent = message;
+            toast.className = 'toast show' + (type !== 'default' ? ` toast--${type}` : '');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ============================================================
+        // FILE PANEL (Detail View)
+        // ============================================================
+        let currentWorkbook = null;
+        let activePanel = null;
+        let currentFileData = null;
+
+        function openFilePanel(fileData) {
+            currentFileData = fileData;
+            const panel = document.getElementById('file-panel');
+            const overlay = document.getElementById('panel-overlay');
+            const source = document.getElementById('file-panel-source');
+
+            // Update panel header and metadata
+            document.getElementById('file-panel-title').textContent = fileData.name;
+            document.getElementById('file-panel-type').textContent = fileData.type.toUpperCase();
+            document.getElementById('file-panel-dims').textContent = '';
+            document.getElementById('file-meta-size').textContent = fileData.size;
+            document.getElementById('file-meta-date').textContent = fileData.date;
+            document.getElementById('file-meta-category').textContent = fileData.category || 'General';
+
+            // Show loading
+            source.innerHTML = '<div class="source-loading">Loading...</div>';
+
+            // Open panel
+            panel.classList.add('active');
+            overlay.classList.add('active');
+            activePanel = panel;
+            document.body.style.overflow = 'hidden';
+
+            // Load comments
+            renderFileComments(fileData.name);
+            document.getElementById('file-panel-comment-input').value = '';
+
+            // Load financial setting
+            const settings = getFileSettings(fileData.name);
+            document.getElementById('file-panel-financial').checked = settings.financial || false;
+
+            // Load content
+            loadFileContent(fileData);
+        }
+
+        async function loadFileContent(fileData) {
+            const source = document.getElementById('file-panel-source');
+
+            try {
+                if (['xlsx', 'xls'].includes(fileData.type)) {
+                    const response = await fetch(fileData.path);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                    const arrayBuffer = await response.arrayBuffer();
+                    currentWorkbook = XLSX.read(arrayBuffer, { type: 'array', cellStyles: true });
+                    renderSpreadsheet(currentWorkbook, 0);
+                } else if (fileData.type === 'csv') {
+                    const response = await fetch(fileData.path);
+                    const text = await response.text();
+                    renderCSV(text);
+                }
+            } catch (err) {
+                source.innerHTML = `<div class="source-loading">Failed to load: ${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        function closeFilePanel() {
+            const panel = document.getElementById('file-panel');
+            const overlay = document.getElementById('panel-overlay');
+
+            panel.classList.remove('active');
+            overlay.classList.remove('active');
+            activePanel = null;
+            document.body.style.overflow = '';
+        }
+
+        // Close panel on overlay click
+        document.getElementById('panel-overlay').addEventListener('click', closeFilePanel);
+
+        // Close panel on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && activePanel) closeFilePanel();
+        });
+
+        // Delete from panel
+        document.getElementById('file-panel-delete').addEventListener('click', () => {
+            if (currentFileData) {
+                deleteFile(currentFileData.name);
+                closeFilePanel();
+            }
+        });
+
+        // Comments persistence
+        function getFileComments(filename) {
+            const stored = localStorage.getItem('fileComments');
+            const all = stored ? JSON.parse(stored) : {};
+            return all[filename] || [];
+        }
+
+        function saveFileComment(filename, text) {
+            const stored = localStorage.getItem('fileComments');
+            const all = stored ? JSON.parse(stored) : {};
+            if (!all[filename]) all[filename] = [];
+            all[filename].push({
+                text: text,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+            });
+            localStorage.setItem('fileComments', JSON.stringify(all));
+        }
+
+        function renderFileComments(filename) {
+            const container = document.getElementById('file-panel-comments');
+            const comments = getFileComments(filename);
+
+            if (comments.length === 0) {
+                container.innerHTML = '<div style="font-size: var(--text-sm); color: var(--gray-400);">No comments yet</div>';
+                return;
+            }
+
+            container.innerHTML = comments.map((c, i) => `
+                <div style="padding: var(--space-2) 0; border-bottom: 1px solid var(--gray-100); font-size: var(--text-sm); display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2);">
+                    <div style="flex: 1;">
+                        <div style="color: var(--gray-700);">${escapeHtml(c.text)}</div>
+                        <div style="color: var(--gray-400); font-size: var(--text-xs); margin-top: var(--space-1);">${c.date} at ${c.time}</div>
+                    </div>
+                    <button class="btn btn--sm" style="padding: 2px 6px; font-size: 10px; color: var(--gray-400);" data-delete-comment="${i}">×</button>
+                </div>
+            `).join('');
+
+            // Attach delete handlers
+            container.querySelectorAll('[data-delete-comment]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const index = parseInt(btn.dataset.deleteComment);
+                    const confirmed = await showConfirmModal('Delete this comment?', { danger: true });
+                    if (confirmed) {
+                        deleteFileComment(filename, index);
+                        renderFileComments(filename);
+                        showToast('Comment deleted', 'success');
+                    }
+                });
+            });
+        }
+
+        function deleteFileComment(filename, index) {
+            const stored = localStorage.getItem('fileComments');
+            const all = stored ? JSON.parse(stored) : {};
+            if (all[filename] && all[filename][index] !== undefined) {
+                all[filename].splice(index, 1);
+                localStorage.setItem('fileComments', JSON.stringify(all));
+            }
+        }
+
+        document.getElementById('file-panel-add-comment').addEventListener('click', () => {
+            const input = document.getElementById('file-panel-comment-input');
+            const text = input.value.trim();
+            if (text && currentFileData) {
+                saveFileComment(currentFileData.name, text);
+                renderFileComments(currentFileData.name);
+                input.value = '';
+                showToast('Comment added', 'success');
+            }
+        });
+
+        // Financial table setting persistence
+        function getFileSettings(filename) {
+            const stored = localStorage.getItem('fileSettings');
+            const all = stored ? JSON.parse(stored) : {};
+            return all[filename] || {};
+        }
+
+        function saveFileSetting(filename, key, value) {
+            const stored = localStorage.getItem('fileSettings');
+            const all = stored ? JSON.parse(stored) : {};
+            if (!all[filename]) all[filename] = {};
+            all[filename][key] = value;
+            localStorage.setItem('fileSettings', JSON.stringify(all));
+        }
+
+        document.getElementById('file-panel-financial').addEventListener('change', (e) => {
+            if (currentFileData) {
+                saveFileSetting(currentFileData.name, 'financial', e.target.checked);
+                // Re-render with new setting
+                if (currentWorkbook) {
+                    renderSpreadsheet(currentWorkbook, 0);
+                }
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Escape for use in HTML attributes (includes quote escaping)
+        function escapeAttr(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function getColumnLetter(index) {
+            let letter = '';
+            while (index >= 0) {
+                letter = String.fromCharCode(65 + (index % 26)) + letter;
+                index = Math.floor(index / 26) - 1;
+            }
+            return letter;
+        }
+
+        function renderSpreadsheet(workbook, sheetIndex) {
+            const source = document.getElementById('file-panel-source');
+            const sheetNames = workbook.SheetNames;
+            const sheetName = sheetNames[sheetIndex];
+            const sheet = workbook.Sheets[sheetName];
+
+            // Convert to JSON
+            const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            // Calculate dimensions
+            const rowCount = data.length;
+            const colCount = Math.max(...data.map(row => row ? row.length : 0), 0);
+
+            if (rowCount === 0) {
+                source.innerHTML = '<div class="source-loading">No data in spreadsheet</div>';
+                return;
+            }
+
+            // Update panel header with dimensions
+            document.getElementById('file-panel-dims').textContent = `${rowCount} rows × ${colCount} columns`;
+
+            // Check if financial mode is enabled
+            const settings = currentFileData ? getFileSettings(currentFileData.name) : {};
+            const isFinancial = settings.financial || false;
+
+            // Build spreadsheet HTML
+            let html = `<div class="spreadsheet${isFinancial ? ' spreadsheet--financial' : ''}">`;
+
+            // Sheet tabs (only if multiple sheets)
+            if (sheetNames.length > 1) {
+                html += '<div class="spreadsheet__tabs">';
+                sheetNames.forEach((name, i) => {
+                    const activeClass = i === sheetIndex ? ' active' : '';
+                    html += `<button class="spreadsheet__tab${activeClass}" onclick="renderSpreadsheet(currentWorkbook, ${i})">${escapeHtml(name)}</button>`;
+                });
+                html += '</div>';
+            }
+
+            // Grid
+            html += '<div class="spreadsheet__grid"><table class="spreadsheet__table">';
+
+            // Column header row (A, B, C, D...)
+            html += '<thead><tr><th class="spreadsheet__corner"></th>';
+            for (let c = 0; c < colCount; c++) {
+                html += `<th>${getColumnLetter(c)}</th>`;
+            }
+            html += '</tr></thead>';
+
+            // Data rows
+            html += '<tbody>';
+            data.forEach((row, r) => {
+                html += `<tr><td class="spreadsheet__row-num">${r + 1}</td>`;
+                for (let c = 0; c < colCount; c++) {
+                    const cell = row && row[c] !== undefined ? row[c] : '';
+                    let displayValue;
+                    if (typeof cell === 'number') {
+                        // In financial mode, don't add commas to years (4-digit numbers 1900-2100)
+                        const isYear = isFinancial && cell >= 1900 && cell <= 2100 && Number.isInteger(cell);
+                        displayValue = isYear ? cell.toString() : cell.toLocaleString();
+                    } else {
+                        displayValue = escapeHtml(String(cell));
+                    }
+                    html += `<td>${displayValue}</td>`;
+                }
+                html += '</tr>';
+            });
+            html += '</tbody></table></div></div>';
+
+            source.innerHTML = html;
+        }
+
+        function renderCSV(text) {
+            const source = document.getElementById('file-panel-source');
+            const dims = document.getElementById('file-panel-dims');
+            const rows = text.split('\n').map(row => row.split(','));
+
+            const rowCount = rows.length;
+            const colCount = Math.max(...rows.map(r => r.length), 0);
+            dims.textContent = `${rowCount} rows × ${colCount} columns`;
+
+            // Check if financial mode is enabled
+            const settings = currentFileData ? getFileSettings(currentFileData.name) : {};
+            const isFinancial = settings.financial || false;
+
+            let html = `<div class="spreadsheet${isFinancial ? ' spreadsheet--financial' : ''}"><div class="spreadsheet__grid"><table class="spreadsheet__table">`;
+
+            // Header row with column letters
+            html += '<thead><tr><th class="spreadsheet__corner"></th>';
+            for (let c = 0; c < colCount; c++) {
+                html += `<th>${getColumnLetter(c)}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+
+            rows.forEach((row, r) => {
+                if (row.length > 1 || row[0].trim()) {
+                    html += `<tr><td class="spreadsheet__row-num">${r + 1}</td>`;
+                    for (let c = 0; c < colCount; c++) {
+                        const cell = row[c] ? row[c].trim() : '';
+                        const num = parseFloat(cell.replace(/,/g, ''));
+                        let displayValue;
+                        if (!isNaN(num) && cell !== '') {
+                            const isYear = isFinancial && num >= 1900 && num <= 2100 && Number.isInteger(num);
+                            displayValue = isYear ? num.toString() : num.toLocaleString();
+                        } else {
+                            displayValue = escapeHtml(cell);
+                        }
+                        html += `<td>${displayValue}</td>`;
+                    }
+                    html += '</tr>';
+                }
+            });
+
+            html += '</tbody></table></div></div>';
+            source.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

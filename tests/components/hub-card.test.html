@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Card Test — Proxa</title>
+    <link rel="stylesheet" href="../../css/proxa.css">
+    <style>
+        .test-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .test-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .test-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-bottom: var(--space-3);
+        }
+        .test-file {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .test-section {
+            margin-bottom: var(--space-6);
+        }
+        .test-section__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--space-4);
+        }
+        .test-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+        .test-item__label {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .props-table {
+            width: 100%;
+            font-size: var(--text-sm);
+            border-collapse: collapse;
+        }
+        .props-table th,
+        .props-table td {
+            padding: var(--space-2) var(--space-3);
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .props-table th {
+            font-weight: 600;
+            color: var(--gray-600);
+            background: var(--gray-50);
+        }
+        .props-table code {
+            font-size: var(--text-xs);
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            text-decoration: none;
+            margin-bottom: var(--space-4);
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+        .icon {
+            stroke: currentColor;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-page">
+        <a href="../index.html" class="back-link">← Back to Tests</a>
+
+        <header class="test-header">
+            <h1 class="test-title">Hub Card</h1>
+            <p class="test-description">Navigation cards for dashboard sections. Used to provide quick access to different areas of the app with icons, titles, and metadata.</p>
+            <span class="test-file">css/components/hub-card.css</span>
+        </header>
+
+        <!-- Basic Examples -->
+        <section class="test-section">
+            <h2 class="test-section__title">Basic Examples</h2>
+            <div class="test-grid">
+                <div class="test-item">
+                    <span class="test-item__label">With badge count</span>
+                    <div class="hub-card">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            <span class="badge badge--count">4</span>
+                        </div>
+                        <div class="hub-card__title">Updates</div>
+                        <div class="hub-card__meta">12 new this week</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Without badge</span>
+                    <div class="hub-card">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <circle cx="9" cy="7" r="3"/>
+                                <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                                <circle cx="17" cy="7" r="2.5"/>
+                                <path d="M21 20v-1.5a3 3 0 0 0-2.5-2.96"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Team</div>
+                        <div class="hub-card__meta">8 members</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Calendar</span>
+                    <div class="hub-card">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <rect x="3" y="4" width="18" height="17" rx="2"/>
+                                <path d="M3 9h18"/>
+                                <path d="M8 2v4"/>
+                                <path d="M16 2v4"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Calendar</div>
+                        <div class="hub-card__meta">3 tours scheduled</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Projects</span>
+                    <div class="hub-card">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                <rect x="14" y="14" width="7" height="7" rx="1"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Projects</div>
+                        <div class="hub-card__meta">5 active</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid Layout -->
+        <section class="test-section">
+            <h2 class="test-section__title">Grid Layout (.hub-grid)</h2>
+            <div class="hub-grid">
+                <div class="hub-card">
+                    <div class="hub-card__top">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span class="badge badge--count">4</span>
+                    </div>
+                    <div class="hub-card__title">Updates</div>
+                    <div class="hub-card__meta">12 new this week</div>
+                </div>
+                <div class="hub-card">
+                    <div class="hub-card__top">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                            <circle cx="9" cy="7" r="3"/>
+                            <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                        </svg>
+                    </div>
+                    <div class="hub-card__title">Team</div>
+                    <div class="hub-card__meta">8 members</div>
+                </div>
+                <div class="hub-card">
+                    <div class="hub-card__top">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                            <rect x="3" y="4" width="18" height="17" rx="2"/>
+                            <path d="M3 9h18"/>
+                        </svg>
+                    </div>
+                    <div class="hub-card__title">Calendar</div>
+                    <div class="hub-card__meta">3 events</div>
+                </div>
+                <div class="hub-card">
+                    <div class="hub-card__top">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                            <rect x="3" y="3" width="7" height="7" rx="1"/>
+                            <rect x="14" y="3" width="7" height="7" rx="1"/>
+                            <rect x="3" y="14" width="7" height="7" rx="1"/>
+                            <rect x="14" y="14" width="7" height="7" rx="1"/>
+                        </svg>
+                    </div>
+                    <div class="hub-card__title">Projects</div>
+                    <div class="hub-card__meta">5 active</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- States -->
+        <section class="test-section">
+            <h2 class="test-section__title">States</h2>
+            <div class="test-grid">
+                <div class="test-item">
+                    <span class="test-item__label">Default</span>
+                    <div class="hub-card">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Favorites</div>
+                        <div class="hub-card__meta">7 items</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">:hover (simulated)</span>
+                    <div class="hub-card" style="background: var(--gray-75);">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Favorites</div>
+                        <div class="hub-card__meta">7 items</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Edge Cases -->
+        <section class="test-section">
+            <h2 class="test-section__title">Edge Cases</h2>
+            <div class="test-grid">
+                <div class="test-item">
+                    <span class="test-item__label">Long title</span>
+                    <div class="hub-card" style="width: 160px;">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Financial Reports Overview</div>
+                        <div class="hub-card__meta">Updated daily</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Long meta text</span>
+                    <div class="hub-card" style="width: 160px;">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Reports</div>
+                        <div class="hub-card__meta">Last updated 5 minutes ago by John</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">No meta</span>
+                    <div class="hub-card" style="width: 160px;">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Settings</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Large badge count</span>
+                    <div class="hub-card" style="width: 160px;">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                            <span class="badge badge--count">999+</span>
+                        </div>
+                        <div class="hub-card__title">Notifications</div>
+                        <div class="hub-card__meta">Unread</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">Zero state</span>
+                    <div class="hub-card" style="width: 160px;">
+                        <div class="hub-card__top">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="hub-card__title">Uploads</div>
+                        <div class="hub-card__meta">No files</div>
+                    </div>
+                </div>
+                <div class="test-item">
+                    <span class="test-item__label">No icon</span>
+                    <div class="hub-card" style="width: 160px;">
+                        <div class="hub-card__top">
+                            <span class="badge badge--count">2</span>
+                        </div>
+                        <div class="hub-card__title">Quick Links</div>
+                        <div class="hub-card__meta">2 pinned</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Props Reference -->
+        <section class="test-section">
+            <h2 class="test-section__title">Props / Classes Reference</h2>
+            <table class="props-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>.hub-card</code></td>
+                        <td>Base container. Flex column layout with padding, border, hover state.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.hub-card__top</code></td>
+                        <td>Header row for icon and optional badge. Uses flex with space-between.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.hub-card__title</code></td>
+                        <td>Card title text. Semi-bold, slightly larger.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.hub-card__meta</code></td>
+                        <td>Secondary metadata text. Smaller, muted color.</td>
+                    </tr>
+                    <tr>
+                        <td><code>.hub-grid</code></td>
+                        <td>4-column responsive grid layout for hub cards.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

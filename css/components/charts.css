@@ -1,0 +1,252 @@
+/* ============================================================
+   CHARTS
+   Common chart container and legend styles for Chart.js
+   ============================================================ */
+
+/* Chart container */
+.chart-container {
+    position: relative;
+    height: 100%;
+    min-height: 200px;
+}
+
+.chart-container--sm {
+    min-height: 150px;
+}
+
+.chart-container--lg {
+    min-height: 300px;
+}
+
+.chart-container--fixed {
+    height: 250px;
+}
+
+/* Chart wrapper with header */
+.chart-wrap {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.chart-wrap__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: var(--border);
+    background: var(--gray-50);
+}
+
+.chart-wrap__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.chart-wrap__unit {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.chart-wrap__actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.chart-wrap__body {
+    flex: 1;
+    padding: var(--space-4);
+    min-height: 0;
+}
+
+/* Chart legend - inline style (used in slide viz) */
+.chart-legend-inline {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--gray-600);
+}
+
+.legend-color {
+    width: 12px;
+    height: 3px;
+    border-radius: 1px;
+}
+
+.legend-color--line {
+    height: 2px;
+}
+
+.legend-color--dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.legend-color--square {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+/* Chart type selector */
+.chart-type-select {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--gray-600);
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.chart-type-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Chart empty state */
+.chart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 150px;
+    color: var(--gray-400);
+    text-align: center;
+}
+
+.chart-empty__icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-2);
+}
+
+.chart-empty__text {
+    font-size: var(--text-sm);
+}
+
+/* Chart loading state */
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 150px;
+}
+
+.chart-loading__spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--gray-200);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: chart-spin 0.8s linear infinite;
+}
+
+@keyframes chart-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* View tabs for chart/table/notes switching */
+.viz-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    background: var(--gray-200);
+    border-radius: var(--radius-sm);
+}
+
+.viz-tab {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--gray-600);
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--radius-sm) - 2px);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.viz-tab:hover {
+    color: var(--gray-800);
+}
+
+.viz-tab.active {
+    color: var(--gray-800);
+    background: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Viz view containers */
+.viz-view {
+    display: none;
+    height: 100%;
+}
+
+.viz-view.active {
+    display: block;
+}
+
+/* Inline chart (no wrapper, just canvas) */
+.chart-inline {
+    width: 100%;
+    height: 200px;
+}
+
+.chart-inline--sm {
+    height: 120px;
+}
+
+.chart-inline--lg {
+    height: 300px;
+}
+
+/* Chart tooltip customization (applied via Chart.js options) */
+.chart-tooltip {
+    background: var(--gray-800) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: var(--space-2) var(--space-3) !important;
+    font-size: var(--text-xs) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Chart axis styling hints (for Chart.js config) */
+/*
+  Use these values in Chart.js options:
+
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: {
+        font: { size: 10 },
+        color: '#78716c' // --gray-500
+      }
+    },
+    y: {
+      grid: { color: '#e7e5e4' }, // --gray-200
+      ticks: {
+        font: { size: 10 },
+        color: '#78716c',
+        callback: v => '$' + (v/1000) + 'K'
+      }
+    }
+  }
+*/

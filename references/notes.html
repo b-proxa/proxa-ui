@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        .doc-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .doc-header {
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .doc-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .doc-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+        .notes-editor {
+            width: 100%;
+            min-height: 500px;
+            padding: var(--space-4);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            line-height: 1.7;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            background: var(--gray-50);
+            color: var(--gray-800);
+            resize: vertical;
+        }
+        .notes-editor:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+        }
+        .save-status {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            margin-top: var(--space-2);
+        }
+        .save-status.saved {
+            color: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header__left">
+            <span class="header__logo">Proxa</span>
+            <nav class="header__nav">
+                <a href="../index.html" class="header__nav-item">Dashboard</a>
+                <a href="../patterns/record.html" class="header__nav-item">Record</a>
+                <a href="index.html" class="header__nav-item">References</a>
+                <a href="notes.html" class="header__nav-item active">Notes</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="doc-page">
+        <div class="doc-header">
+            <div>
+                <h1 class="doc-title">Notes</h1>
+                <p class="doc-description">Backlog, todos, and scratch notes. Auto-saves as you type.</p>
+            </div>
+        </div>
+
+        <textarea id="notes-editor" class="notes-editor" placeholder="# Backlog
+
+- [ ] Item one
+- [ ] Item two
+
+## Notes
+
+Write anything here..."></textarea>
+        <div id="save-status" class="save-status">Saved</div>
+    </main>
+
+    <script>
+        const editor = document.getElementById('notes-editor');
+        const status = document.getElementById('save-status');
+        const STORAGE_KEY = 'proxa-notes';
+        let saveTimeout;
+
+        // Load saved notes
+        function loadNotes() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                editor.value = saved;
+            }
+        }
+
+        // Save notes
+        function saveNotes() {
+            localStorage.setItem(STORAGE_KEY, editor.value);
+            status.textContent = 'Saved';
+            status.classList.add('saved');
+        }
+
+        // Debounced save on input
+        editor.addEventListener('input', () => {
+            status.textContent = 'Saving...';
+            status.classList.remove('saved');
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveNotes, 500);
+        });
+
+        // Save on blur
+        editor.addEventListener('blur', saveNotes);
+
+        // Load on page load
+        loadNotes();
+    </script>
+</body>
+</html>

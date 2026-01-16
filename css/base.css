@@ -1,0 +1,29 @@
+/* ============================================================
+   PROXA BASE STYLES
+   Reset and foundational styles
+   ============================================================ */
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--gray-800);
+    background: var(--gray-100);
+    min-height: 100vh;
+}
+
+/* Icon defaults */
+.icon {
+    stroke: var(--gray-500);
+}
+
+.icon-accent { stroke: var(--accent); }
+.icon-success { stroke: var(--success); }
+.icon-error { stroke: var(--error); }
+.icon-warning { stroke: var(--warning); }

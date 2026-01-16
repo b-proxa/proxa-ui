@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxa Design System v2</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* ============================================================
+           DESIGN SYSTEM TOKENS
+           ============================================================ */
+        :root {
+            --gray-50: #fafaf8;
+            --gray-75: #f8f8f6;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            --accent: #4a6fa5;
+            --accent-light: #eef2f7;
+            --accent-dark: #3a5a8a;
+            --success: #6b8f71;
+            --warning: #c9a227;
+            --error: #b54848;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 24px;
+            --space-6: 32px;
+            --space-8: 48px;
+            --font-family: system-ui, -apple-system, sans-serif;
+            --font-mono: 'SF Mono', Monaco, Consolas, monospace;
+            --text-xs: 0.675rem;
+            --text-sm: 0.8rem;
+            --text-base: 0.9rem;
+            --text-lg: 1.1rem;
+            --text-xl: 1.35rem;
+            --leading-tight: 1.25;
+            --leading-normal: 1.5;
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 10px;
+            --border: 1px solid var(--gray-200);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --transition-fast: 0.1s ease;
+            --transition-base: 0.15s ease;
+            --transition-slide: 0.25s ease;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-family); font-size: var(--text-base); line-height: var(--leading-normal); color: var(--gray-800); background: var(--gray-100); min-height: 100vh; }
+        .icon { stroke: var(--gray-500); }
+        .icon-accent { stroke: var(--accent); }
+        .icon-success { stroke: var(--success); }
+        .icon-error { stroke: var(--error); }
+        .icon-warning { stroke: var(--warning); }
+        .app-header { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5); background: var(--gray-100); border-bottom: var(--border); position: sticky; top: 0; z-index: 100; }
+        .app-header__logo { font-weight: 700; font-size: var(--text-lg); color: var(--gray-800); }
+        .app-header__divider { width: 1px; height: 20px; background: var(--gray-200); }
+        .app-header__title { font-size: var(--text-sm); color: var(--gray-500); }
+        .app-tabs { display: flex; gap: 2px; padding: 2px; background: var(--gray-200); border-radius: var(--radius-sm); margin-left: auto; }
+        .app-tab { padding: var(--space-2) var(--space-4); font-size: var(--text-sm); font-weight: 500; color: var(--gray-600); background: transparent; border: none; border-radius: calc(var(--radius-sm) - 2px); cursor: pointer; transition: all var(--transition-fast); }
+        .app-tab:hover { color: var(--gray-800); }
+        .app-tab.active { color: var(--gray-800); background: white; box-shadow: var(--shadow-sm); }
+        .app-content { padding: var(--space-6); max-width: 1400px; margin: 0 auto; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .showcase-section { background: transparent; border: var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-bottom: var(--space-5); }
+        .showcase-section__title { font-size: var(--text-xs); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-400); margin-bottom: var(--space-4); padding-bottom: var(--space-2); border-bottom: var(--border); }
+        .showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+        .showcase-item { display: flex; flex-direction: column; gap: var(--space-2); }
+        .showcase-item__label { font-size: var(--text-xs); color: var(--gray-500); font-weight: 500; }
+        .showcase-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+        .color-swatch { width: 48px; height: 48px; border-radius: var(--radius-sm); border: var(--border); display: flex; align-items: flex-end; justify-content: center; padding-bottom: var(--space-1); font-size: 8px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .color-swatch--light { color: var(--gray-600); text-shadow: none; }
+        .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); font-family: inherit; font-size: var(--text-sm); font-weight: 500; line-height: 1; border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); border: var(--border); background: transparent; color: var(--gray-700); text-decoration: none; }
+        .btn:hover { background: var(--gray-75); border-color: var(--gray-300); }
+        .btn:active { background: var(--gray-100); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn--primary { background: var(--gray-800); border-color: var(--gray-800); color: white; }
+        .btn--primary:hover { background: var(--gray-700); border-color: var(--gray-700); }
+        .btn--sm { padding: var(--space-1) var(--space-2); font-size: var(--text-xs); }
+        .btn-ai, .btn-add { padding: 0 var(--space-1); font-size: var(--text-xs); font-weight: 500; color: var(--gray-400); background: transparent; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); }
+        .btn-ai:hover, .btn-add:hover { color: var(--gray-600); border-color: var(--gray-400); }
+        .btn .spinner { display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .btn.loading .spinner { display: block; }
+        .btn.loading .btn-text { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .input, .textarea, .select { width: 100%; padding: var(--space-2) var(--space-3); font-family: inherit; font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--gray-800); background: white; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); transition: border-color var(--transition-fast), box-shadow var(--transition-fast); }
+        .input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+        .textarea { min-height: 80px; resize: vertical; }
+        .input--underline { padding: var(--space-2) 0; background: transparent; border: none; border-bottom: 1px solid var(--gray-300); border-radius: 0; }
+        .input--underline:focus { border-color: transparent; border-bottom-color: var(--accent); box-shadow: none; }
+        .field { display: flex; flex-direction: column; gap: var(--space-2); }
+        .field__label { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); font-weight: 500; color: var(--gray-500); }
+        .field__hint { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--gray-400); }
+        .card { background: transparent; border: var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: background var(--transition-base); }
+        .card:hover { background: var(--gray-75); }
+        .card--solid { background: white; box-shadow: var(--shadow-sm); }
+        .card--solid:hover { background: white; }
+        .card__header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: var(--border); background: var(--gray-50); }
+        .card__title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-700); }
+        .card__actions { margin-left: auto; display: flex; gap: var(--space-2); }
+        .card__body { padding: var(--space-4); }
+        .badge { display: inline-flex; align-items: center; padding: var(--space-1) var(--space-2); font-size: var(--text-xs); font-weight: 500; line-height: 1; color: var(--gray-600); background: var(--gray-200); border-radius: var(--radius-sm); }
+        .badge--count { padding: 2px 7px; font-weight: 600; color: white; background: var(--accent); border-radius: 10px; min-width: 18px; justify-content: center; }
+        .badge--success { background: var(--success); color: white; }
+        .badge--warning { background: var(--warning); color: white; }
+        .badge--error { background: var(--error); color: white; }
+        .tabs { display: flex; gap: 2px; padding: 2px; background: var(--gray-200); border-radius: var(--radius-sm); }
+        .tab { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); font-weight: 500; color: var(--gray-600); background: transparent; border: none; border-radius: calc(var(--radius-sm) - 2px); cursor: pointer; transition: all var(--transition-fast); }
+        .tab:hover { color: var(--gray-800); }
+        .tab.active { color: var(--gray-800); background: white; box-shadow: var(--shadow-sm); }
+        .tab__count { margin-left: var(--space-1); padding: 0 var(--space-1); font-size: 0.6rem; background: var(--gray-300); border-radius: 2px; }
+        .tab.active .tab__count { background: var(--gray-200); }
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown__menu { display: none; position: absolute; top: calc(100% + var(--space-1)); right: 0; min-width: 180px; background: white; border: var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 100; overflow: hidden; }
+        .dropdown__menu.open { display: block; }
+        .dropdown__section { padding: var(--space-2) 0; }
+        .dropdown__label { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); font-weight: 500; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+        .dropdown__item { display: block; width: 100%; padding: var(--space-2) var(--space-3); font-size: var(--text-sm); text-align: left; color: var(--gray-700); background: none; border: none; cursor: pointer; transition: background var(--transition-fast); }
+        .dropdown__item:hover { background: var(--gray-50); }
+        .dropdown__divider { height: 1px; background: var(--gray-100); margin: var(--space-1) 0; }
+        .toast { display: inline-flex; padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: white; background: var(--gray-800); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); }
+        .file-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); background: white; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); cursor: pointer; transition: background var(--transition-fast); max-width: 300px; }
+        .file-item:hover { background: var(--gray-50); }
+        .file-item__icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; font-size: 9px; font-weight: 700; color: white; border-radius: var(--radius-sm); flex-shrink: 0; letter-spacing: -0.5px; }
+        .file-item__info { flex: 1; min-width: 0; }
+        .file-item__name { font-size: var(--text-sm); font-weight: 500; color: var(--gray-700); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .file-item__meta { font-size: var(--text-xs); color: var(--gray-400); }
+        .data-table-wrap { overflow-x: auto; border: var(--border); border-radius: var(--radius-sm); background: white; display: inline-block; }
+        .data-table { border-collapse: collapse; font-size: var(--text-xs); }
+        .data-table th { padding: var(--space-1) var(--space-2); font-weight: 600; text-align: left; color: var(--gray-700); background: var(--gray-50); border-bottom: var(--border); border-right: var(--border); white-space: nowrap; }
+        .data-table th.col-header { text-align: right; font-weight: 500; color: var(--gray-500); }
+        .data-table th.total-col { background: var(--gray-100); color: var(--gray-700); text-align: right; }
+        .data-table td { padding: var(--space-1) var(--space-2); border-bottom: var(--border); border-right: var(--border); white-space: nowrap; text-align: right; color: var(--gray-700); }
+        .data-table td:first-child { text-align: left; }
+        .data-table td.total-col { font-weight: 600; background: var(--gray-50); border-left: 2px solid var(--gray-200); }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table td:last-child, .data-table th:last-child { border-right: none; }
+        .series-label { display: flex; align-items: center; gap: var(--space-1); font-weight: 600; }
+        .series-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+        .ai-panel { padding: var(--space-3); background: var(--gray-50); border: var(--border); border-radius: var(--radius-md); }
+        .ai-panel__input { width: 100%; min-height: 50px; margin-bottom: var(--space-2); }
+        .ai-panel__actions { display: flex; align-items: center; gap: var(--space-2); }
+        .ai-size-select { padding: var(--space-1) var(--space-2); font-size: var(--text-xs); border: 1px solid var(--gray-200); border-radius: var(--radius-sm); background: white; }
+        .section-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+        .section-title { font-size: var(--text-xs); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-400); }
+        .toolbar { display: flex; align-items: center; gap: var(--space-3); }
+        .toolbar__divider { width: 1px; height: 20px; background: var(--gray-200); }
+        .toolbar__status { font-size: var(--text-xs); color: var(--gray-400); }
+        .toolbar__status--saved { color: var(--success); }
+        .hub-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .hub-card { display: flex; flex-direction: column; padding: 14px; background: transparent; border-radius: var(--radius-lg); border: var(--border); cursor: pointer; transition: background var(--transition-base); }
+        .hub-card:hover { background: var(--gray-75); }
+        .hub-card__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .hub-card__title { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); margin-bottom: 2px; }
+        .hub-card__meta { font-size: 0.7rem; color: var(--gray-500); }
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .metric-card { padding: 14px; background: transparent; border-radius: var(--radius-lg); border: var(--border); cursor: pointer; transition: background var(--transition-base); }
+        .metric-card:hover { background: var(--gray-75); }
+        .metric-card__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .metric-card__label { font-size: 0.75rem; font-weight: 500; color: var(--gray-600); }
+        .metric-card__change { font-size: 0.7rem; font-weight: 500; }
+        .metric-card__change--positive { color: var(--success); }
+        .metric-card__change--negative { color: var(--error); }
+        .metric-card__value { font-size: 1.25rem; font-weight: 400; color: var(--gray-800); margin-bottom: 10px; }
+        .metric-card__sparkline { width: 100%; height: 32px; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: all var(--transition-base); z-index: 200; }
+        .overlay.active { opacity: 1; visibility: visible; }
+        .panel { position: fixed; top: 0; right: 0; width: 400px; height: 100%; background: var(--gray-50); border-left: var(--border); transform: translateX(100%); transition: transform var(--transition-slide); z-index: 300; display: flex; flex-direction: column; }
+        .panel.active { transform: translateX(0); }
+        .panel--wide { width: min(600px, 50vw); }
+        .panel__header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-5); border-bottom: var(--border); }
+        .panel__title { font-size: var(--text-base); font-weight: 600; color: var(--gray-800); }
+        .panel__close { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; border-radius: var(--radius-md); cursor: pointer; color: var(--gray-400); transition: all var(--transition-fast); }
+        .panel__close:hover { background: var(--gray-100); color: var(--gray-600); }
+        .panel__content { flex: 1; overflow-y: auto; padding: var(--space-4) var(--space-5); }
+        .detail-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: var(--border); }
+        .detail-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .detail-section__title { font-size: 0.65rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .meta-list { display: flex; flex-direction: column; gap: 8px; }
+        .meta-row { display: flex; justify-content: space-between; font-size: 0.75rem; }
+        .meta-row__label { color: var(--gray-500); }
+        .meta-row__value { color: var(--gray-700); }
+        .comment { display: flex; gap: 10px; margin-bottom: 12px; }
+        .comment:last-child { margin-bottom: 0; }
+        .comment__avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 600; color: var(--gray-600); flex-shrink: 0; }
+        .comment__content { flex: 1; }
+        .comment__header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+        .comment__author { font-size: 0.75rem; font-weight: 500; color: var(--gray-700); }
+        .comment__time { font-size: 0.65rem; color: var(--gray-400); }
+        .comment__text { font-size: 0.75rem; color: var(--gray-600); line-height: 1.5; }
+        .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--gray-200); display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 600; color: var(--gray-600); }
+        .avatar--sm { width: 20px; height: 20px; font-size: 0.55rem; }
+        .avatar--lg { width: 32px; height: 32px; font-size: 0.7rem; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+        .status-dot--offline { background: var(--gray-300); }
+        .status-dot--warning { background: var(--warning); }
+        .status-dot--error { background: var(--error); }
+        .source-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--accent); text-decoration: none; }
+        .source-link:hover { text-decoration: underline; }
+        .source-link__icon { width: 28px; height: 28px; background: var(--gray-100); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; }
+        .pdf-preview { background: white; border: var(--border); border-radius: var(--radius-md); aspect-ratio: 8.5 / 11; max-height: 320px; padding: 24px; display: flex; flex-direction: column; position: relative; margin-bottom: var(--space-4); }
+        .pdf-preview__page { position: absolute; bottom: 12px; right: 12px; font-size: 0.65rem; color: var(--gray-400); }
+        @media (max-width: 768px) { .hub-grid { grid-template-columns: repeat(2, 1fr); } .metrics-grid { grid-template-columns: repeat(2, 1fr); } .panel, .panel--wide { width: 100%; } }
+        @media (max-width: 480px) { .hub-grid, .metrics-grid { grid-template-columns: 1fr; } .app-header__divider { display: none; } }
+        .markdown-content { background: white; border-radius: var(--radius-lg); padding: var(--space-6); border: var(--border); }
+        .markdown-content h1 { font-size: 1.5rem; margin-bottom: var(--space-4); color: var(--gray-900); border-bottom: var(--border); padding-bottom: var(--space-3); }
+        .markdown-content h2 { font-size: 1.2rem; margin-top: var(--space-6); margin-bottom: var(--space-3); color: var(--gray-800); }
+        .markdown-content h3 { font-size: 1rem; margin-top: var(--space-4); margin-bottom: var(--space-2); color: var(--gray-700); }
+        .markdown-content p { margin-bottom: var(--space-3); color: var(--gray-700); }
+        .markdown-content ul, .markdown-content ol { margin-left: var(--space-4); margin-bottom: var(--space-3); }
+        .markdown-content li { margin-bottom: var(--space-1); color: var(--gray-700); }
+        .markdown-content code { padding: 2px 6px; font-family: var(--font-mono); font-size: 0.85em; background: var(--gray-100); border-radius: var(--radius-sm); color: var(--gray-800); }
+        .markdown-content pre { padding: var(--space-4); font-family: var(--font-mono); font-size: var(--text-xs); background: var(--gray-800); color: var(--gray-100); border-radius: var(--radius-md); overflow-x: auto; margin-bottom: var(--space-4); }
+        .markdown-content pre code { padding: 0; background: none; color: inherit; }
+        .markdown-content strong { font-weight: 600; color: var(--gray-800); }
+        .markdown-content hr { border: none; border-top: var(--border); margin: var(--space-6) 0; }
+        .markdown-content table { width: 100%; border-collapse: collapse; margin-bottom: var(--space-4); font-size: var(--text-sm); }
+        .markdown-content th, .markdown-content td { padding: var(--space-2) var(--space-3); border: var(--border); text-align: left; }
+        .markdown-content th { background: var(--gray-50); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <span class="app-header__logo">Proxa</span>
+        <div class="app-header__divider"></div>
+        <span class="app-header__title">Design System v2</span>
+        <div class="app-tabs">
+            <button class="app-tab active" data-tab="visual">Visual</button>
+            <button class="app-tab" data-tab="docs">Docs</button>
+        </div>
+    </header>
+    <main class="app-content">
+        <div class="tab-panel active" id="tab-visual">
+            <!-- COLORS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Colors — Grays (Natural Stone Scale)</div>
+                <div class="showcase-row">
+                    <div class="color-swatch color-swatch--light" style="background: var(--gray-50)">50</div>
+                    <div class="color-swatch color-swatch--light" style="background: var(--gray-75)">75</div>
+                    <div class="color-swatch color-swatch--light" style="background: var(--gray-100)">100</div>
+                    <div class="color-swatch color-swatch--light" style="background: var(--gray-200)">200</div>
+                    <div class="color-swatch color-swatch--light" style="background: var(--gray-300)">300</div>
+                    <div class="color-swatch" style="background: var(--gray-400)">400</div>
+                    <div class="color-swatch" style="background: var(--gray-500)">500</div>
+                    <div class="color-swatch" style="background: var(--gray-600)">600</div>
+                    <div class="color-swatch" style="background: var(--gray-700)">700</div>
+                    <div class="color-swatch" style="background: var(--gray-800)">800</div>
+                    <div class="color-swatch" style="background: var(--gray-900)">900</div>
+                </div>
+                <div style="margin-top: var(--space-4);">
+                    <div class="showcase-section__title" style="border: none; margin-bottom: var(--space-2);">Accent & Semantic</div>
+                    <div class="showcase-row">
+                        <div class="color-swatch" style="background: var(--accent)">accent</div>
+                        <div class="color-swatch color-swatch--light" style="background: var(--accent-light)">light</div>
+                        <div class="color-swatch" style="background: var(--accent-dark)">dark</div>
+                        <div style="width: 16px;"></div>
+                        <div class="color-swatch" style="background: var(--success)">success</div>
+                        <div class="color-swatch" style="background: var(--warning)">warning</div>
+                        <div class="color-swatch" style="background: var(--error)">error</div>
+                    </div>
+                </div>
+            </div>
+            <!-- TYPOGRAPHY -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Typography</div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                    <div><span style="font-size: var(--text-xs); color: var(--gray-400);">--text-xs (0.675rem)</span><br><span style="font-size: var(--text-xs);">Badge labels, hints, metadata</span></div>
+                    <div><span style="font-size: var(--text-xs); color: var(--gray-400);">--text-sm (0.8rem)</span><br><span style="font-size: var(--text-sm);">Most UI text: buttons, inputs, labels</span></div>
+                    <div><span style="font-size: var(--text-xs); color: var(--gray-400);">--text-base (0.9rem)</span><br><span style="font-size: var(--text-base);">Body content, descriptions</span></div>
+                    <div><span style="font-size: var(--text-xs); color: var(--gray-400);">--text-lg (1.1rem)</span><br><span style="font-size: var(--text-lg); font-weight: 600;">Card titles, modal titles</span></div>
+                    <div><span style="font-size: var(--text-xs); color: var(--gray-400);">--text-xl (1.35rem)</span><br><span style="font-size: var(--text-xl); font-weight: 600;">Page headings</span></div>
+                </div>
+            </div>
+            <!-- SPACING -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Spacing Scale</div>
+                <div class="showcase-row" style="align-items: flex-end;">
+                    <div style="text-align: center;"><div style="width: 4px; height: 4px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">1</span></div>
+                    <div style="text-align: center;"><div style="width: 8px; height: 8px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">2</span></div>
+                    <div style="text-align: center;"><div style="width: 12px; height: 12px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">3</span></div>
+                    <div style="text-align: center;"><div style="width: 16px; height: 16px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">4</span></div>
+                    <div style="text-align: center;"><div style="width: 24px; height: 24px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">5</span></div>
+                    <div style="text-align: center;"><div style="width: 32px; height: 32px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">6</span></div>
+                    <div style="text-align: center;"><div style="width: 48px; height: 48px; background: var(--accent);"></div><span style="font-size: var(--text-xs); color: var(--gray-400);">8</span></div>
+                </div>
+            </div>
+            <!-- ICONS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Content Type Icons</div>
+                <div class="showcase-grid" style="grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));">
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z"/><path d="M5 17l1 2.5L8.5 21 6 19.5 5 17z"/><path d="M19 17l-1 2.5L15.5 21 18 19.5 19 17z"/></svg><span class="showcase-item__label">Knowledge</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h2V10H4zM10 20h2V4h-2zM16 20h2v-6h-2z"/></svg><span class="showcase-item__label">All Content</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/></svg><span class="showcase-item__label">My Content</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="showcase-item__label">Favorites</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><span class="showcase-item__label">Record</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h3M8 11h8M8 15h6"/><rect x="14" y="6" width="3" height="4" rx="0.5"/></svg><span class="showcase-item__label">Doc</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M4 14h16M9 4v16M14 4v16"/></svg><span class="showcase-item__label">Worksheet</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg><span class="showcase-item__label">Collection</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span class="showcase-item__label">File</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b54848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span class="showcase-item__label">PDF</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M4 14h16M9 4v16M14 4v16"/></svg><span class="showcase-item__label">Excel</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="1.5"/><path d="M21 15l-5-4-3 2.5-4-3-6 5"/></svg><span class="showcase-item__label">Media</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="showcase-item__label">Link</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9C21 7.9 20.1 7 19 7H12L10 5H5C3.9 5 3 5.9 3 5Z"/></svg><span class="showcase-item__label">Folder</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg><span class="showcase-item__label">Updates</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="2.5"/><path d="M21 20v-1.5a3 3 0 0 0-2.5-2.96"/></svg><span class="showcase-item__label">Team</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/></svg><span class="showcase-item__label">Calendar</span></div>
+                    <div class="showcase-item" style="align-items: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="showcase-item__label">Projects</span></div>
+                </div>
+            </div>
+            <!-- BUTTONS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Buttons</div>
+                <div class="showcase-row">
+                    <div class="showcase-item"><span class="showcase-item__label">Default</span><button class="btn">Button</button></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Primary</span><button class="btn btn--primary">Save</button></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Small</span><button class="btn btn--sm">Export</button></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Disabled</span><button class="btn" disabled>Disabled</button></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Loading</span><button class="btn btn--primary loading"><span class="spinner"></span><span class="btn-text">Generate</span></button></div>
+                    <div class="showcase-item"><span class="showcase-item__label">AI / Add</span><div class="showcase-row"><button class="btn-ai">AI</button><button class="btn-add">+</button></div></div>
+                </div>
+            </div>
+            <!-- INPUTS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Inputs</div>
+                <div class="showcase-grid">
+                    <div class="showcase-item"><span class="showcase-item__label">Text Input</span><input type="text" class="input" placeholder="Enter value..."></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Select</span><select class="select"><option>Option 1</option><option>Option 2</option></select></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Underline Input</span><input type="text" class="input input--underline" placeholder="Title..."></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Textarea</span><textarea class="textarea" rows="2" placeholder="Description..."></textarea></div>
+                </div>
+            </div>
+            <!-- BADGES, TABS, STATUS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Badges, Tabs, Status & Avatars</div>
+                <div class="showcase-row" style="gap: var(--space-5); flex-wrap: wrap;">
+                    <div class="showcase-item"><span class="showcase-item__label">Label Badges</span><div class="showcase-row"><span class="badge">Zone 1</span><span class="badge">Label</span><span class="badge">Data</span></div></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Count Badges</span><div class="showcase-row"><span class="badge badge--count">4</span><span class="badge badge--count badge--success">Done</span><span class="badge badge--count badge--warning">3</span><span class="badge badge--count badge--error">!</span></div></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Tabs</span><div class="tabs"><button class="tab active">Output</button><button class="tab">Table</button><button class="tab">Notes <span class="tab__count">3</span></button></div></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Status Dots</span><div class="showcase-row"><div class="status-dot"></div><div class="status-dot status-dot--offline"></div><div class="status-dot status-dot--warning"></div><div class="status-dot status-dot--error"></div></div></div>
+                    <div class="showcase-item"><span class="showcase-item__label">Avatars</span><div class="showcase-row"><div class="avatar avatar--sm">JD</div><div class="avatar">JD</div><div class="avatar avatar--lg">JD</div></div></div>
+                </div>
+            </div>
+            <!-- CARD -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Card (with Field)</div>
+                <div style="max-width: 400px;">
+                    <div class="card card--solid">
+                        <div class="card__header"><span class="badge">Zone 1</span><span class="card__title">Title</span><div class="card__actions"><button class="btn-ai">AI</button></div></div>
+                        <div class="card__body"><div class="field"><div class="field__label">Label</div><input type="text" class="input" placeholder="Enter value..."><div class="field__hint">Helper text goes here.</div></div></div>
+                    </div>
+                </div>
+            </div>
+            <!-- DROPDOWN -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Dropdown</div>
+                <div class="dropdown">
+                    <button class="btn btn--sm">Export ▾</button>
+                    <div class="dropdown__menu open" style="position: relative; top: var(--space-2); display: block;">
+                        <div class="dropdown__section"><div class="dropdown__label">Export As</div><button class="dropdown__item">PNG Image</button><button class="dropdown__item">PDF Document</button></div>
+                        <div class="dropdown__divider"></div>
+                        <div class="dropdown__section"><button class="dropdown__item">Copy as JSON</button></div>
+                    </div>
+                </div>
+            </div>
+            <!-- TOAST -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Toast</div>
+                <div class="toast">Changes saved</div>
+            </div>
+            <!-- FILE ITEMS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">File Items</div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                    <div class="file-item"><span class="file-item__icon" style="background: #b54848">PDF</span><div class="file-item__info"><div class="file-item__name">quarterly-report.pdf</div><div class="file-item__meta">1.2 MB • Jan 5</div></div></div>
+                    <div class="file-item"><span class="file-item__icon" style="background: #6b8f71">XLSX</span><div class="file-item__info"><div class="file-item__name">financial-data.xlsx</div><div class="file-item__meta">245 KB • Jan 4</div></div></div>
+                    <div class="file-item"><span class="file-item__icon" style="background: #c9a227">PPTX</span><div class="file-item__info"><div class="file-item__name">presentation.pptx</div><div class="file-item__meta">3.8 MB • Jan 3</div></div></div>
+                </div>
+            </div>
+            <!-- DATA TABLE -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Data Table</div>
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead><tr><th></th><th class="col-header">Jan '24</th><th class="col-header">Feb '24</th><th class="col-header">Mar '24</th><th class="total-col">Total</th></tr></thead>
+                        <tbody>
+                            <tr><td><div class="series-label"><span class="series-dot" style="background: #4a6fa5"></span>Revenue</div></td><td>12,450</td><td>14,230</td><td>15,890</td><td class="total-col">42,570</td></tr>
+                            <tr><td><div class="series-label"><span class="series-dot" style="background: #6b8f71"></span>Expenses</div></td><td>8,200</td><td>9,100</td><td>8,950</td><td class="total-col">26,250</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- AI PANEL -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">AI Panel</div>
+                <div style="max-width: 400px;">
+                    <div class="ai-panel">
+                        <textarea class="textarea ai-panel__input" placeholder="Describe what to generate..."></textarea>
+                        <div class="ai-panel__actions"><select class="ai-size-select"><option>Small</option><option selected>Medium</option><option>Large</option></select><button class="btn btn--primary btn--sm" style="margin-left: auto;"><span class="btn-text">Generate</span></button></div>
+                    </div>
+                </div>
+            </div>
+            <!-- SECTION HEADER & TOOLBAR -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Section Header & Toolbar</div>
+                <div class="section-header" style="background: var(--gray-100); padding: var(--space-3); border-radius: var(--radius-sm);">
+                    <span class="section-title">Data</span>
+                    <div class="toolbar" style="margin-left: auto;"><div class="tabs"><button class="tab active">Edit</button><button class="tab">View</button></div><div class="toolbar__divider"></div><button class="btn btn--sm">Export</button><span class="toolbar__status toolbar__status--saved">Saved</span></div>
+                </div>
+            </div>
+            <!-- HUB CARDS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Hub Cards (NEW)</div>
+                <div class="hub-grid" style="max-width: 600px;">
+                    <div class="hub-card"><div class="hub-card__top"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg><span class="badge badge--count">4</span></div><div class="hub-card__title">Updates</div><div class="hub-card__meta">12 new this week</div></div>
+                    <div class="hub-card"><div class="hub-card__top"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="2.5"/><path d="M21 20v-1.5a3 3 0 0 0-2.5-2.96"/></svg></div><div class="hub-card__title">Team</div><div class="hub-card__meta">8 members</div></div>
+                </div>
+            </div>
+            <!-- METRIC CARDS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Metric Cards (NEW)</div>
+                <div class="metrics-grid" style="max-width: 600px;">
+                    <div class="metric-card"><div class="metric-card__top"><span class="metric-card__label">Revenue</span><span class="metric-card__change metric-card__change--negative">↘ -70.88%</span></div><div class="metric-card__value">$14.3K</div><svg class="metric-card__sparkline" viewBox="0 0 100 32" preserveAspectRatio="none"><defs><linearGradient id="sparkline-neg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/><stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/></linearGradient></defs><path d="M0,8 L15,10 L30,12 L45,15 L60,16 L75,20 L100,24 L100,32 L0,32 Z" fill="url(#sparkline-neg)"/><polyline points="0,8 15,10 30,12 45,15 60,16 75,20 100,24" fill="none" stroke="#b54848" stroke-width="1"/></svg></div>
+                    <div class="metric-card"><div class="metric-card__top"><span class="metric-card__label">Sales</span><span class="metric-card__change metric-card__change--positive">↗ +97.16%</span></div><div class="metric-card__value">$11.5K</div><svg class="metric-card__sparkline" viewBox="0 0 100 32" preserveAspectRatio="none"><defs><linearGradient id="sparkline-pos" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/><stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/></linearGradient></defs><path d="M0,24 L15,22 L30,20 L45,18 L60,15 L75,12 L100,8 L100,32 L0,32 Z" fill="url(#sparkline-pos)"/><polyline points="0,24 15,22 30,20 45,18 60,15 75,12 100,8" fill="none" stroke="#6b8f71" stroke-width="1"/></svg></div>
+                </div>
+            </div>
+            <!-- COMMENTS -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Comments (NEW)</div>
+                <div style="max-width: 400px;">
+                    <div class="comment"><div class="comment__avatar">JD</div><div class="comment__content"><div class="comment__header"><span class="comment__author">Jake Donovan</span><span class="comment__time">2 days ago</span></div><div class="comment__text">We should revisit pricing for group bookings. Early bird discounts may help.</div></div></div>
+                    <div class="comment"><div class="comment__avatar">AL</div><div class="comment__content"><div class="comment__header"><span class="comment__author">Amy Liu</span><span class="comment__time">5 days ago</span></div><div class="comment__text">January inquiries are up 15% week-over-week.</div></div></div>
+                </div>
+            </div>
+            <!-- SOURCE LINKS & METADATA -->
+            <div class="showcase-section">
+                <div class="showcase-section__title">Source Links & Metadata (NEW)</div>
+                <div style="display: flex; gap: var(--space-6); flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div class="detail-section__title">Source Files</div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <a href="#" class="source-link"><div class="source-link__icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 6h6M5 8h6M5 10h3"/></svg></div>revenue-dec-2025.xlsx</a>
+                            <a href="#" class="source-link"><div class="source-link__icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#b54848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 6h6M5 8h6M5 10h3"/></svg></div>2021-financial-statements.pdf</a>
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <div class="detail-section__title">Metadata</div>
+                        <div class="meta-list">
+                            <div class="meta-row"><span class="meta-row__label">Owner</span><span class="meta-row__value">Jake Donovan</span></div>
+                            <div class="meta-row"><span class="meta-row__label">Last updated</span><span class="meta-row__value">Jan 8, 2026</span></div>
+                            <div class="meta-row"><span class="meta-row__label">Update frequency</span><span class="meta-row__value">Weekly</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-panel" id="tab-docs">
+            <div class="markdown-content" id="markdown-output"></div>
+        </div>
+    </main>
+    <script>
+    const SKILL_MARKDOWN = `---
+name: proxa-design-system
+version: 2.0
+description: Design system for all Proxa products including Records, Glossaries, Dashboards, and other UI.
+---
+
+# Proxa Design System v2
+
+A comprehensive design system for building consistent Proxa interfaces.
+
+## When to Use This Skill
+
+- Building new Proxa products (Records, Glossaries, Dashboards, etc.)
+- Adding features to existing Proxa interfaces
+- Creating new components that need to match existing style
+- Ensuring visual consistency across the product suite
+
+## Design Principles
+
+1. **Understated & Professional** — Neutral colors, subtle shadows, minimal decoration
+2. **Information Dense** — Compact spacing, small typography, efficient use of space
+3. **Consistent Patterns** — Same components everywhere, predictable interactions
+4. **Progressive Disclosure** — Hide complexity until needed (AI panels, dropdowns, slide-over panels)
+5. **Transparent by Default** — Dashboard cards use transparent backgrounds with borders (v2)
+6. **Gray Icons** — Icons use gray-500 by default, semantic colors only when meaningful (v2)
+
+---
+
+## Design Tokens
+
+### Colors — Natural Stone Scale
+
+\`\`\`css
+:root {
+    /* Grays - Warm stone palette */
+    --gray-50: #fafaf8;
+    --gray-75: #f8f8f6;
+    --gray-100: #f6f5f3;
+    --gray-200: #e7e5e4;
+    --gray-300: #d6d3d1;
+    --gray-400: #a8a29e;
+    --gray-500: #78716c;
+    --gray-600: #57534e;
+    --gray-700: #44403c;
+    --gray-800: #292524;
+    --gray-900: #1c1917;
+    
+    /* Accent - Muted blue */
+    --accent: #4a6fa5;
+    --accent-light: #eef2f7;
+    --accent-dark: #3a5a8a;
+    
+    /* Semantic */
+    --success: #6b8f71;
+    --warning: #c9a227;
+    --error: #b54848;
+}
+\`\`\`
+
+**Usage:**
+- \`--gray-100\` — Page background
+- \`--gray-75\` — Hover states (v2)
+- \`--gray-50\` — Card headers, panel backgrounds
+- \`--gray-200\` — Borders
+- \`--gray-400\` — Muted text, placeholder icons
+- \`--gray-500\` — Secondary text, default icons
+- \`--gray-600\` — Labels
+- \`--gray-700\` — Body text
+- \`--gray-800\` — Headings, primary buttons
+- \`--accent\` — Interactive elements, focus states, links
+
+### Spacing
+
+\`\`\`css
+:root {
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+}
+\`\`\`
+
+### Typography
+
+\`\`\`css
+:root {
+    --font-family: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', Monaco, Consolas, monospace;
+    
+    --text-xs: 0.675rem;   /* badges, hints, meta */
+    --text-sm: 0.8rem;     /* most UI text */
+    --text-base: 0.9rem;   /* body text */
+    --text-lg: 1.1rem;     /* card titles */
+    --text-xl: 1.35rem;    /* page titles */
+}
+\`\`\`
+
+### Borders, Radius & Shadows
+
+\`\`\`css
+:root {
+    --radius-sm: 4px;   /* Buttons, inputs */
+    --radius-md: 6px;   /* Dropdowns */
+    --radius-lg: 10px;  /* Cards, panels */
+    
+    --border: 1px solid var(--gray-200);
+    
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+\`\`\`
+
+**Shadow usage (v2):** Use shadows sparingly. Dashboard cards should NOT have shadows. Use shadows for: dropdowns, toasts, modals, and solid form cards only.
+
+---
+
+## Components
+
+### Core Components
+- **Buttons** — Default, Primary, Small, Loading, AI/Add
+- **Inputs** — Text, Textarea, Select, Underline variant
+- **Field** — Label + Input + Hint wrapper
+- **Badge** — Label style (gray) and Count style (colored)
+- **Tabs** — With optional count indicator
+- **Dropdown** — With sections, labels, dividers
+- **Toast** — Dark notification bar
+- **Card** — Transparent (dashboard) or Solid (forms)
+
+### Dashboard Components (NEW in v2)
+- **Hub Card** — 4-column grid with icon, optional badge, title, meta
+- **Metric Card** — Label, change indicator, large value, sparkline
+- **Slide-Over Panel** — Standard (400px) and Wide (min(600px, 50vw)) variants
+- **Comment Thread** — Avatar + author/time + text
+- **Metadata List** — Label/value pairs
+- **Source Link** — File icon + filename link
+- **PDF Preview** — Document preview card (8.5:11 aspect ratio)
+- **Status Dot** — Online/offline/warning/error indicators
+- **Avatar** — Small (20px), Medium (24px), Large (32px) sizes
+
+### Data Components
+- **File Item** — Icon badge + name + meta
+- **Data Table** — Spreadsheet style with series dots
+- **AI Panel** — Textarea + size select + generate button
+
+### Layout Components
+- **Section Header** — Uppercase title
+- **Toolbar** — Tabs + divider + actions + status
+
+---
+
+## Key Patterns (v2)
+
+### Dashboard Card Backgrounds
+
+Dashboard cards use **transparent backgrounds** with borders. Hover state uses gray-75.
+
+\`\`\`css
+.card {
+    background: transparent;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+}
+.card:hover { background: var(--gray-75); }
+\`\`\`
+
+Form cards use **solid white backgrounds** with subtle shadow (add \`.card--solid\`).
+
+### Slide-Over Panels
+
+Use for detail views, keeping dashboard context visible.
+
+\`\`\`css
+.panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100%;
+    background: var(--gray-50);
+    border-left: 1px solid var(--gray-200);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+}
+.panel.active { transform: translateX(0); }
+.panel--wide { width: min(600px, 50vw); }
+\`\`\`
+
+### Sparklines
+
+SVG sparklines with gradient fill. Line stroke-width: 1.
+
+\`\`\`html
+<svg viewBox="0 0 100 32" preserveAspectRatio="none">
+    <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+        </linearGradient>
+    </defs>
+    <path d="M0,24 ... L100,32 L0,32 Z" fill="url(#grad)"/>
+    <polyline points="0,24 ..." fill="none" stroke="#6b8f71" stroke-width="1"/>
+</svg>
+\`\`\`
+
+---
+
+## Content Type Icons
+
+Standard icons for navigation and content types. All icons use:
+- 20x20 size
+- \`stroke: var(--gray-500)\` (default)
+- \`stroke-width: 1.5\`
+- \`stroke-linecap: round\`
+- \`stroke-linejoin: round\`
+
+| Icon | Name | Usage |
+|------|------|-------|
+| ✦ | Knowledge Base | Top-level navigation |
+| ▎▎▎ | All Content | Filter: all items |
+| 👤 | My Content | Filter: user's items |
+| ☆ | Favorites | Filter: starred items |
+| 📄 | All | Proxa content: all types |
+| ▭ | Record | Proxa content: records |
+| 📝 | Doc | Proxa content: documents |
+| ⊞ | Worksheet | Proxa content: spreadsheets |
+| ◎◎ | Collection | Proxa content: collections |
+| 📃 | File | Proxa content: generic file |
+| 🖼 | Media | Proxa content: images/video |
+| 🔗 | Link | Proxa content: external links |
+| 📁 | Folder | Navigation: folders |
+| 🕐 | Updates | Hub: activity feed |
+| 👥 | Team | Hub: team members |
+| 📅 | Calendar | Hub: schedule |
+| ⊞⊞ | Projects | Hub: projects grid |
+
+---
+
+## File Type Colors
+
+| Type | Color | Hex |
+|------|-------|-----|
+| PDF | Red | \`#b54848\` |
+| Excel/CSV | Green | \`#6b8f71\` |
+| Word | Blue | \`#4a6fa5\` |
+| PowerPoint | Gold | \`#c9a227\` |
+| Images | Blue | \`#4a6fa5\` |
+| Other | Gray | \`#78716c\` |
+
+---
+
+## Responsive Breakpoints
+
+\`\`\`css
+/* Tablet */
+@media (max-width: 768px) {
+    .hub-grid { grid-template-columns: repeat(2, 1fr); }
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .panel, .panel--wide { width: 100%; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .hub-grid { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: 1fr; }
+}
+\`\`\`
+
+---
+
+## Do's and Don'ts
+
+### Do
+
+- Use the warm gray palette (stone tones, not cool grays)
+- Use transparent backgrounds for dashboard cards (border-only)
+- Use solid white backgrounds for form cards
+- Use gray-500 for icons by default
+- Keep typography small (\`--text-xs\` to \`--text-sm\` for most UI)
+- Use \`--space-2\` and \`--space-3\` for most padding/gaps
+- Use subtle borders (\`--gray-200\`) not heavy ones
+- Add hover states (gray-75 background) to interactive elements
+- Use slide-over panels for detail views
+
+### Don't
+
+- Use shadows on dashboard cards
+- Use pure black (\`#000\`) or pure white (\`#fff\`)
+- Make buttons or inputs too large
+- Use bright or saturated colors except for semantic purposes
+- Use accent colors for icons (except for semantic meaning)
+- Add excessive shadows or borders
+- Use different fonts — stick to system-ui
+
+---
+
+*See the Visual tab for live component examples.*
+`;
+    document.getElementById('markdown-output').innerHTML = marked.parse(SKILL_MARKDOWN);
+    document.querySelectorAll('.app-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        });
+    });
+    </script>
+</body>
+</html>

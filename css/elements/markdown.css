@@ -1,0 +1,169 @@
+/* ============================================================
+   MARKDOWN
+   Styled markdown content rendering
+   ============================================================ */
+
+.markdown {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--gray-700);
+}
+
+.markdown h1 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--space-3);
+}
+
+.markdown h2 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-2);
+}
+
+.markdown h3 {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.markdown h4 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-1);
+}
+
+.markdown p {
+    margin-bottom: var(--space-3);
+}
+
+.markdown p:last-child {
+    margin-bottom: 0;
+}
+
+.markdown ul,
+.markdown ol {
+    margin-bottom: var(--space-3);
+    padding-left: var(--space-5);
+}
+
+.markdown li {
+    margin-bottom: var(--space-1);
+}
+
+.markdown li:last-child {
+    margin-bottom: 0;
+}
+
+.markdown strong {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.markdown em {
+    font-style: italic;
+}
+
+.markdown a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.markdown a:hover {
+    color: var(--accent-dark);
+}
+
+.markdown code {
+    padding: 2px var(--space-1);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--gray-100);
+    border-radius: 3px;
+}
+
+.markdown pre {
+    margin-bottom: var(--space-3);
+    padding: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-normal);
+    background: var(--gray-800);
+    color: var(--gray-100);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+}
+
+.markdown pre code {
+    padding: 0;
+    background: none;
+    border-radius: 0;
+}
+
+.markdown blockquote {
+    margin-bottom: var(--space-3);
+    padding: var(--space-3);
+    padding-left: var(--space-4);
+    background: var(--gray-50);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    color: var(--gray-600);
+}
+
+.markdown hr {
+    margin: var(--space-4) 0;
+    border: none;
+    border-top: 1px solid var(--gray-200);
+}
+
+.markdown table {
+    width: 100%;
+    margin-bottom: var(--space-3);
+    border-collapse: collapse;
+    font-size: var(--text-xs);
+}
+
+.markdown th,
+.markdown td {
+    padding: var(--space-2);
+    border: 1px solid var(--gray-200);
+    text-align: left;
+}
+
+.markdown th {
+    font-weight: 600;
+    background: var(--gray-50);
+}
+
+/* Compact markdown for smaller spaces */
+.markdown--compact {
+    font-size: var(--text-xs);
+}
+
+.markdown--compact h2 {
+    font-size: var(--text-base);
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-1);
+}
+
+.markdown--compact h3 {
+    font-size: var(--text-sm);
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-1);
+}
+
+.markdown--compact p,
+.markdown--compact ul,
+.markdown--compact ol {
+    margin-bottom: var(--space-2);
+}
+
+.markdown--compact li {
+    margin-bottom: 0;
+}

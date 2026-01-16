@@ -1,0 +1,82 @@
+/* ============================================================
+   PROXA DESIGN TOKENS
+   ============================================================ */
+
+:root {
+    /* Colors — Natural Stone Scale */
+    --gray-50: #fafaf8;
+    --gray-75: #f8f8f6;
+    --gray-100: #f6f5f3;
+    --gray-200: #e7e5e4;
+    --gray-300: #d6d3d1;
+    --gray-400: #a8a29e;
+    --gray-500: #78716c;
+    --gray-600: #57534e;
+    --gray-700: #44403c;
+    --gray-800: #292524;
+    --gray-900: #1c1917;
+
+    /* Colors — Accent */
+    --accent: #4a6fa5;
+    --accent-light: #eef2f7;
+    --accent-dark: #3a5a8a;
+
+    /* Colors — Semantic */
+    --success: #6b8f71;
+    --warning: #c9a227;
+    --error: #b54848;
+
+    /* Colors — Financial (for charts/data viz) */
+    --fin-favorable: #4a7c59;
+    --fin-favorable-bg: #eef4f0;
+    --fin-unfavorable: #b54848;
+    --fin-unfavorable-bg: #fdf2f2;
+    --fin-neutral: var(--gray-500);
+    --fin-total: var(--gray-700);
+    --fin-subtotal: var(--gray-400);
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-8: 48px;
+
+    /* Typography */
+    --font-family: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', Monaco, Consolas, monospace;
+
+    --text-xs: 0.675rem;
+    --text-sm: 0.8rem;
+    --text-base: 0.9rem;
+    --text-lg: 1.1rem;
+    --text-xl: 1.35rem;
+
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+
+    /* Borders & Radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+
+    --border: 1px solid var(--gray-200);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    /* Transitions */
+    --transition-fast: 0.1s ease;
+    --transition-base: 0.15s ease;
+    --transition-slide: 0.25s ease;
+
+    /* Layout Widths */
+    --width-narrow: 700px;     /* Forms, articles, focused content */
+    --width-medium: 900px;     /* Standard pages, reports */
+    --width-wide: 1100px;      /* Dashboards, data tables */
+    --width-full: 1400px;      /* Full-width layouts */
+}

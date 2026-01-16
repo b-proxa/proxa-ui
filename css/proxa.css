@@ -1,0 +1,45 @@
+/* ============================================================
+   PROXA DESIGN SYSTEM
+   Main entry point - imports all modules
+   ============================================================ */
+
+/* Foundation */
+@import 'tokens.css';
+@import 'base.css';
+
+/* Elements — Base styled HTML */
+@import 'elements/buttons.css';
+@import 'elements/inputs.css';
+@import 'elements/badges.css';
+@import 'elements/tabs.css';
+@import 'elements/dropdown.css';
+@import 'elements/toast.css';
+@import 'elements/avatar.css';
+@import 'elements/markdown.css';
+
+/* Components — Reusable composed blocks */
+@import 'components/cards.css';
+@import 'components/modal.css';
+@import 'components/data-table.css';
+@import 'components/fin-table.css';
+@import 'components/file-item.css';
+@import 'components/file-upload.css';
+@import 'components/metric-card.css';
+@import 'components/hub-card.css';
+@import 'components/ai-panel.css';
+@import 'components/slide-panel.css';
+@import 'components/comments.css';
+
+/* Charts & Visualizations */
+@import 'components/charts.css';
+@import 'components/sparkline.css';
+@import 'components/waterfall.css';
+@import 'components/variance-bars.css';
+@import 'components/metric-block.css';
+
+/* Patterns — Complex assembled units */
+@import 'patterns/header.css';
+@import 'patterns/record.css';
+
+/* Utilities */
+@import 'utilities.css';

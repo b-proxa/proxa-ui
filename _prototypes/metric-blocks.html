@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metric Blocks — Financial KPIs</title>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            
+            --fin-favorable: #4a7c59;
+            --fin-favorable-bg: #eef4f0;
+            --fin-unfavorable: #b54848;
+            --fin-unfavorable-bg: #fdf2f2;
+            --fin-neutral: var(--gray-500);
+            
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: var(--width-wide, 1100px);
+            margin: 0 auto;
+        }
+        
+        .header {
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .header .subtitle {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+        
+        /* Metric Grid */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        /* Metric Block */
+        .metric-block {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .metric-block--highlight {
+            background: var(--gray-800);
+            border-color: var(--gray-800);
+        }
+        
+        .metric-block--highlight .metric-block__label,
+        .metric-block--highlight .metric-block__value,
+        .metric-block--highlight .metric-block__context {
+            color: white;
+        }
+        
+        .metric-block--highlight .metric-block__trend {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .metric-block__label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        
+        .metric-block__value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-800);
+            line-height: 1.1;
+            margin-bottom: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .metric-block__value--small {
+            font-size: 22px;
+        }
+        
+        .metric-block__footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .metric-block__trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+        
+        .metric-block__trend--up {
+            color: var(--fin-favorable);
+            background: var(--fin-favorable-bg);
+        }
+        
+        .metric-block__trend--down {
+            color: var(--fin-unfavorable);
+            background: var(--fin-unfavorable-bg);
+        }
+        
+        .metric-block__trend--neutral {
+            color: var(--gray-600);
+            background: var(--gray-100);
+        }
+        
+        .metric-block__context {
+            font-size: 11px;
+            color: var(--gray-400);
+        }
+        
+        .metric-block__sparkline {
+            height: 32px;
+            margin: 12px 0;
+        }
+        
+        /* Section Headers */
+        .section-header {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            margin: 32px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        /* Large Metric Row */
+        .metric-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .metric-block--large {
+            padding: 24px;
+        }
+        
+        .metric-block--large .metric-block__value {
+            font-size: 36px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Key Performance Indicators</h1>
+            <div class="subtitle">FY2024 vs FY2023</div>
+        </div>
+        
+        <!-- Primary KPIs -->
+        <div class="metric-row">
+            <div class="metric-block metric-block--large metric-block--highlight">
+                <div class="metric-block__label">Net Income</div>
+                <div class="metric-block__value">$863,883</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 9.3%</span>
+                    <span class="metric-block__context">vs $790,265 PY</span>
+                </div>
+            </div>
+            <div class="metric-block metric-block--large">
+                <div class="metric-block__label">Total Revenue</div>
+                <div class="metric-block__value">$4.07M</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 4.9%</span>
+                    <span class="metric-block__context">vs $3.88M PY</span>
+                </div>
+            </div>
+            <div class="metric-block metric-block--large">
+                <div class="metric-block__label">Cash Position</div>
+                <div class="metric-block__value">$1.39M</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--down">▼ 5.2%</span>
+                    <span class="metric-block__context">vs $1.46M PY</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-header">Revenue Breakdown</div>
+        <div class="metric-grid">
+            <div class="metric-block">
+                <div class="metric-block__label">Tour Packages</div>
+                <div class="metric-block__value metric-block__value--small">$3.25M</div>
+                <canvas class="metric-block__sparkline" id="spark-tour"></canvas>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 3.0%</span>
+                    <span class="metric-block__context">79.8% of revenue</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Gratuities</div>
+                <div class="metric-block__value metric-block__value--small">$308K</div>
+                <canvas class="metric-block__sparkline" id="spark-gratuities"></canvas>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 6.1%</span>
+                    <span class="metric-block__context">7.6% of revenue</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Ancillary Revenue</div>
+                <div class="metric-block__value metric-block__value--small">$277K</div>
+                <canvas class="metric-block__sparkline" id="spark-ancillary"></canvas>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--down">▼ 6.2%</span>
+                    <span class="metric-block__context">6.8% of revenue</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Accommodation Upgrades</div>
+                <div class="metric-block__value metric-block__value--small">$107K</div>
+                <canvas class="metric-block__sparkline" id="spark-accommodation"></canvas>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 10.2%</span>
+                    <span class="metric-block__context">New in 2023</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-header">Profitability</div>
+        <div class="metric-grid">
+            <div class="metric-block">
+                <div class="metric-block__label">Gross Margin</div>
+                <div class="metric-block__value metric-block__value--small">27.7%</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 3.2 pts</span>
+                    <span class="metric-block__context">vs 24.5% PY</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Operating Expenses</div>
+                <div class="metric-block__value metric-block__value--small">$2.94M</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--neutral">▲ 0.5%</span>
+                    <span class="metric-block__context">Well controlled</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Effective Tax Rate</div>
+                <div class="metric-block__value metric-block__value--small">23.4%</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--down">▲ 6.4 pts</span>
+                    <span class="metric-block__context">vs 17.0% PY</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Return on Equity</div>
+                <div class="metric-block__value metric-block__value--small">18.9%</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--down">▼ 1.1 pts</span>
+                    <span class="metric-block__context">vs 20.0% PY</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-header">Balance Sheet Highlights</div>
+        <div class="metric-grid">
+            <div class="metric-block">
+                <div class="metric-block__label">Total Assets</div>
+                <div class="metric-block__value metric-block__value--small">$6.41M</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 1.1%</span>
+                    <span class="metric-block__context">vs $6.34M PY</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Total Liabilities</div>
+                <div class="metric-block__value metric-block__value--small">$1.84M</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▼ 22.9%</span>
+                    <span class="metric-block__context">vs $2.38M PY</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Shareholder Equity</div>
+                <div class="metric-block__value metric-block__value--small">$4.57M</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▲ 15.6%</span>
+                    <span class="metric-block__context">vs $3.96M PY</span>
+                </div>
+            </div>
+            <div class="metric-block">
+                <div class="metric-block__label">Debt-to-Equity</div>
+                <div class="metric-block__value metric-block__value--small">0.40x</div>
+                <div class="metric-block__footer">
+                    <span class="metric-block__trend metric-block__trend--up">▼ 0.20x</span>
+                    <span class="metric-block__context">Improved leverage</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Mini sparkline renderer
+        function drawSparkline(canvasId, data, color = '#4a7c59') {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.offsetWidth;
+            const height = canvas.offsetHeight;
+            
+            canvas.width = width * 2;
+            canvas.height = height * 2;
+            ctx.scale(2, 2);
+            
+            const max = Math.max(...data);
+            const min = Math.min(...data);
+            const range = max - min || 1;
+            
+            const padding = 2;
+            const stepX = (width - padding * 2) / (data.length - 1);
+            
+            // Draw line
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            data.forEach((val, i) => {
+                const x = padding + i * stepX;
+                const y = padding + (1 - (val - min) / range) * (height - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            
+            // Draw end dot
+            const lastX = padding + (data.length - 1) * stepX;
+            const lastY = padding + (1 - (data[data.length - 1] - min) / range) * (height - padding * 2);
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw sparklines with actual 5-year data (reversed: 2020 → 2024)
+        drawSparkline('spark-tour', [2321973, 1410705, 2531473, 3149104, 3245037], '#4a7c59');
+        drawSparkline('spark-gratuities', [167278, 120556, 227329, 290404, 308147], '#4a7c59');
+        drawSparkline('spark-ancillary', [207803, 151510, 273664, 294956, 276709], '#b54848');
+        drawSparkline('spark-accommodation', [0, 0, 0, 97075, 106950], '#4a7c59');
+    </script>
+</body>
+</html>

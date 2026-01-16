@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waterfall Chart — Revenue to Net Income</title>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            
+            --fin-favorable: #4a7c59;
+            --fin-unfavorable: #b54848;
+            --fin-total: var(--gray-700);
+            --fin-subtotal: var(--gray-400);
+            
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family);
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--gray-800);
+            background: var(--gray-100);
+            padding: 24px;
+        }
+        
+        .container {
+            max-width: var(--width-medium, 900px);
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .header h1 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .header .subtitle {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+        
+        .chart-container {
+            padding: 24px;
+        }
+        
+        /* Waterfall Chart */
+        .waterfall {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            padding-bottom: 60px;
+        }
+        
+        .waterfall__bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            height: 100%;
+        }
+        
+        .waterfall__bar-wrapper {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .waterfall__bar {
+            width: 70%;
+            max-width: 60px;
+            border-radius: 3px 3px 0 0;
+            position: relative;
+            transition: opacity 0.2s;
+        }
+        
+        .waterfall__bar:hover {
+            opacity: 0.85;
+        }
+        
+        .waterfall__bar--increase {
+            background: var(--fin-favorable);
+        }
+        
+        .waterfall__bar--decrease {
+            background: var(--fin-unfavorable);
+        }
+        
+        .waterfall__bar--total {
+            background: var(--fin-total);
+            border-radius: 3px;
+        }
+        
+        .waterfall__bar--subtotal {
+            background: var(--fin-subtotal);
+        }
+        
+        .waterfall__connector {
+            position: absolute;
+            height: 1px;
+            background: var(--gray-300);
+            z-index: 1;
+        }
+        
+        .waterfall__value {
+            position: absolute;
+            top: -20px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--gray-600);
+            white-space: nowrap;
+        }
+        
+        .waterfall__bar--total .waterfall__value,
+        .waterfall__bar--subtotal .waterfall__value {
+            color: var(--gray-800);
+        }
+        
+        .waterfall__label {
+            position: absolute;
+            bottom: -55px;
+            font-size: 10px;
+            color: var(--gray-600);
+            text-align: center;
+            width: 100%;
+            line-height: 1.3;
+        }
+        
+        .waterfall__label strong {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        /* Axis */
+        .waterfall__axis {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 60px;
+            height: 1px;
+            background: var(--gray-300);
+        }
+        
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .legend__item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--gray-600);
+        }
+        
+        .legend__color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+        
+        .legend__color--increase { background: var(--fin-favorable); }
+        .legend__color--decrease { background: var(--fin-unfavorable); }
+        .legend__color--total { background: var(--fin-total); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Revenue to Net Income Bridge</h1>
+            <div class="subtitle">FY2024 — Values in CAD</div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="waterfall" id="waterfall">
+                <div class="waterfall__axis"></div>
+                <!-- Bars will be inserted by JS -->
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend__item">
+                <div class="legend__color legend__color--increase"></div>
+                <span>Income / Favorable</span>
+            </div>
+            <div class="legend__item">
+                <div class="legend__color legend__color--decrease"></div>
+                <span>Expense / Unfavorable</span>
+            </div>
+            <div class="legend__item">
+                <div class="legend__color legend__color--total"></div>
+                <span>Total / Subtotal</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // FY2024 Data
+        const data = [
+            { label: 'Total', sublabel: 'Revenue', value: 4065642, type: 'total' },
+            { label: 'Wages &', sublabel: 'Benefits', value: -974358, type: 'decrease' },
+            { label: 'Gratuities', sublabel: '', value: -308147, type: 'decrease' },
+            { label: 'Amortization', sublabel: '', value: -229419, type: 'decrease' },
+            { label: 'Food', sublabel: '', value: -175591, type: 'decrease' },
+            { label: 'Other', sublabel: 'Expenses', value: -1250133, type: 'decrease' },
+            { label: 'Income', sublabel: 'Before Tax', value: 1127994, type: 'subtotal' },
+            { label: 'Income', sublabel: 'Taxes', value: -264111, type: 'decrease' },
+            { label: 'Net', sublabel: 'Income', value: 863883, type: 'total' },
+        ];
+        
+        function formatValue(val) {
+            const abs = Math.abs(val);
+            if (abs >= 1000000) return '$' + (abs / 1000000).toFixed(2) + 'M';
+            return '$' + (abs / 1000).toFixed(0) + 'K';
+        }
+        
+        function renderWaterfall() {
+            const container = document.getElementById('waterfall');
+            const maxVal = 4065642; // Total revenue as max
+            const chartHeight = 340; // Available height for bars
+            const scale = chartHeight / maxVal;
+            
+            let runningTotal = 0;
+            let html = '<div class="waterfall__axis"></div>';
+            
+            data.forEach((item, i) => {
+                let barBottom, barHeight;
+                
+                if (item.type === 'total' || item.type === 'subtotal') {
+                    // Totals start from 0
+                    barBottom = 0;
+                    barHeight = item.value * scale;
+                    runningTotal = item.value;
+                } else {
+                    // Changes
+                    const prevTotal = runningTotal;
+                    runningTotal += item.value;
+                    
+                    if (item.value < 0) {
+                        // Decrease: bar hangs from previous level
+                        barBottom = runningTotal * scale;
+                        barHeight = Math.abs(item.value) * scale;
+                    } else {
+                        // Increase: bar builds up from previous level
+                        barBottom = prevTotal * scale;
+                        barHeight = item.value * scale;
+                    }
+                }
+                
+                const barClass = item.type === 'total' ? 'waterfall__bar--total' :
+                                 item.type === 'subtotal' ? 'waterfall__bar--subtotal' :
+                                 item.value < 0 ? 'waterfall__bar--decrease' : 'waterfall__bar--increase';
+                
+                html += `
+                    <div class="waterfall__bar-group">
+                        <div class="waterfall__bar-wrapper" style="bottom: ${barBottom}px">
+                            <div class="waterfall__bar ${barClass}" style="height: ${barHeight}px">
+                                <span class="waterfall__value">${formatValue(item.value)}</span>
+                            </div>
+                        </div>
+                        <div class="waterfall__label">
+                            <strong>${item.label}</strong>
+                            ${item.sublabel}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        renderWaterfall();
+    </script>
+</body>
+</html>

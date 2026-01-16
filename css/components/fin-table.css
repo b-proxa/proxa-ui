@@ -1,0 +1,247 @@
+/* ============================================================
+   FINANCIAL TABLE
+   Base component for financial data tables
+
+   Variants:
+   - .fin-table--statement: Financial statement with view modes
+   - .fin-table--comparison: YoY comparison with variance columns
+   - .fin-table--trend: Trend table with sparklines
+   ============================================================ */
+
+.fin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+/* Header */
+.fin-table thead th {
+    padding: var(--space-2) var(--space-4);
+    font-weight: 600;
+    text-align: right;
+    color: var(--gray-600);
+    background: var(--gray-100);
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+}
+
+.fin-table thead th:first-child {
+    text-align: left;
+    width: 40%;
+}
+
+/* Body cells */
+.fin-table tbody td {
+    padding: var(--space-2) var(--space-4);
+    text-align: right;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.fin-table tbody td:first-child {
+    text-align: left;
+}
+
+.fin-table tbody tr:hover td {
+    background: var(--gray-50);
+}
+
+/* ============================================================
+   ROW TYPES
+   ============================================================ */
+
+/* Section header row */
+.fin-row--section td {
+    padding: var(--space-3) var(--space-4) var(--space-2);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--gray-500);
+    background: var(--gray-50) !important;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+/* Statement header (used in multi-statement views) */
+.fin-row--statement td {
+    padding: var(--space-3) var(--space-4) var(--space-2);
+    font-weight: 700;
+    font-size: var(--text-base);
+    color: var(--gray-800);
+    background: white !important;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+/* Standard data row */
+.fin-row--data td:first-child {
+    font-weight: 400;
+}
+
+/* Detail row (less prominent) */
+.fin-row--detail td {
+    color: var(--gray-400);
+    font-size: var(--text-xs);
+}
+
+/* Subtotal row */
+.fin-row--subtotal td {
+    font-weight: 600;
+    border-top: 1px solid var(--gray-200);
+}
+
+/* Total row */
+.fin-row--total td {
+    font-weight: 700;
+    background: var(--gray-100) !important;
+    border-top: 2px solid var(--gray-300);
+}
+
+/* Grand total row (dark) */
+.fin-row--grandtotal td {
+    font-weight: 700;
+    font-size: var(--text-base);
+    background: var(--gray-800) !important;
+    color: white !important;
+    border-top: 2px solid var(--gray-800);
+}
+
+/* Spacer row */
+.fin-row--spacer td {
+    padding: var(--space-2);
+    background: white !important;
+    border: none;
+}
+
+/* ============================================================
+   INDENT LEVELS
+   ============================================================ */
+
+.fin-indent-1 { padding-left: 28px !important; }
+.fin-indent-2 { padding-left: 44px !important; }
+.fin-indent-3 { padding-left: 60px !important; }
+
+/* ============================================================
+   VALUE STATES
+   ============================================================ */
+
+.fin-value--favorable { color: var(--fin-favorable); }
+.fin-value--unfavorable { color: var(--fin-unfavorable); }
+.fin-value--muted { color: var(--gray-400); }
+
+/* ============================================================
+   VARIANT: STATEMENT VIEW MODES
+   Toggle detail visibility with .fin-table--raw, --statement, --summary
+   ============================================================ */
+
+.fin-table--raw .fin-row--detail { display: table-row; }
+.fin-table--statement .fin-row--detail { display: none; }
+.fin-table--summary .fin-row--data { display: none; }
+.fin-table--summary .fin-row--detail { display: none; }
+
+/* ============================================================
+   VARIANT: COMPARISON TABLE
+   Adds variance columns with highlighted background
+   ============================================================ */
+
+.fin-table--comparison thead th.col-variance {
+    background: var(--gray-100);
+}
+
+.fin-table--comparison .col-variance {
+    background: var(--gray-50);
+    border-left: 1px solid var(--gray-200);
+}
+
+.fin-table--comparison tbody tr:hover td.col-variance {
+    background: var(--gray-100);
+}
+
+/* ============================================================
+   VARIANCE BADGES
+   Used in comparison tables for +/- indicators
+   ============================================================ */
+
+.variance-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+
+.variance-badge--favorable {
+    color: var(--fin-favorable);
+    background: var(--fin-favorable-bg);
+}
+
+.variance-badge--unfavorable {
+    color: var(--fin-unfavorable);
+    background: var(--fin-unfavorable-bg);
+}
+
+.variance-badge--neutral {
+    color: var(--gray-500);
+    background: var(--gray-100);
+}
+
+/* ============================================================
+   VARIANT: TREND TABLE
+   Adds sparkline cells and trend indicators
+   ============================================================ */
+
+.fin-table--trend .fin-table__sparkline {
+    width: 80px;
+    height: 24px;
+}
+
+.fin-table--trend .fin-table__trend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px 6px;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+
+.fin-table__trend--up {
+    color: var(--fin-favorable);
+    background: var(--fin-favorable-bg);
+}
+
+.fin-table__trend--down {
+    color: var(--fin-unfavorable);
+    background: var(--fin-unfavorable-bg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .fin-table {
+        font-size: var(--text-xs);
+    }
+
+    .fin-table thead th,
+    .fin-table tbody td {
+        padding: var(--space-1) var(--space-2);
+    }
+
+    .fin-table thead th:first-child {
+        width: 35%;
+    }
+}
+
+@media (max-width: 480px) {
+    .fin-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .fin-table {
+        min-width: 500px;
+    }
+}

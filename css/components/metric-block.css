@@ -1,0 +1,113 @@
+/* ============================================================
+   METRIC BLOCK
+   Large KPI blocks for financial dashboards
+   ============================================================ */
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.metric-block {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    border: var(--border);
+}
+
+.metric-block--large {
+    padding: 24px;
+}
+
+.metric-block--large .metric-block__value {
+    font-size: 36px;
+}
+
+/* Highlight/featured variant */
+.metric-block--highlight {
+    background: var(--gray-800);
+    border-color: var(--gray-800);
+}
+
+.metric-block--highlight .metric-block__label,
+.metric-block--highlight .metric-block__value,
+.metric-block--highlight .metric-block__context {
+    color: white;
+}
+
+.metric-block--highlight .metric-block__trend {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.metric-block__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500);
+    margin-bottom: 8px;
+}
+
+.metric-block__value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1.1;
+    margin-bottom: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-block__value--small {
+    font-size: 22px;
+}
+
+.metric-block__footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.metric-block__trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+
+.metric-block__trend--up {
+    color: var(--fin-favorable);
+    background: var(--fin-favorable-bg);
+}
+
+.metric-block__trend--down {
+    color: var(--fin-unfavorable);
+    background: var(--fin-unfavorable-bg);
+}
+
+.metric-block__trend--neutral {
+    color: var(--gray-600);
+    background: var(--gray-100);
+}
+
+.metric-block__context {
+    font-size: 11px;
+    color: var(--gray-400);
+}
+
+.metric-block__sparkline {
+    height: 32px;
+    margin: 12px 0;
+}
