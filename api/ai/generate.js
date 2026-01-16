@@ -1,18 +1,21 @@
-import Anthropic from '@anthropic-ai/sdk';
+const Anthropic = require('@anthropic-ai/sdk');
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
-});
+let anthropic = null;
+if (process.env.ANTHROPIC_API_KEY) {
+  anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY
+  });
+}
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Only allow POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   // Check for API key
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return res.status(500).json({ error: 'AI not configured' });
+  if (!anthropic) {
+    return res.status(500).json({ error: 'AI not configured. ANTHROPIC_API_KEY not set.' });
   }
 
   const { prompt, context } = req.body;
@@ -42,7 +45,7 @@ export default async function handler(req, res) {
       error: error.message
     });
   }
-}
+};
 
 function buildSystemPrompt(context) {
   if (!context) {
