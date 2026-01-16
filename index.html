@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxa Design System Sandbox</title>
+    <title>Brandon's Sandbox</title>
     <link rel="stylesheet" href="css/proxa.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -237,25 +237,29 @@
             max-width: 500px;
             margin: 0 auto;
         }
-        /* 8-bit Pixel Art */
+        /* 8-bit Pixel Art - Proxa Logo */
         .pixel-art {
-            margin-bottom: var(--space-5);
+            margin-top: var(--space-8);
+            margin-bottom: var(--space-6);
         }
         .pixel-grid {
             display: grid;
-            grid-template-columns: repeat(8, 10px);
-            gap: 2px;
+            grid-template-columns: repeat(10, 10px);
+            gap: 1px;
             justify-content: center;
+            background: #1a1625;
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            width: fit-content;
+            margin: 0 auto;
         }
         .px {
             width: 10px;
             height: 10px;
-            background: transparent;
+            background: #1a1625;
         }
-        .px.c1 { background: var(--gray-800); }
-        .px.c2 { background: var(--gray-200); }
-        .px.c3 { background: var(--gray-600); }
-        .px.c4 { background: var(--accent, #4f46e5); }
+        .px.w { background: #f5f5f5; }
+        .px.g { background: #a0a0a0; }
         /* Password Gate */
         .password-gate {
             position: fixed;
@@ -351,28 +355,32 @@
     <div class="tab-content active" id="tab-home">
         <div class="home-layout">
             <div class="home-hero">
-                <!-- 8-bit Pixel Art -->
+                <!-- 8-bit Proxa Logo -->
                 <div class="pixel-art">
                     <div class="pixel-grid">
-                        <!-- Row 1 -->
-                        <div class="px"></div><div class="px"></div><div class="px c1"></div><div class="px c1"></div><div class="px c1"></div><div class="px c1"></div><div class="px"></div><div class="px"></div>
-                        <!-- Row 2 -->
-                        <div class="px"></div><div class="px c1"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c1"></div><div class="px"></div>
-                        <!-- Row 3 -->
-                        <div class="px c1"></div><div class="px c2"></div><div class="px c3"></div><div class="px c2"></div><div class="px c2"></div><div class="px c3"></div><div class="px c2"></div><div class="px c1"></div>
-                        <!-- Row 4 -->
-                        <div class="px c1"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c1"></div>
-                        <!-- Row 5 -->
-                        <div class="px c1"></div><div class="px c2"></div><div class="px c4"></div><div class="px c2"></div><div class="px c2"></div><div class="px c4"></div><div class="px c2"></div><div class="px c1"></div>
-                        <!-- Row 6 -->
-                        <div class="px c1"></div><div class="px c2"></div><div class="px c2"></div><div class="px c4"></div><div class="px c4"></div><div class="px c2"></div><div class="px c2"></div><div class="px c1"></div>
-                        <!-- Row 7 -->
-                        <div class="px"></div><div class="px c1"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c2"></div><div class="px c1"></div><div class="px"></div>
-                        <!-- Row 8 -->
-                        <div class="px"></div><div class="px"></div><div class="px c1"></div><div class="px c1"></div><div class="px c1"></div><div class="px c1"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 1: Arrow tip -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 2: Arrow -->
+                        <div class="px"></div><div class="px w"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 3: P top with arrow -->
+                        <div class="px w"></div><div class="px"></div><div class="px w"></div><div class="px w"></div><div class="px w"></div><div class="px w"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 4: P bowl top -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 5: P bowl -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 6: P bowl bottom -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px w"></div><div class="px w"></div><div class="px w"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 7: Stem -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 8: Stem -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 9: Stem -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
+                        <!-- Row 10: Stem base -->
+                        <div class="px"></div><div class="px"></div><div class="px w"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div><div class="px"></div>
                     </div>
                 </div>
-                <h1 class="home-title">Proxa Design System Sandbox</h1>
+                <h1 class="home-title">Brandon's Sandbox</h1>
                 <p class="home-subtitle">A prototyping environment for UI components, patterns, and AI-powered workflows.</p>
             </div>
         </div>
