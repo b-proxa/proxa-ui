@@ -298,26 +298,40 @@
                             </select>
                         </div>
                         <div class="ai-panel" id="ai-panel-description">
-                            <div class="field" style="margin-bottom: var(--space-2);">
-                                <label class="field__label">Additional Attachment</label>
-                                <select class="select ai-panel__attachment" id="ai-attachment-description" style="max-width: 300px;">
-                                    <option value="">None — use table data only</option>
-                                </select>
-                                <div class="field__hint">Table data from Visualization is always included.</div>
+                            <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2);">
+                                <div class="field" style="flex: 1;">
+                                    <label class="field__label">Additional Attachment</label>
+                                    <select class="select ai-panel__attachment" id="ai-attachment-description">
+                                        <option value="">None — use table data only</option>
+                                    </select>
+                                </div>
+                                <div class="field" style="flex: 1;">
+                                    <label class="field__label">Saved Prompts</label>
+                                    <select class="select" id="ai-saved-prompts-description">
+                                        <option value="">Select a saved prompt...</option>
+                                    </select>
+                                </div>
                             </div>
+                            <div class="field__hint" style="margin-bottom: var(--space-2);">Table data from Visualization is always included.</div>
                             <textarea class="textarea ai-panel__input" id="ai-prompt-description" placeholder="e.g. Write a summary highlighting revenue growth and key trends..."></textarea>
                             <div class="ai-panel__actions">
-                                <button class="btn btn--primary btn--sm" id="ai-run-description">
-                                    <span class="btn-text">Run</span>
-                                    <span class="spinner"></span>
-                                </button>
-                                <span class="ai-panel__status" id="ai-status-description"></span>
+                                <div style="margin-left: auto; display: flex; gap: var(--space-2); align-items: center;">
+                                    <button class="btn btn--sm" id="ai-save-prompt-description" title="Save this prompt">Save</button>
+                                    <button class="btn btn--primary btn--sm" id="ai-run-description">
+                                        <span class="btn-text">Run</span>
+                                        <span class="spinner"></span>
+                                    </button>
+                                    <span class="ai-panel__status" id="ai-status-description"></span>
+                                </div>
                             </div>
-                            <div class="ai-panel__suggestion" id="ai-suggestion-description" style="display: none;">
-                                <div class="ai-panel__suggestion-header">Suggestion</div>
-                                <div class="ai-panel__suggestion-content" id="ai-suggestion-content-description"></div>
-                                <div class="ai-panel__suggestion-actions">
-                                    <button class="btn btn--sm" id="ai-reject-description">Reject</button>
+                            <div class="ai-panel__chat" id="ai-chat-description" style="display: none;">
+                                <div class="ai-panel__chat-header">
+                                    <span>Chat</span>
+                                    <button class="btn btn--sm" id="ai-clear-chat-description" title="Clear chat">Clear</button>
+                                </div>
+                                <div class="ai-panel__chat-messages" id="ai-chat-messages-description"></div>
+                                <div class="ai-panel__chat-actions">
+                                    <button class="btn btn--sm" id="ai-reject-description">Close</button>
                                     <button class="btn btn--primary btn--sm" id="ai-accept-description">Accept</button>
                                 </div>
                             </div>
@@ -349,29 +363,43 @@
                             <button class="btn-ai" data-ai="visualization">AI</button>
                         </div>
                         <div class="ai-panel" id="ai-panel-visualization">
-                            <div class="field" style="margin-bottom: var(--space-2);">
-                                <label class="field__label">Attachment</label>
-                                <select class="select ai-panel__attachment" id="ai-attachment-visualization" style="max-width: 300px;">
-                                    <option value="">None — describe data manually</option>
-                                </select>
+                            <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-2);">
+                                <div class="field" style="flex: 1;">
+                                    <label class="field__label">Attachment</label>
+                                    <select class="select ai-panel__attachment" id="ai-attachment-visualization">
+                                        <option value="">None — describe data manually</option>
+                                    </select>
+                                </div>
+                                <div class="field" style="flex: 1;">
+                                    <label class="field__label">Saved Prompts</label>
+                                    <select class="select" id="ai-saved-prompts-visualization">
+                                        <option value="">Select a saved prompt...</option>
+                                    </select>
+                                </div>
                             </div>
                             <textarea class="textarea ai-panel__input" id="ai-prompt-visualization" placeholder="e.g. Extract monthly revenue and expenses from the attached file..."></textarea>
                             <div class="ai-panel__actions">
-                                <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--gray-600); cursor: pointer; margin-right: auto;">
+                                <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--gray-600); cursor: pointer;">
                                     <input type="checkbox" id="ai-preset-financial" style="cursor: pointer;">
                                     Financial Table
                                 </label>
-                                <button class="btn btn--primary btn--sm" id="ai-run-visualization">
-                                    <span class="btn-text">Run</span>
-                                    <span class="spinner"></span>
-                                </button>
-                                <span class="ai-panel__status" id="ai-status-visualization"></span>
+                                <div style="margin-left: auto; display: flex; gap: var(--space-2); align-items: center;">
+                                    <button class="btn btn--sm" id="ai-save-prompt-visualization" title="Save this prompt">Save</button>
+                                    <button class="btn btn--primary btn--sm" id="ai-run-visualization">
+                                        <span class="btn-text">Run</span>
+                                        <span class="spinner"></span>
+                                    </button>
+                                    <span class="ai-panel__status" id="ai-status-visualization"></span>
+                                </div>
                             </div>
-                            <div class="ai-panel__suggestion" id="ai-suggestion-visualization" style="display: none;">
-                                <div class="ai-panel__suggestion-header">Suggestion</div>
-                                <div class="ai-panel__suggestion-content" id="ai-suggestion-content-visualization"></div>
-                                <div class="ai-panel__suggestion-actions">
-                                    <button class="btn btn--sm" id="ai-reject-visualization">Reject</button>
+                            <div class="ai-panel__chat" id="ai-chat-visualization" style="display: none;">
+                                <div class="ai-panel__chat-header">
+                                    <span>Chat</span>
+                                    <button class="btn btn--sm" id="ai-clear-chat-visualization" title="Clear chat">Clear</button>
+                                </div>
+                                <div class="ai-panel__chat-messages" id="ai-chat-messages-visualization"></div>
+                                <div class="ai-panel__chat-actions">
+                                    <button class="btn btn--sm" id="ai-reject-visualization">Close</button>
                                     <button class="btn btn--primary btn--sm" id="ai-accept-visualization">Accept</button>
                                 </div>
                             </div>
@@ -1109,18 +1137,115 @@
             });
         }
 
-        async function runAIBlock(fieldId) {
+        // Chat history per field
+        const aiChatHistory = {};
+
+        function addChatMessage(fieldId, role, content) {
+            if (!aiChatHistory[fieldId]) aiChatHistory[fieldId] = [];
+            aiChatHistory[fieldId].push({ role, content });
+
+            const messagesDiv = document.getElementById('ai-chat-messages-' + fieldId);
+            if (!messagesDiv) return;
+
+            const isUser = role === 'user';
+            const messageHtml = `
+                <div class="ai-chat-message ai-chat-message--${isUser ? 'user' : 'ai'}">
+                    <div class="ai-chat-message__avatar">${isUser ? 'You' : 'AI'}</div>
+                    <div class="ai-chat-message__content">
+                        <div class="ai-chat-message__bubble">${escapeHtml(content)}</div>
+                    </div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function clearChat(fieldId) {
+            aiChatHistory[fieldId] = [];
+            const messagesDiv = document.getElementById('ai-chat-messages-' + fieldId);
+            if (messagesDiv) messagesDiv.innerHTML = '';
+            const chatDiv = document.getElementById('ai-chat-' + fieldId);
+            if (chatDiv) chatDiv.style.display = 'none';
+        }
+
+        // Saved prompts library
+        const SAVED_PROMPTS_KEY = 'proxa_saved_prompts';
+
+        function getSavedPrompts(fieldId) {
+            const stored = localStorage.getItem(SAVED_PROMPTS_KEY);
+            const all = stored ? JSON.parse(stored) : {};
+            return all[fieldId] || [];
+        }
+
+        function savePromptToLibrary(fieldId) {
             const prompt = document.getElementById('ai-prompt-' + fieldId)?.value;
+            if (!prompt) {
+                showToast('Enter a prompt first', 'error');
+                return;
+            }
+
+            const name = window.prompt('Name this prompt:', prompt.substring(0, 50));
+            if (!name) return;
+
+            const stored = localStorage.getItem(SAVED_PROMPTS_KEY);
+            const all = stored ? JSON.parse(stored) : {};
+            if (!all[fieldId]) all[fieldId] = [];
+            all[fieldId].push({ name, prompt });
+            localStorage.setItem(SAVED_PROMPTS_KEY, JSON.stringify(all));
+
+            populateSavedPrompts(fieldId);
+            showToast('Prompt saved', 'success');
+        }
+
+        function populateSavedPrompts(fieldId) {
+            const select = document.getElementById('ai-saved-prompts-' + fieldId);
+            if (!select) return;
+
+            const prompts = getSavedPrompts(fieldId);
+            select.innerHTML = '<option value="">Select a saved prompt...</option>';
+            prompts.forEach((p, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = p.name;
+                select.appendChild(opt);
+            });
+        }
+
+        function loadSavedPrompt(fieldId) {
+            const select = document.getElementById('ai-saved-prompts-' + fieldId);
+            const idx = select?.value;
+            if (idx === '' || idx === null) return;
+
+            const prompts = getSavedPrompts(fieldId);
+            const prompt = prompts[parseInt(idx)];
+            if (prompt) {
+                document.getElementById('ai-prompt-' + fieldId).value = prompt.prompt;
+                showToast('Prompt loaded', 'success');
+            }
+            select.value = '';
+        }
+
+        // Initialize saved prompts dropdowns
+        populateSavedPrompts('visualization');
+        populateSavedPrompts('description');
+
+        async function runAIBlock(fieldId) {
+            const promptInput = document.getElementById('ai-prompt-' + fieldId);
+            const prompt = promptInput?.value;
             const attachmentName = document.getElementById('ai-attachment-' + fieldId)?.value;
             const runBtn = document.getElementById('ai-run-' + fieldId);
-            const suggestionDiv = document.getElementById('ai-suggestion-' + fieldId);
-            const contentDiv = document.getElementById('ai-suggestion-content-' + fieldId);
+            const chatDiv = document.getElementById('ai-chat-' + fieldId);
             const status = document.getElementById('ai-status-' + fieldId);
 
             if (!prompt) {
                 showToast('Enter a prompt first', 'error');
                 return;
             }
+
+            // Show chat panel and add user message
+            chatDiv.style.display = 'block';
+            addChatMessage(fieldId, 'user', prompt);
+            promptInput.value = '';
 
             // Show loading
             runBtn.classList.add('loading');
@@ -1183,17 +1308,22 @@
             }
 
             try {
+                // Include chat history for context
+                const messages = (aiChatHistory[fieldId] || []).map(m => ({
+                    role: m.role,
+                    content: m.content
+                }));
+
                 const response = await fetch('/api/ai/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt, context })
+                    body: JSON.stringify({ prompt, context, messages })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    contentDiv.textContent = data.suggestion;
-                    suggestionDiv.style.display = 'block';
+                    addChatMessage(fieldId, 'assistant', data.suggestion);
                     status.textContent = '';
                 } else {
                     showToast('AI error: ' + data.error, 'error');
@@ -1326,7 +1456,15 @@
         }
 
         function acceptAISuggestion(fieldId) {
-            const content = document.getElementById('ai-suggestion-content-' + fieldId)?.textContent;
+            // Get last AI message from chat history
+            const history = aiChatHistory[fieldId] || [];
+            const lastAI = [...history].reverse().find(m => m.role === 'assistant');
+            const content = lastAI?.content;
+
+            if (!content) {
+                showToast('No suggestion to accept', 'error');
+                return;
+            }
             if (fieldId === 'visualization') {
                 // Parse markdown table and apply to chart
                 if (applyAITableData(content)) {
@@ -1347,13 +1485,14 @@
                 document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(content));
                 showToast('Description updated', 'success');
             }
-            document.getElementById('ai-suggestion-' + fieldId).style.display = 'none';
+            document.getElementById('ai-chat-' + fieldId).style.display = 'none';
             document.getElementById('ai-panel-' + fieldId).classList.remove('open');
+            clearChat(fieldId);
         }
 
         function rejectAISuggestion(fieldId) {
-            document.getElementById('ai-suggestion-' + fieldId).style.display = 'none';
-            showToast('Suggestion rejected');
+            document.getElementById('ai-chat-' + fieldId).style.display = 'none';
+            clearChat(fieldId);
         }
 
         // Wire up AI events for visualization panel
@@ -1362,6 +1501,9 @@
         document.getElementById('ai-run-visualization')?.addEventListener('click', () => runAIBlock('visualization'));
         document.getElementById('ai-accept-visualization')?.addEventListener('click', () => acceptAISuggestion('visualization'));
         document.getElementById('ai-reject-visualization')?.addEventListener('click', () => rejectAISuggestion('visualization'));
+        document.getElementById('ai-clear-chat-visualization')?.addEventListener('click', () => clearChat('visualization'));
+        document.getElementById('ai-save-prompt-visualization')?.addEventListener('click', () => savePromptToLibrary('visualization'));
+        document.getElementById('ai-saved-prompts-visualization')?.addEventListener('change', () => loadSavedPrompt('visualization'));
 
         // Wire up AI events for description panel
         document.getElementById('ai-prompt-description')?.addEventListener('blur', () => saveAIPrompt('description'));
@@ -1369,6 +1511,9 @@
         document.getElementById('ai-run-description')?.addEventListener('click', () => runAIBlock('description'));
         document.getElementById('ai-accept-description')?.addEventListener('click', () => acceptAISuggestion('description'));
         document.getElementById('ai-reject-description')?.addEventListener('click', () => rejectAISuggestion('description'));
+        document.getElementById('ai-clear-chat-description')?.addEventListener('click', () => clearChat('description'));
+        document.getElementById('ai-save-prompt-description')?.addEventListener('click', () => savePromptToLibrary('description'));
+        document.getElementById('ai-saved-prompts-description')?.addEventListener('change', () => loadSavedPrompt('description'));
 
         // View tabs
         document.querySelectorAll('#view-tabs .tab').forEach(tab => {

@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'AI not configured. ANTHROPIC_API_KEY not set.' });
   }
 
-  const { prompt, context } = req.body;
+  const { prompt, context, messages = [] } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
@@ -27,11 +27,20 @@ module.exports = async function handler(req, res) {
   try {
     const systemPrompt = buildSystemPrompt(context);
 
+    // Build conversation messages
+    const conversationMessages = messages.map(m => ({
+      role: m.role === 'user' ? 'user' : 'assistant',
+      content: m.content
+    }));
+
+    // Add current prompt as last user message
+    conversationMessages.push({ role: 'user', content: prompt });
+
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 2048,
       system: systemPrompt,
-      messages: [{ role: 'user', content: prompt }]
+      messages: conversationMessages
     });
 
     res.json({
