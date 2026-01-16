@@ -1349,7 +1349,7 @@
             if (!confirmed) return;
 
             try {
-                const response = await fetch(`/api/attachments/${encodeURIComponent(filename)}`, {
+                const response = await fetch(`/api/attachments?filename=${encodeURIComponent(filename)}`, {
                     method: 'DELETE'
                 });
 
@@ -1464,6 +1464,28 @@
                     const response = await fetch(fileData.path);
                     const text = await response.text();
                     renderCSV(text);
+                } else {
+                    // Unknown type - try to detect from content
+                    const response = await fetch(fileData.path);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                    const arrayBuffer = await response.arrayBuffer();
+                    const bytes = new Uint8Array(arrayBuffer.slice(0, 4));
+
+                    // Check for Excel/ZIP magic bytes (PK..)
+                    if (bytes[0] === 0x50 && bytes[1] === 0x4B) {
+                        currentWorkbook = XLSX.read(arrayBuffer, { type: 'array', cellStyles: true });
+                        renderSpreadsheet(currentWorkbook, 0);
+                    } else {
+                        // Try as text
+                        const decoder = new TextDecoder();
+                        const text = decoder.decode(arrayBuffer);
+                        if (text.includes(',') && text.includes('\n')) {
+                            renderCSV(text);
+                        } else {
+                            source.innerHTML = `<div class="source-loading">Preview not available for this file type</div>`;
+                        }
+                    }
                 }
             } catch (err) {
                 // Escape error message before inserting
