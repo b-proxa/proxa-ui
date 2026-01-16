@@ -256,9 +256,83 @@
         .px.c2 { background: var(--gray-200); }
         .px.c3 { background: var(--gray-600); }
         .px.c4 { background: var(--accent, #4f46e5); }
+        /* Password Gate */
+        .password-gate {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        .password-gate.hidden { display: none; }
+        .password-gate__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .password-gate__form {
+            display: flex;
+            gap: var(--space-2);
+        }
+        .password-gate__input {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-sm);
+            width: 200px;
+        }
+        .password-gate__input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .password-gate__error {
+            color: var(--error);
+            font-size: var(--text-sm);
+            height: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- Password Gate -->
+    <div class="password-gate" id="password-gate">
+        <div class="password-gate__title">Enter Password</div>
+        <div class="password-gate__form">
+            <input type="password" class="password-gate__input" id="password-input" placeholder="Password" autofocus>
+            <button class="btn btn--primary" onclick="checkPassword()">Enter</button>
+        </div>
+        <div class="password-gate__error" id="password-error"></div>
+    </div>
+
+    <script>
+        const SITE_PASSWORD = 'proxa';
+        const STORAGE_KEY = 'proxa-auth';
+
+        function checkPassword() {
+            const input = document.getElementById('password-input');
+            if (input.value === SITE_PASSWORD) {
+                sessionStorage.setItem(STORAGE_KEY, 'true');
+                document.getElementById('password-gate').classList.add('hidden');
+            } else {
+                document.getElementById('password-error').textContent = 'Incorrect password';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        document.getElementById('password-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // Check if already authenticated this session
+        if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
+            document.getElementById('password-gate').classList.add('hidden');
+        }
+    </script>
+
     <!-- Header -->
     <header class="app-header">
         <span class="app-header__logo">Proxa</span>
