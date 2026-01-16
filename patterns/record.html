@@ -1137,13 +1137,32 @@
 
         async function getFileContent(filename) {
             try {
-                const response = await fetch('/api/attachments/' + encodeURIComponent(filename) + '/content');
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.content || '';
+                // Find file in attachments to get its URL
+                const file = state.attachments.find(f => f.name === filename);
+                if (!file || !file.url) return 'File not found';
+
+                const response = await fetch(file.url);
+                if (!response.ok) return 'Failed to fetch file';
+
+                const ext = filename.split('.').pop().toLowerCase();
+
+                if (['xlsx', 'xls'].includes(ext)) {
+                    // Parse Excel file
+                    const arrayBuffer = await response.arrayBuffer();
+                    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                    // Convert first sheet to CSV-like text
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    return XLSX.utils.sheet_to_csv(firstSheet);
+                } else if (ext === 'csv') {
+                    return await response.text();
+                } else {
+                    // For other files, try text
+                    return await response.text();
                 }
-            } catch (e) {}
-            return 'File content not available';
+            } catch (e) {
+                console.error('getFileContent error:', e);
+                return 'File content not available';
+            }
         }
 
         function acceptAISuggestion(fieldId) {
@@ -1296,14 +1315,17 @@
                 };
 
                 fileList.innerHTML = files.map(file => {
-                    const absolutePath = '/' + file.path; // Make path absolute
+                    // Use URL directly if it's already absolute, otherwise make path absolute
+                    const filePath = (file.url && file.url.startsWith('http')) ? file.url :
+                                     (file.path && file.path.startsWith('http')) ? file.path :
+                                     '/' + file.path;
                     // Escape all user data for safe HTML insertion
                     const safeName = escapeHtml(file.name);
                     const safeType = escapeHtml(file.type);
                     const safeSize = escapeHtml(file.size);
                     const safeDate = escapeHtml(file.date);
                     // Store file data as escaped JSON in data attribute (must escape quotes for attribute context)
-                    const fileDataJson = escapeAttr(JSON.stringify({ path: absolutePath, name: file.name, type: file.type, size: file.size, date: file.date }));
+                    const fileDataJson = escapeAttr(JSON.stringify({ path: filePath, name: file.name, type: file.type, size: file.size, date: file.date }));
 
                     return `
                     <div class="file-item file-item--clickable" data-action="view" data-file="${fileDataJson}">
