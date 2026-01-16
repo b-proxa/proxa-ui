@@ -299,10 +299,11 @@
                         </div>
                         <div class="ai-panel" id="ai-panel-description">
                             <div class="field" style="margin-bottom: var(--space-2);">
-                                <label class="field__label">Source</label>
+                                <label class="field__label">Additional Attachment</label>
                                 <select class="select ai-panel__attachment" id="ai-attachment-description" style="max-width: 300px;">
-                                    <option value="">Current table data</option>
+                                    <option value="">None — use table data only</option>
                                 </select>
+                                <div class="field__hint">Table data from Visualization is always included.</div>
                             </div>
                             <textarea class="textarea ai-panel__input" id="ai-prompt-description" placeholder="e.g. Write a summary highlighting revenue growth and key trends..."></textarea>
                             <div class="ai-panel__actions">
@@ -1169,8 +1170,8 @@
                 }
             }
 
-            // For description/title field, include current table data if no attachment selected
-            if ((fieldId === 'description' || fieldId === 'title') && !attachmentName) {
+            // For description/title field, always include current table data
+            if (fieldId === 'description' || fieldId === 'title') {
                 const tableData = {
                     labels: state.chart.labels,
                     series: state.chart.series.map(s => ({
