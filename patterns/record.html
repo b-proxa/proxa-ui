@@ -1464,6 +1464,9 @@
                     const response = await fetch(fileData.path);
                     const text = await response.text();
                     renderCSV(text);
+                } else if (fileData.type === 'pdf') {
+                    // Embed PDF
+                    source.innerHTML = `<iframe src="${fileData.path}" style="width:100%;height:100%;border:none;"></iframe>`;
                 } else {
                     // Unknown type - try to detect from content
                     const response = await fetch(fileData.path);
@@ -1472,19 +1475,16 @@
                     const arrayBuffer = await response.arrayBuffer();
                     const bytes = new Uint8Array(arrayBuffer.slice(0, 4));
 
+                    // Check for PDF magic bytes (%PDF)
+                    if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
+                        source.innerHTML = `<iframe src="${fileData.path}" style="width:100%;height:100%;border:none;"></iframe>`;
+                    }
                     // Check for Excel/ZIP magic bytes (PK..)
-                    if (bytes[0] === 0x50 && bytes[1] === 0x4B) {
+                    else if (bytes[0] === 0x50 && bytes[1] === 0x4B) {
                         currentWorkbook = XLSX.read(arrayBuffer, { type: 'array', cellStyles: true });
                         renderSpreadsheet(currentWorkbook, 0);
                     } else {
-                        // Try as text
-                        const decoder = new TextDecoder();
-                        const text = decoder.decode(arrayBuffer);
-                        if (text.includes(',') && text.includes('\n')) {
-                            renderCSV(text);
-                        } else {
-                            source.innerHTML = `<div class="source-loading">Preview not available for this file type</div>`;
-                        }
+                        source.innerHTML = `<div class="source-loading">Preview not available for this file type</div>`;
                     }
                 }
             } catch (err) {
