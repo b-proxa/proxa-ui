@@ -342,6 +342,10 @@
                             </div>
                             <textarea class="textarea ai-panel__input" id="ai-prompt-visualization" placeholder="e.g. Extract monthly revenue and expenses from the attached file..."></textarea>
                             <div class="ai-panel__actions">
+                                <label style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--gray-600); cursor: pointer; margin-right: auto;">
+                                    <input type="checkbox" id="ai-preset-financial" style="cursor: pointer;">
+                                    Financial Table
+                                </label>
                                 <button class="btn btn--primary btn--sm" id="ai-run-visualization">
                                     <span class="btn-text">Run</span>
                                     <span class="spinner"></span>
@@ -404,17 +408,10 @@
                         <div class="field__label">Presets</div>
                         <div style="display: flex; flex-direction: column; gap: var(--space-2);">
                             <label style="display: flex; align-items: flex-start; gap: var(--space-2); cursor: pointer;">
-                                <input type="checkbox" id="ai-preset-financial" style="margin-top: 3px;">
-                                <div>
-                                    <div style="font-size: var(--text-sm); font-weight: 500;">Financial Table</div>
-                                    <div style="font-size: var(--text-xs); color: var(--gray-500);">Use full years (2021, 2022), format numbers without $ symbols, metrics as rows</div>
-                                </div>
-                            </label>
-                            <label style="display: flex; align-items: flex-start; gap: var(--space-2); cursor: pointer;">
                                 <input type="checkbox" id="ai-preset-quarterly" style="margin-top: 3px;">
                                 <div>
                                     <div style="font-size: var(--text-sm); font-weight: 500;">Quarterly Data</div>
-                                    <div style="font-size: var(--text-xs); color: var(--gray-500);">Format as Q1, Q2, Q3, Q4 with year</div>
+                                    <div style="font-size: var(--text-xs); color: var(--gray-500);">Format time periods as Q1, Q2, Q3, Q4 with year</div>
                                 </div>
                             </label>
                         </div>
