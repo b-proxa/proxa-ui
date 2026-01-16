@@ -1250,13 +1250,14 @@
         }
 
         async function uploadAttachment(file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
             try {
-                const response = await fetch('/api/attachments', {
+                const response = await fetch('/api/attachments?filename=' + encodeURIComponent(file.name), {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': file.type || 'application/octet-stream',
+                        'X-Filename': file.name
+                    },
+                    body: file
                 });
 
                 if (response.ok) {
@@ -1313,7 +1314,7 @@
                 // Attach event delegation for file actions
                 attachFileListeners();
             } catch (err) {
-                fileList.innerHTML = '<div class="file-list__empty" style="padding: var(--space-3); text-align: center; font-size: var(--text-sm); color: var(--gray-400);">Run "npm run dev" to enable attachments</div>';
+                fileList.innerHTML = '<div class="file-list__empty" style="padding: var(--space-3); text-align: center; font-size: var(--text-sm); color: var(--gray-400);">No files yet — drop files above to upload</div>';
             }
         }
 
