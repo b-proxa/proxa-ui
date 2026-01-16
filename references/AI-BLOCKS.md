@@ -1,6 +1,37 @@
-# AI Blocks — MVP Specification
+# AI Blocks — Specification
 
-> Persistent, re-runnable prompts with human-in-the-loop review.
+> Contextual AI skills with human-in-the-loop review.
+
+---
+
+## Conceptual Model
+
+AI Blocks are a **hybrid pattern** between simple prompts and autonomous agents:
+
+| Level | Description |
+|-------|-------------|
+| **Prompt** | Text in → text out. Stateless, no context, no action. |
+| **AI Block** | Context-aware, stateful (chat), can take action, scoped to a purpose. |
+| **Agent** | Autonomous, multi-step, uses tools, decides what to do next. |
+
+### What Makes AI Blocks Different
+
+- **Context-aware**: Knows the field type, current data, attachments, related table values
+- **Stateful**: Chat history enables multi-turn refinement
+- **Action-capable**: Accept button commits output to the target field
+- **Scoped**: Each block has a specific purpose (generate table data, write description, etc.)
+- **Human-in-the-loop**: User approves before anything changes
+
+### The Hybrid Advantage
+
+AI Blocks aren't just a text box that calls an LLM. They're **scoped, contextual skills** that:
+1. Understand what they're helping with (field context)
+2. Can reference relevant data (attachments, current values)
+3. Allow iterative refinement (inline chat)
+4. Take targeted action (write to a specific field)
+5. Stay under user control (approve/reject)
+
+This pattern can be reused anywhere: form fields, content editors, code blocks, email drafts, report sections—anywhere you want AI assistance scoped to a specific output.
 
 ---
 
@@ -14,6 +45,8 @@ AI Blocks let users describe what they want in plain English. The AI suggests co
 2. **Context-aware** - Blocks know their field type and can reference uploaded files
 3. **Human-in-the-loop** - Always review before applying
 4. **Manual execution** - User clicks "Run" (no auto-execution)
+5. **Conversational** - Inline chat for multi-turn refinement
+6. **Reusable** - Save prompts to a library for future use
 
 ---
 
@@ -123,13 +156,20 @@ Existing `[AI]` buttons next to field labels.
 
 ---
 
-## Future (Post-MVP)
+## Implemented Features
+
+- ✅ Multi-turn chat within blocks
+- ✅ Saved prompts library (localStorage)
+- ✅ Context injection (table data, attachments, current values)
+- ✅ Preset instructions (e.g., Financial Table formatting)
+
+## Future
 
 - Streaming responses
-- Prompt templates
-- Run history
-- Multiple attachments
-- Auto-run on file changes
+- Run history / version tracking
+- Multiple attachments per prompt
+- Cross-block context (reference output from another block)
+- Prompt sharing across users
 
 ---
 
