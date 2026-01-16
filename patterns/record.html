@@ -298,6 +298,12 @@
                             </select>
                         </div>
                         <div class="ai-panel" id="ai-panel-description">
+                            <div class="field" style="margin-bottom: var(--space-2);">
+                                <label class="field__label">Source</label>
+                                <select class="select ai-panel__attachment" id="ai-attachment-description" style="max-width: 300px;">
+                                    <option value="">Current table data</option>
+                                </select>
+                            </div>
                             <textarea class="textarea ai-panel__input" id="ai-prompt-description" placeholder="e.g. Write a summary highlighting revenue growth and key trends..."></textarea>
                             <div class="ai-panel__actions">
                                 <button class="btn btn--primary btn--sm" id="ai-run-description">
@@ -1163,8 +1169,8 @@
                 }
             }
 
-            // For description field, include current table data as context
-            if (fieldId === 'description' || fieldId === 'title') {
+            // For description/title field, include current table data if no attachment selected
+            if ((fieldId === 'description' || fieldId === 'title') && !attachmentName) {
                 const tableData = {
                     labels: state.chart.labels,
                     series: state.chart.series.map(s => ({
@@ -1358,6 +1364,7 @@
 
         // Wire up AI events for description panel
         document.getElementById('ai-prompt-description')?.addEventListener('blur', () => saveAIPrompt('description'));
+        document.getElementById('ai-attachment-description')?.addEventListener('change', () => saveAIPrompt('description'));
         document.getElementById('ai-run-description')?.addEventListener('click', () => runAIBlock('description'));
         document.getElementById('ai-accept-description')?.addEventListener('click', () => acceptAISuggestion('description'));
         document.getElementById('ai-reject-description')?.addEventListener('click', () => rejectAISuggestion('description'));
