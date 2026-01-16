@@ -736,6 +736,55 @@
         let chart = null;
 
         // ============================================================
+        // STATE PERSISTENCE
+        // ============================================================
+        const RECORD_STATE_KEY = 'proxa_record_state';
+
+        function saveState() {
+            const saveData = {
+                sectionHeader: state.sectionHeader,
+                title: state.title,
+                description: state.description,
+                chart: {
+                    type: state.chart.type,
+                    labels: state.chart.labels,
+                    series: state.chart.series,
+                    cellComments: state.chart.cellComments
+                },
+                comments: state.comments
+                // Note: attachments are stored in Vercel Blob, not localStorage
+            };
+            try {
+                localStorage.setItem(RECORD_STATE_KEY, JSON.stringify(saveData));
+            } catch (e) {
+                console.warn('Failed to save state:', e);
+            }
+        }
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(RECORD_STATE_KEY);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.sectionHeader) state.sectionHeader = data.sectionHeader;
+                    if (data.title) state.title = data.title;
+                    if (data.description !== undefined) state.description = data.description;
+                    if (data.chart) {
+                        if (data.chart.type) state.chart.type = data.chart.type;
+                        if (data.chart.labels) state.chart.labels = data.chart.labels;
+                        if (data.chart.series) state.chart.series = data.chart.series;
+                        if (data.chart.cellComments) state.chart.cellComments = data.chart.cellComments;
+                    }
+                    if (data.comments) state.comments = data.comments;
+                    return true;
+                }
+            } catch (e) {
+                console.warn('Failed to load state:', e);
+            }
+            return false;
+        }
+
+        // ============================================================
         // UTILITIES
         // ============================================================
         const formatNumber = (num) => num.toLocaleString('en-US');
@@ -869,6 +918,7 @@
                     state.chart.series[si].data[ci] = parseNumber(e.target.value);
                     renderChart();
                     renderVizTable();
+                    saveState();
                     showToast('Data updated');
                 });
             });
@@ -880,6 +930,7 @@
                     state.chart.series[si].color = e.target.value;
                     renderChart();
                     renderDataTable();
+                    saveState();
                     showToast('Color updated');
                 });
             });
@@ -890,6 +941,7 @@
                     const si = parseInt(e.target.dataset.series);
                     state.chart.series[si].name = e.target.value;
                     renderChart();
+                    saveState();
                     showToast('Series renamed');
                 });
             });
@@ -1030,6 +1082,7 @@
             renderComments();
             renderVizNotes();
             closeModal();
+            saveState();
             showToast('Comment saved');
         });
 
@@ -1040,6 +1093,7 @@
             renderComments();
             renderVizNotes();
             closeModal();
+            saveState();
             showToast('Comment deleted');
         });
 
@@ -1052,11 +1106,13 @@
             state.sectionHeader = e.target.value;
             document.getElementById('slide-section-header').textContent = e.target.value;
         });
+        document.getElementById('field-section-header').addEventListener('change', saveState);
 
         document.getElementById('field-title').addEventListener('input', (e) => {
             state.title = e.target.value;
             document.getElementById('slide-title').textContent = e.target.value;
         });
+        document.getElementById('field-title').addEventListener('change', saveState);
 
         // Editable markdown
         const descContainer = document.getElementById('field-description-container');
@@ -1075,6 +1131,7 @@
             state.description = descEditor.value;
             descDisplay.innerHTML = DOMPurify.sanitize(marked.parse(state.description));
             document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+            saveState();
             showToast('Description updated');
         });
 
@@ -1489,6 +1546,7 @@
                 document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(content));
                 showToast('Description updated', 'success');
             }
+            saveState();
             document.getElementById('ai-chat-' + fieldId).style.display = 'none';
             document.getElementById('ai-panel-' + fieldId).classList.remove('open');
             clearChat(fieldId);
@@ -1541,6 +1599,7 @@
         document.getElementById('chart-type-select').addEventListener('change', (e) => {
             state.chart.type = e.target.value;
             renderChart();
+            saveState();
         });
 
         // Layout settings
@@ -2080,6 +2139,7 @@
         // ============================================================
         // INIT
         // ============================================================
+        loadState(); // Load saved state from localStorage
         renderSlide();
         renderChart();
         renderDataTable();
