@@ -336,16 +336,25 @@
                         <div class="ai-panel" id="ai-panel-visualization">
                             <div class="field" style="margin-bottom: var(--space-2);">
                                 <label class="field__label">Attachment</label>
-                                <select class="select" style="max-width: 300px;">
+                                <select class="select ai-panel__attachment" id="ai-attachment-visualization" style="max-width: 300px;">
                                     <option value="">None — describe data manually</option>
                                 </select>
                             </div>
-                            <textarea class="textarea ai-panel__input" placeholder="e.g. Extract monthly revenue and expenses..."></textarea>
+                            <textarea class="textarea ai-panel__input" id="ai-prompt-visualization" placeholder="e.g. Extract monthly revenue and expenses from the attached file..."></textarea>
                             <div class="ai-panel__actions">
-                                <button class="btn btn--primary btn--sm">
-                                    <span class="btn-text">Extract</span>
+                                <button class="btn btn--primary btn--sm" id="ai-run-visualization">
+                                    <span class="btn-text">Run</span>
                                     <span class="spinner"></span>
                                 </button>
+                                <span class="ai-panel__status" id="ai-status-visualization"></span>
+                            </div>
+                            <div class="ai-panel__suggestion" id="ai-suggestion-visualization" style="display: none;">
+                                <div class="ai-panel__suggestion-header">Suggestion</div>
+                                <div class="ai-panel__suggestion-content" id="ai-suggestion-content-visualization"></div>
+                                <div class="ai-panel__suggestion-actions">
+                                    <button class="btn btn--sm" id="ai-reject-visualization">Reject</button>
+                                    <button class="btn btn--primary btn--sm" id="ai-accept-visualization">Accept</button>
+                                </div>
                             </div>
                         </div>
                         <div id="data-table-container"></div>
@@ -1009,8 +1018,165 @@
             btn.addEventListener('click', () => {
                 const panel = document.getElementById('ai-panel-' + btn.dataset.ai);
                 panel.classList.toggle('open');
+                if (panel.classList.contains('open')) {
+                    populateAIAttachments();
+                    loadAIPrompt(btn.dataset.ai);
+                }
             });
         });
+
+        // AI Blocks functionality
+        const AI_STORAGE_KEY = 'proxa-ai-blocks';
+
+        function loadAIPrompt(fieldId) {
+            const stored = JSON.parse(localStorage.getItem(AI_STORAGE_KEY) || '{}');
+            const prompt = document.getElementById('ai-prompt-' + fieldId);
+            const attachment = document.getElementById('ai-attachment-' + fieldId);
+            if (prompt && stored[fieldId]?.prompt) {
+                prompt.value = stored[fieldId].prompt;
+            }
+            if (attachment && stored[fieldId]?.attachment) {
+                attachment.value = stored[fieldId].attachment;
+            }
+        }
+
+        function saveAIPrompt(fieldId) {
+            const stored = JSON.parse(localStorage.getItem(AI_STORAGE_KEY) || '{}');
+            const prompt = document.getElementById('ai-prompt-' + fieldId);
+            const attachment = document.getElementById('ai-attachment-' + fieldId);
+            stored[fieldId] = {
+                prompt: prompt?.value || '',
+                attachment: attachment?.value || ''
+            };
+            localStorage.setItem(AI_STORAGE_KEY, JSON.stringify(stored));
+            const status = document.getElementById('ai-status-' + fieldId);
+            if (status) {
+                status.textContent = 'Saved';
+                status.className = 'ai-panel__status saved';
+                setTimeout(() => status.textContent = '', 2000);
+            }
+        }
+
+        function populateAIAttachments() {
+            const selects = document.querySelectorAll('.ai-panel__attachment');
+            selects.forEach(select => {
+                const current = select.value;
+                select.innerHTML = '<option value="">None — describe data manually</option>';
+                state.attachments.forEach(file => {
+                    const opt = document.createElement('option');
+                    opt.value = file.name;
+                    opt.textContent = file.name;
+                    select.appendChild(opt);
+                });
+                if (current) select.value = current;
+            });
+        }
+
+        async function runAIBlock(fieldId) {
+            const prompt = document.getElementById('ai-prompt-' + fieldId)?.value;
+            const attachmentName = document.getElementById('ai-attachment-' + fieldId)?.value;
+            const runBtn = document.getElementById('ai-run-' + fieldId);
+            const suggestionDiv = document.getElementById('ai-suggestion-' + fieldId);
+            const contentDiv = document.getElementById('ai-suggestion-content-' + fieldId);
+            const status = document.getElementById('ai-status-' + fieldId);
+
+            if (!prompt) {
+                showToast('Enter a prompt first', 'error');
+                return;
+            }
+
+            // Show loading
+            runBtn.classList.add('loading');
+            status.textContent = 'Generating...';
+            status.className = 'ai-panel__status';
+
+            // Build context
+            const context = {
+                fieldType: fieldId === 'visualization' ? 'data-table' : 'text',
+                fieldName: fieldId.charAt(0).toUpperCase() + fieldId.slice(1)
+            };
+
+            // Get attachment content if selected
+            if (attachmentName) {
+                const file = state.attachments.find(f => f.name === attachmentName);
+                if (file) {
+                    context.attachment = {
+                        name: file.name,
+                        content: await getFileContent(file.name)
+                    };
+                }
+            }
+
+            try {
+                const response = await fetch('/api/ai/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, context })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    contentDiv.textContent = data.suggestion;
+                    suggestionDiv.style.display = 'block';
+                    status.textContent = '';
+                } else {
+                    showToast('AI error: ' + data.error, 'error');
+                    status.textContent = 'Error';
+                    status.className = 'ai-panel__status error';
+                }
+            } catch (err) {
+                showToast('Failed to connect to AI', 'error');
+                status.textContent = 'Error';
+                status.className = 'ai-panel__status error';
+            } finally {
+                runBtn.classList.remove('loading');
+            }
+        }
+
+        async function getFileContent(filename) {
+            try {
+                const response = await fetch('/api/attachments/' + encodeURIComponent(filename) + '/content');
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.content || '';
+                }
+            } catch (e) {}
+            return 'File content not available';
+        }
+
+        function acceptAISuggestion(fieldId) {
+            const content = document.getElementById('ai-suggestion-content-' + fieldId)?.textContent;
+            if (fieldId === 'visualization') {
+                // Parse as table data
+                showToast('Data applied', 'success');
+            } else if (fieldId === 'title') {
+                state.title = content;
+                document.getElementById('title-editor').value = content;
+                document.getElementById('slide-title').textContent = content;
+                showToast('Title updated', 'success');
+            } else if (fieldId === 'description') {
+                state.description = content;
+                document.getElementById('desc-editor').value = content;
+                document.getElementById('desc-display').innerHTML = DOMPurify.sanitize(marked.parse(content));
+                document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(content));
+                showToast('Description updated', 'success');
+            }
+            document.getElementById('ai-suggestion-' + fieldId).style.display = 'none';
+            document.getElementById('ai-panel-' + fieldId).classList.remove('open');
+        }
+
+        function rejectAISuggestion(fieldId) {
+            document.getElementById('ai-suggestion-' + fieldId).style.display = 'none';
+            showToast('Suggestion rejected');
+        }
+
+        // Wire up AI events for visualization panel
+        document.getElementById('ai-prompt-visualization')?.addEventListener('blur', () => saveAIPrompt('visualization'));
+        document.getElementById('ai-attachment-visualization')?.addEventListener('change', () => saveAIPrompt('visualization'));
+        document.getElementById('ai-run-visualization')?.addEventListener('click', () => runAIBlock('visualization'));
+        document.getElementById('ai-accept-visualization')?.addEventListener('click', () => acceptAISuggestion('visualization'));
+        document.getElementById('ai-reject-visualization')?.addEventListener('click', () => rejectAISuggestion('visualization'));
 
         // View tabs
         document.querySelectorAll('#view-tabs .tab').forEach(tab => {
