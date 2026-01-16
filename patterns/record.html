@@ -400,6 +400,25 @@
                             <option value="executive">Executive Summary</option>
                         </select>
                     </div>
+                    <div class="field" style="margin-top: var(--space-4);">
+                        <div class="field__label">Presets</div>
+                        <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                            <label style="display: flex; align-items: flex-start; gap: var(--space-2); cursor: pointer;">
+                                <input type="checkbox" id="ai-preset-financial" style="margin-top: 3px;">
+                                <div>
+                                    <div style="font-size: var(--text-sm); font-weight: 500;">Financial Table</div>
+                                    <div style="font-size: var(--text-xs); color: var(--gray-500);">Use full years (2021, 2022), format numbers without $ symbols, metrics as rows</div>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: flex-start; gap: var(--space-2); cursor: pointer;">
+                                <input type="checkbox" id="ai-preset-quarterly" style="margin-top: 3px;">
+                                <div>
+                                    <div style="font-size: var(--text-sm); font-weight: 500;">Quarterly Data</div>
+                                    <div style="font-size: var(--text-xs); color: var(--gray-500);">Format as Q1, Q2, Q3, Q4 with year</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1101,6 +1120,32 @@
                 fieldType: fieldId === 'visualization' ? 'data-table' : 'text',
                 fieldName: fieldId.charAt(0).toUpperCase() + fieldId.slice(1)
             };
+
+            // Add AI settings
+            const customContext = document.getElementById('ai-context')?.value || '';
+            const tone = document.getElementById('ai-tone')?.value || 'professional';
+            if (customContext) context.customInstructions = customContext;
+            context.tone = tone;
+
+            // Add preset instructions
+            const presetInstructions = [];
+            if (document.getElementById('ai-preset-financial')?.checked) {
+                presetInstructions.push(
+                    'Format as a financial table:',
+                    '- Use full years (2021, 2022, 2023, 2024) as column headers',
+                    '- Output numbers without currency symbols (use 2188455 not $2,188,455)',
+                    '- Put metrics (Revenue, Expenses, Profit) as rows and time periods as columns',
+                    '- First column header should be "Metric"'
+                );
+            }
+            if (document.getElementById('ai-preset-quarterly')?.checked) {
+                presetInstructions.push(
+                    'Format time periods as quarters: Q1 2024, Q2 2024, etc.'
+                );
+            }
+            if (presetInstructions.length > 0) {
+                context.presetInstructions = presetInstructions.join('\n');
+            }
 
             // Get attachment content if selected
             if (attachmentName) {

@@ -52,18 +52,44 @@ function buildSystemPrompt(context) {
     return 'You are an AI assistant. Respond concisely and helpfully.';
   }
 
-  return `You are an AI assistant helping with data management in a business application.
+  const parts = [
+    `You are an AI assistant helping with data management in a business application.`,
+    ``,
+    `Field type: ${context.fieldType || 'text'}`,
+    `Field name: ${context.fieldName || 'Content'}`,
+    `Tone: ${context.tone || 'professional'}`
+  ];
 
-Field type: ${context.fieldType || 'text'}
-Field name: ${context.fieldName || 'Content'}
+  // Add preset instructions if provided
+  if (context.presetInstructions) {
+    parts.push('');
+    parts.push('IMPORTANT formatting requirements:');
+    parts.push(context.presetInstructions);
+  }
 
-${context.attachment ?
-  `Available reference data:\n--- ${context.attachment.name} ---\n${context.attachment.content}` :
-  'No attachments provided.'}
+  // Add custom instructions if provided
+  if (context.customInstructions) {
+    parts.push('');
+    parts.push('Additional instructions:');
+    parts.push(context.customInstructions);
+  }
 
-${context.currentContent ?
-  `Current content:\n${JSON.stringify(context.currentContent, null, 2)}` :
-  'Field is currently empty.'}
+  // Add attachment data
+  parts.push('');
+  if (context.attachment) {
+    parts.push(`Available reference data:\n--- ${context.attachment.name} ---\n${context.attachment.content}`);
+  } else {
+    parts.push('No attachments provided.');
+  }
 
-Respond with ONLY the data/content requested, formatted appropriately for the field type. Do not include explanations unless asked.`;
+  // Add current content if any
+  if (context.currentContent) {
+    parts.push('');
+    parts.push(`Current content:\n${JSON.stringify(context.currentContent, null, 2)}`);
+  }
+
+  parts.push('');
+  parts.push('Respond with ONLY the data/content requested, formatted appropriately for the field type. Do not include explanations unless asked.');
+
+  return parts.join('\n');
 }
