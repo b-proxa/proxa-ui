@@ -1126,13 +1126,17 @@
             descEditor.focus();
         });
 
-        descEditor.addEventListener('blur', () => {
-            descContainer.classList.remove('editing');
+        // Live preview as user types
+        descEditor.addEventListener('input', () => {
             state.description = descEditor.value;
             descDisplay.innerHTML = DOMPurify.sanitize(marked.parse(state.description));
             document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+        });
+
+        // Save state on blur
+        descEditor.addEventListener('blur', () => {
+            descContainer.classList.remove('editing');
             saveState();
-            showToast('Description updated');
         });
 
         // AI panel toggles
