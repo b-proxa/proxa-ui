@@ -38,10 +38,17 @@ module.exports = async function handler(req, res) {
   // POST - upload file
   if (req.method === 'POST') {
     try {
-      const filename = req.query.filename || req.headers['x-filename'] || 'file-' + Date.now();
+      // Get filename from query, header, or generate fallback
+      let filename = req.query.filename || req.headers['x-filename'] || 'file-' + Date.now();
+
+      // Decode if URL encoded
+      try {
+        filename = decodeURIComponent(filename);
+      } catch (e) {}
 
       const blob = await put(filename, req, {
         access: 'public',
+        addRandomSuffix: false, // Keep original filename
       });
 
       return res.json({

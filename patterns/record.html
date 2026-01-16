@@ -670,7 +670,8 @@
             },
             comments: [
                 { text: 'Great progress on cost management this quarter.', author: 'Finance Team', time: 'Dec 1' }
-            ]
+            ],
+            attachments: []
         };
 
         let chart = null;
@@ -1275,6 +1276,9 @@
             try {
                 const response = await fetch('/api/attachments');
                 const files = await response.json();
+
+                // Store in state for AI dropdown
+                state.attachments = files;
 
                 if (files.length === 0) {
                     fileList.innerHTML = '<div class="file-list__empty" style="padding: var(--space-3); text-align: center; font-size: var(--text-sm); color: var(--gray-400);">No attachments yet</div>';
