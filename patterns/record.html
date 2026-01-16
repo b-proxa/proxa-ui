@@ -291,10 +291,10 @@
                         <div class="field__label">
                             Content
                             <button class="btn-ai" data-ai="description">AI</button>
-                            <select class="ai-size-select" style="margin-left: var(--space-2);">
-                                <option value="small">Small</option>
+                            <select class="ai-size-select" id="ai-size-description" style="margin-left: var(--space-2);">
+                                <option value="short">Short</option>
                                 <option value="medium" selected>Medium</option>
-                                <option value="large">Large</option>
+                                <option value="long">Long</option>
                             </select>
                         </div>
                         <div class="ai-panel" id="ai-panel-description">
@@ -1263,6 +1263,10 @@
             const tone = document.getElementById('ai-tone')?.value || 'professional';
             if (customContext) context.customInstructions = customContext;
             context.tone = tone;
+
+            // Add response length preference
+            const responseLength = document.getElementById('ai-size-' + fieldId)?.value || 'medium';
+            context.responseLength = responseLength;
 
             // Add preset instructions
             const presetInstructions = [];

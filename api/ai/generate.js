@@ -61,12 +61,19 @@ function buildSystemPrompt(context) {
     return 'You are an AI assistant. Respond concisely and helpfully.';
   }
 
+  const lengthGuide = {
+    short: 'Keep response brief: 1-2 sentences or a few bullet points.',
+    medium: 'Provide a balanced response: a short paragraph or several bullet points.',
+    long: 'Provide a detailed response: multiple paragraphs with thorough explanation.'
+  };
+
   const parts = [
     `You are an AI assistant helping with data management in a business application.`,
     ``,
     `Field type: ${context.fieldType || 'text'}`,
     `Field name: ${context.fieldName || 'Content'}`,
-    `Tone: ${context.tone || 'professional'}`
+    `Tone: ${context.tone || 'professional'}`,
+    `Response length: ${lengthGuide[context.responseLength] || lengthGuide.medium}`
   ];
 
   // Add preset instructions if provided
