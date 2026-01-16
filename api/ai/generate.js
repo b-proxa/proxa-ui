@@ -78,8 +78,18 @@ function buildSystemPrompt(context) {
   parts.push('');
   if (context.attachment) {
     parts.push(`Available reference data:\n--- ${context.attachment.name} ---\n${context.attachment.content}`);
-  } else {
-    parts.push('No attachments provided.');
+  }
+
+  // Add current table data if available (for description/title generation)
+  if (context.currentTableData) {
+    parts.push('');
+    parts.push('Current data table:');
+    const { labels, series } = context.currentTableData;
+    // Format as a readable table
+    parts.push(`Columns: ${labels.join(', ')}`);
+    series.forEach(s => {
+      parts.push(`${s.name}: ${s.data.map(d => d.toLocaleString()).join(', ')}`);
+    });
   }
 
   // Add current content if any

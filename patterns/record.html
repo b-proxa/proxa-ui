@@ -1163,6 +1163,18 @@
                 }
             }
 
+            // For description field, include current table data as context
+            if (fieldId === 'description' || fieldId === 'title') {
+                const tableData = {
+                    labels: state.chart.labels,
+                    series: state.chart.series.map(s => ({
+                        name: s.name,
+                        data: s.data
+                    }))
+                };
+                context.currentTableData = tableData;
+            }
+
             try {
                 const response = await fetch('/api/ai/generate', {
                     method: 'POST',
