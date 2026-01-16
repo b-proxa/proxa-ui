@@ -1185,13 +1185,6 @@
             return { headers, rows: dataRows };
         }
 
-        function parseNumber(str) {
-            if (!str) return 0;
-            // Remove $, commas, and other non-numeric chars except decimal and minus
-            const cleaned = str.replace(/[^0-9.-]/g, '');
-            return parseFloat(cleaned) || 0;
-        }
-
         const DEFAULT_COLORS = ['#4a6fa5', '#6b8f71', '#c9a227', '#b54848', '#7c5295', '#2d9cdb'];
 
         function applyAITableData(content) {
@@ -1203,8 +1196,14 @@
 
             const { headers, rows } = parsed;
 
+            // Parse currency strings like "$2,188,455" to numbers
+            const parseCurrency = (str) => {
+                if (!str) return 0;
+                const cleaned = str.replace(/[^0-9.-]/g, '');
+                return parseFloat(cleaned) || 0;
+            };
+
             // Detect orientation: if first column looks like years/dates, transpose
-            // First column values from data rows
             const firstColValues = rows.map(r => r[0]);
             const looksLikeTimeColumn = firstColValues.every(v =>
                 /^\d{4}$/.test(v) || /^\d{4}[-\/]\d{2}/.test(v) || /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i.test(v)
@@ -1212,8 +1211,6 @@
 
             if (looksLikeTimeColumn) {
                 // First column is time periods, other columns are metrics
-                // Labels = first column values (2021, 2022, etc.)
-                // Series = other columns (Revenue, Expenses, EBITDA)
                 const newLabels = firstColValues;
                 const newSeries = [];
 
@@ -1223,7 +1220,7 @@
                         s.name.toLowerCase() === metricName.toLowerCase()
                     );
                     const color = existingSeries?.color || DEFAULT_COLORS[(col - 1) % DEFAULT_COLORS.length];
-                    const data = rows.map(row => parseNumber(row[col]));
+                    const data = rows.map(row => parseCurrency(row[col]));
                     newSeries.push({ name: metricName, color, data });
                 }
 
@@ -1231,8 +1228,6 @@
                 state.chart.series = newSeries;
             } else {
                 // First column is metric names, other columns are time periods
-                // Labels = headers (excluding first)
-                // Series = rows
                 const newLabels = headers.slice(1);
                 const newSeries = [];
 
@@ -1242,7 +1237,7 @@
                         s.name.toLowerCase() === metricName.toLowerCase()
                     );
                     const color = existingSeries?.color || DEFAULT_COLORS[idx % DEFAULT_COLORS.length];
-                    const data = row.slice(1).map(parseNumber);
+                    const data = row.slice(1).map(parseCurrency);
                     newSeries.push({ name: metricName, color, data });
                 });
 
