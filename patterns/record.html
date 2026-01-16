@@ -811,9 +811,16 @@
         // RENDER FUNCTIONS
         // ============================================================
         function renderSlide() {
+            // Update slide preview
             document.getElementById('slide-section-header').textContent = state.sectionHeader;
             document.getElementById('slide-title').textContent = state.title;
             document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+
+            // Update form fields
+            document.getElementById('field-section-header').value = state.sectionHeader;
+            document.getElementById('field-title').value = state.title;
+            document.getElementById('field-description').value = state.description;
+            document.getElementById('field-description-display').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
         }
 
         function renderChart() {
