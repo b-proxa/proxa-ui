@@ -298,13 +298,21 @@
                             </select>
                         </div>
                         <div class="ai-panel" id="ai-panel-description">
-                            <textarea class="textarea ai-panel__input" placeholder="Describe what to write..."></textarea>
+                            <textarea class="textarea ai-panel__input" id="ai-prompt-description" placeholder="e.g. Write a summary highlighting revenue growth and key trends..."></textarea>
                             <div class="ai-panel__actions">
-                                <button class="btn btn--primary btn--sm">
-                                    <span class="btn-text">Generate</span>
+                                <button class="btn btn--primary btn--sm" id="ai-run-description">
+                                    <span class="btn-text">Run</span>
                                     <span class="spinner"></span>
                                 </button>
-                                <button class="btn btn--sm">Save Prompt</button>
+                                <span class="ai-panel__status" id="ai-status-description"></span>
+                            </div>
+                            <div class="ai-panel__suggestion" id="ai-suggestion-description" style="display: none;">
+                                <div class="ai-panel__suggestion-header">Suggestion</div>
+                                <div class="ai-panel__suggestion-content" id="ai-suggestion-content-description"></div>
+                                <div class="ai-panel__suggestion-actions">
+                                    <button class="btn btn--sm" id="ai-reject-description">Reject</button>
+                                    <button class="btn btn--primary btn--sm" id="ai-accept-description">Accept</button>
+                                </div>
                             </div>
                         </div>
                         <div class="editable-markdown" id="field-description-container">
@@ -1315,8 +1323,8 @@
                 showToast('Title updated', 'success');
             } else if (fieldId === 'description') {
                 state.description = content;
-                document.getElementById('desc-editor').value = content;
-                document.getElementById('desc-display').innerHTML = DOMPurify.sanitize(marked.parse(content));
+                document.getElementById('field-description').value = content;
+                document.getElementById('field-description-display').innerHTML = DOMPurify.sanitize(marked.parse(content));
                 document.getElementById('slide-description').innerHTML = DOMPurify.sanitize(marked.parse(content));
                 showToast('Description updated', 'success');
             }
@@ -1335,6 +1343,12 @@
         document.getElementById('ai-run-visualization')?.addEventListener('click', () => runAIBlock('visualization'));
         document.getElementById('ai-accept-visualization')?.addEventListener('click', () => acceptAISuggestion('visualization'));
         document.getElementById('ai-reject-visualization')?.addEventListener('click', () => rejectAISuggestion('visualization'));
+
+        // Wire up AI events for description panel
+        document.getElementById('ai-prompt-description')?.addEventListener('blur', () => saveAIPrompt('description'));
+        document.getElementById('ai-run-description')?.addEventListener('click', () => runAIBlock('description'));
+        document.getElementById('ai-accept-description')?.addEventListener('click', () => acceptAISuggestion('description'));
+        document.getElementById('ai-reject-description')?.addEventListener('click', () => rejectAISuggestion('description'));
 
         // View tabs
         document.querySelectorAll('#view-tabs .tab').forEach(tab => {
