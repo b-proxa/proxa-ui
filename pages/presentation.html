@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        .presentation-layout {
+            display: flex;
+            height: calc(100vh - 52px);
+            overflow: hidden;
+        }
+
+        .presentation-sidebar {
+            width: 180px;
+            background: var(--gray-50);
+            border-right: var(--border);
+            padding: var(--space-3);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .thumbnail-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .thumbnail {
+            aspect-ratio: 16 / 9;
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            padding: var(--space-2);
+            font-size: 10px;
+            color: var(--gray-600);
+            overflow: hidden;
+        }
+
+        .thumbnail:hover {
+            border-color: var(--accent);
+        }
+
+        .thumbnail.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-light);
+        }
+
+        .thumbnail__title {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .presentation-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--gray-100);
+            padding: var(--space-4);
+            overflow: hidden;
+        }
+
+        .slide-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            display: grid;
+            grid-template-columns: 35% 1fr;
+            grid-template-rows: auto 1fr;
+            overflow: hidden;
+        }
+
+        .slide__header {
+            grid-column: 1 / -1;
+            padding: var(--space-4) var(--space-5);
+            border-bottom: var(--border);
+        }
+
+        .slide__section {
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-400);
+            margin-bottom: var(--space-1);
+        }
+
+        .slide__title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+        }
+
+        .slide__left {
+            padding: var(--space-4);
+            border-right: var(--border);
+            overflow-y: auto;
+        }
+
+        .slide__right {
+            padding: var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-50);
+        }
+
+        .slide__description {
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            color: var(--gray-600);
+        }
+
+        .slide__viz-placeholder {
+            text-align: center;
+            color: var(--gray-400);
+        }
+
+        .presentation-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+        }
+
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border: var(--border);
+            border-radius: var(--radius-sm);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--gray-600);
+        }
+
+        .nav-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            min-width: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <span class="app-header__logo">Proxa</span>
+        <nav class="app-tabs">
+            <a href="../index.html" class="app-tab">Style Guide</a>
+            <a href="../patterns/record.html" class="app-tab">Record</a>
+            <a href="dashboard.html" class="app-tab">Dashboard</a>
+            <a href="presentation.html" class="app-tab active">Presentation</a>
+        </nav>
+    </header>
+
+    <div class="presentation-layout">
+        <aside class="presentation-sidebar">
+            <div class="thumbnail-list" id="thumbnails"></div>
+        </aside>
+
+        <main class="presentation-main">
+            <div class="slide-viewport">
+                <div class="slide-container" id="slide">
+                    <!-- Slide content inserted by JS -->
+                </div>
+            </div>
+
+            <div class="presentation-controls">
+                <button class="nav-btn" id="prev-btn" onclick="prevSlide()">←</button>
+                <span class="slide-counter" id="counter">1 of 3</span>
+                <button class="nav-btn" id="next-btn" onclick="nextSlide()">→</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                section: 'Financial Overview',
+                title: 'Q4 Revenue Performance',
+                description: 'Revenue exceeded targets by 12% in Q4, driven primarily by strong performance in the Enterprise segment. The APAC region showed particularly strong growth at 23% YoY.',
+                viz: 'Line Chart: Revenue Trend'
+            },
+            {
+                section: 'Cost Analysis',
+                title: 'Operating Expenses Breakdown',
+                description: 'Operating expenses remained flat compared to Q3, with reductions in marketing spend offset by increased R&D investment. Headcount grew by 8% to support product expansion.',
+                viz: 'Bar Chart: Expense Categories'
+            },
+            {
+                section: 'Regional Performance',
+                title: 'Revenue by Geography',
+                description: 'North America continues to represent 45% of total revenue. EMEA grew 15% YoY while APAC emerged as the fastest-growing region with 23% growth.',
+                viz: 'Table: Regional Breakdown'
+            }
+        ];
+
+        let currentSlide = 0;
+
+        function renderThumbnails() {
+            const container = document.getElementById('thumbnails');
+            container.innerHTML = slides.map((slide, i) => `
+                <div class="thumbnail ${i === currentSlide ? 'active' : ''}" onclick="goToSlide(${i})">
+                    <div class="thumbnail__title">${slide.title}</div>
+                    <div>${slide.section}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderSlide() {
+            const slide = slides[currentSlide];
+            document.getElementById('slide').innerHTML = `
+                <div class="slide__header">
+                    <div class="slide__section">${slide.section}</div>
+                    <h1 class="slide__title">${slide.title}</h1>
+                </div>
+                <div class="slide__left">
+                    <p class="slide__description">${slide.description}</p>
+                </div>
+                <div class="slide__right">
+                    <div class="slide__viz-placeholder">
+                        <div style="font-size: 48px; margin-bottom: var(--space-2);">📊</div>
+                        <div>${slide.viz}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('counter').textContent = `${currentSlide + 1} of ${slides.length}`;
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === slides.length - 1;
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            renderThumbnails();
+            renderSlide();
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) goToSlide(currentSlide - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1);
+        }
+
+        // Initialize
+        renderThumbnails();
+        renderSlide();
+    </script>
+</body>
+</html>
