@@ -28,9 +28,7 @@
         .slide { grid-template-columns: var(--col-split, 35%) 6px 1fr; }
         .slide__title h1 { margin: 0; }
 
-        /* Wide format (16:4) - reduce font sizes only, let flexbox handle responsive layout */
-        .slide.slide--wide .slide__title h1 { font-size: var(--text-base); }
-        .slide.slide--wide .slide__section-header { font-size: 10px; }
+        /* Wide format (16:4) - header stays same, only description text adjusts */
         .slide.slide--wide .markdown { font-size: 11px; line-height: 1.3; }
         .slide.slide--wide .markdown h1,
         .slide.slide--wide .markdown h2,
