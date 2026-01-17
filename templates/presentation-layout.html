@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation Layout Template</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        /* Template-specific layout styles */
+        body {
+            background: var(--gray-100);
+            margin: 0;
+            padding: 0;
+        }
+
+        .template-container {
+            min-height: 100vh;
+            padding: var(--space-6);
+        }
+
+        /* Presentation wrapper */
+        .presentation {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+
+        /* Slide container - 16:9 aspect ratio */
+        .slide {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            aspect-ratio: 16 / 9;
+            padding: var(--space-6);
+            display: grid;
+            grid-template-columns: 35% 1fr;
+            grid-template-rows: auto 1fr;
+            gap: var(--space-5);
+            overflow: hidden;
+        }
+
+        /* Slide header spans both columns */
+        .slide__header {
+            grid-column: 1 / -1;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: var(--space-3);
+        }
+
+        .slide__title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+
+        .slide__subtitle {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+
+        /* Left column: Description zone */
+        .slide__description {
+            padding-right: var(--space-4);
+            border-right: 1px solid var(--gray-200);
+            overflow-y: auto;
+        }
+
+        /* Right column: Visualization zone */
+        .slide__visualization {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+        }
+
+        /* Placeholder styles */
+        .drop-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            background: var(--gray-50);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: var(--text-sm);
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .template-container {
+                padding: var(--space-4);
+            }
+
+            .slide {
+                aspect-ratio: auto;
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr;
+                padding: var(--space-4);
+            }
+
+            .slide__description {
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+                padding-right: 0;
+                padding-bottom: var(--space-4);
+            }
+
+            .slide__visualization {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="template-container">
+        <div class="presentation">
+
+            <!-- SLIDE 1: Title/Overview -->
+            <div class="slide">
+                <header class="slide__header">
+                    <h1 class="slide__title">Slide Title Goes Here</h1>
+                    <p class="slide__subtitle">Optional subtitle or date</p>
+                </header>
+
+                <div class="slide__description">
+                    <div class="drop-zone">
+                        DROP: Markdown content<br>
+                        OR Text description<br>
+                        OR Key points list<br>
+                        <br>
+                        Use .markdown class for formatted content
+                    </div>
+                </div>
+
+                <div class="slide__visualization">
+                    <div class="drop-zone">
+                        DROP: Chart (line, bar, area)<br>
+                        OR Waterfall<br>
+                        OR Variance bars<br>
+                        OR Metric blocks<br>
+                        OR Financial table
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: Data detail -->
+            <div class="slide">
+                <header class="slide__header">
+                    <h1 class="slide__title">Second Slide Title</h1>
+                    <p class="slide__subtitle">Supporting information</p>
+                </header>
+
+                <div class="slide__description">
+                    <div class="drop-zone">
+                        DROP: Analysis notes<br>
+                        OR Commentary<br>
+                        OR Insights
+                    </div>
+                </div>
+
+                <div class="slide__visualization">
+                    <div class="drop-zone">
+                        DROP: Visualization<br>
+                        OR Table<br>
+                        OR Comparison
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Add more slides as needed -->
+            <div class="slide">
+                <header class="slide__header">
+                    <h1 class="slide__title">Third Slide Title</h1>
+                    <p class="slide__subtitle">Additional context</p>
+                </header>
+
+                <div class="slide__description">
+                    <div class="drop-zone">
+                        DROP: Content here
+                    </div>
+                </div>
+
+                <div class="slide__visualization">
+                    <div class="drop-zone">
+                        DROP: Visualization here
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        // Add interactive elements:
+        // import { drawSparkline } from '../js/sparkline.js';
+        // For charts, import Chart.js and configure
+    </script>
+</body>
+</html>

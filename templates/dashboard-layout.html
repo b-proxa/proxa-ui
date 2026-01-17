@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Layout Template</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        /* Template-specific layout styles */
+        body {
+            background: var(--gray-50);
+            margin: 0;
+            padding: 0;
+        }
+
+        .template-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header zone */
+        .template-header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: var(--space-4) var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Main content area */
+        .template-main {
+            flex: 1;
+            padding: var(--space-6);
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Metrics row - for KPI cards */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        /* Main content grid - 2 columns on desktop */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .content-primary {
+            min-width: 0; /* Prevent grid blowout */
+        }
+
+        .content-sidebar {
+            min-width: 0;
+        }
+
+        /* Full width content section */
+        .content-full {
+            margin-bottom: var(--space-6);
+        }
+
+        /* Placeholder styles to show zones */
+        .drop-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            background: white;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: var(--text-sm);
+            text-align: center;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .template-main {
+                padding: var(--space-4);
+            }
+
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="template-container">
+        <!-- HEADER ZONE: Navigation, branding, user menu -->
+        <header class="template-header">
+            <div class="drop-zone">
+                DROP: Header component with navigation and branding
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="template-main">
+
+            <!-- METRICS ROW: KPI cards, metric blocks -->
+            <section class="metrics-row">
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (Revenue, Profit, etc.)
+                </div>
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (with sparkline)
+                </div>
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (YoY comparison)
+                </div>
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (trend indicator)
+                </div>
+            </section>
+
+            <!-- MAIN CONTENT GRID: Primary content + sidebar -->
+            <div class="content-grid">
+                <!-- Primary content area -->
+                <div class="content-primary">
+                    <div class="drop-zone" style="min-height: 400px;">
+                        DROP: Chart (line, bar, area)<br>
+                        OR Data Table<br>
+                        OR Waterfall Chart<br>
+                        OR Variance Bars
+                    </div>
+                </div>
+
+                <!-- Sidebar: Activity, shortcuts, quick actions -->
+                <aside class="content-sidebar">
+                    <div class="drop-zone">
+                        DROP: Hub Cards<br>
+                        OR Recent Activity<br>
+                        OR Quick Actions
+                    </div>
+                </aside>
+            </div>
+
+            <!-- FULL WIDTH SECTION: Tables, detailed data -->
+            <section class="content-full">
+                <div class="drop-zone">
+                    DROP: Financial Table<br>
+                    OR Data Table<br>
+                    OR Activity Log
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module">
+        // Add any interactive elements here
+        // Import modules as needed:
+        // import { initDropdowns } from '../js/dropdown.js';
+    </script>
+</body>
+</html>

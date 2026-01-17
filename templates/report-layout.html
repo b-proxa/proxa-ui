@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Layout Template</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        /* Template-specific layout styles */
+        body {
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .template-container {
+            min-height: 100vh;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-6);
+        }
+
+        /* Report header */
+        .report-header {
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .report-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .report-meta {
+            display: flex;
+            gap: var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+        }
+
+        .report-meta__item {
+            display: flex;
+            gap: var(--space-1);
+        }
+
+        /* Report sections */
+        .report-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .report-section__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .report-section__content {
+            margin-bottom: var(--space-4);
+        }
+
+        /* Two-column layout for metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Placeholder styles */
+        .drop-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            background: var(--gray-50);
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: var(--text-sm);
+            text-align: center;
+        }
+
+        .drop-zone--large {
+            min-height: 300px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .template-container {
+                padding: var(--space-6) var(--space-4);
+            }
+
+            .report-title {
+                font-size: 1.5rem;
+            }
+
+            .report-meta {
+                flex-direction: column;
+                gap: var(--space-2);
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .template-container {
+                padding: 0;
+            }
+
+            .drop-zone {
+                border: 1px solid var(--gray-300);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="template-container">
+
+        <!-- REPORT HEADER -->
+        <header class="report-header">
+            <h1 class="report-title">Report Title</h1>
+            <div class="report-meta">
+                <div class="report-meta__item">
+                    <strong>Period:</strong>
+                    <span>Q4 2024</span>
+                </div>
+                <div class="report-meta__item">
+                    <strong>Date:</strong>
+                    <span>January 17, 2026</span>
+                </div>
+                <div class="report-meta__item">
+                    <strong>Prepared by:</strong>
+                    <span>Finance Team</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- EXECUTIVE SUMMARY -->
+        <section class="report-section">
+            <h2 class="report-section__title">Executive Summary</h2>
+            <div class="report-section__content">
+                <div class="drop-zone">
+                    DROP: Markdown content<br>
+                    OR Summary text<br>
+                    OR Key highlights
+                </div>
+            </div>
+        </section>
+
+        <!-- KEY METRICS -->
+        <section class="report-section">
+            <h2 class="report-section__title">Key Metrics</h2>
+            <div class="metrics-grid">
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (Revenue)
+                </div>
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (Profit)
+                </div>
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (Growth)
+                </div>
+                <div class="drop-zone">
+                    DROP: Metric Card<br>
+                    (Margin)
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCIAL PERFORMANCE -->
+        <section class="report-section">
+            <h2 class="report-section__title">Financial Performance</h2>
+            <div class="report-section__content">
+                <div class="drop-zone drop-zone--large">
+                    DROP: Chart (line, bar, area)<br>
+                    OR Waterfall Chart<br>
+                    OR Variance Bars
+                </div>
+            </div>
+            <div class="report-section__content">
+                <div class="drop-zone">
+                    DROP: Analysis text<br>
+                    OR Commentary<br>
+                    Use .markdown class
+                </div>
+            </div>
+        </section>
+
+        <!-- DETAILED DATA -->
+        <section class="report-section">
+            <h2 class="report-section__title">Detailed Analysis</h2>
+            <div class="report-section__content">
+                <div class="drop-zone drop-zone--large">
+                    DROP: Financial Table<br>
+                    OR Data Table<br>
+                    OR Comparison Table
+                </div>
+            </div>
+        </section>
+
+        <!-- ADDITIONAL SECTION (Optional) -->
+        <section class="report-section">
+            <h2 class="report-section__title">Additional Insights</h2>
+            <div class="report-section__content">
+                <div class="drop-zone">
+                    DROP: Additional charts<br>
+                    OR Tables<br>
+                    OR Commentary
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER/NOTES -->
+        <section class="report-section">
+            <h2 class="report-section__title">Notes & Methodology</h2>
+            <div class="report-section__content">
+                <div class="drop-zone">
+                    DROP: Footnotes<br>
+                    OR Data sources<br>
+                    OR Methodology notes
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script type="module">
+        // Import modules as needed:
+        // import { initDropdowns } from '../js/dropdown.js';
+    </script>
+</body>
+</html>

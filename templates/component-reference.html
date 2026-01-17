@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Reference - Quick Copy Guide</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        body {
+            background: var(--gray-50);
+            margin: 0;
+            padding: var(--space-6);
+            font-family: var(--font-sans);
+        }
+
+        .reference-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .reference-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .reference-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .reference-subtitle {
+            font-size: var(--text-base);
+            color: var(--gray-600);
+        }
+
+        /* Component card */
+        .component-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .component-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .component-card__title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .component-card__category {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .component-card__preview {
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+        }
+
+        .component-card__code {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .component-card__code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .component-card__usage {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-3);
+            padding: var(--space-3);
+            background: var(--gray-50);
+            border-left: 3px solid var(--accent);
+            border-radius: var(--radius-sm);
+        }
+
+        /* Category sections */
+        .category-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--gray-300);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: var(--space-4);
+            }
+
+            .reference-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reference-container">
+        <header class="reference-header">
+            <h1 class="reference-title">Component Reference</h1>
+            <p class="reference-subtitle">Quick copy-paste guide for assembling pages. Copy HTML snippets below and drop into templates.</p>
+        </header>
+
+        <!-- LAYOUT COMPONENTS -->
+        <section class="category-section">
+            <h2 class="category-title">📦 Layout Components</h2>
+
+            <!-- Card -->
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Card</h3>
+                    <span class="component-card__category">Layout</span>
+                </div>
+                <div class="component-card__usage">
+                    <strong>When to use:</strong> Container for grouped content, forms, or data displays.
+                </div>
+                <div class="component-card__preview">
+                    <div class="card">
+                        <div class="card__header">
+                            <span class="card__title">Card Title</span>
+                        </div>
+                        <div class="card__body">
+                            <p style="font-size: var(--text-sm); color: var(--gray-600);">Card content goes here.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-card__code">
+<pre>&lt;div class="card"&gt;
+    &lt;div class="card__header"&gt;
+        &lt;span class="card__title"&gt;Card Title&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="card__body"&gt;
+        &lt;p&gt;Content here&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA DISPLAY -->
+        <section class="category-section">
+            <h2 class="category-title">📊 Data Display</h2>
+
+            <!-- Metric Card -->
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Metric Card</h3>
+                    <span class="component-card__category">Data Display</span>
+                </div>
+                <div class="component-card__usage">
+                    <strong>When to use:</strong> KPI displays, dashboard metrics, financial summaries.
+                </div>
+                <div class="component-card__preview">
+                    <div class="metric-card" style="max-width: 280px;">
+                        <div class="metric-card__label">Revenue</div>
+                        <div class="metric-card__value">$2.4M</div>
+                        <div class="metric-card__change metric-card__change--positive">
+                            <span class="metric-card__change-value">+12.5%</span>
+                            <span class="metric-card__change-label">vs last month</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-card__code">
+<pre>&lt;div class="metric-card"&gt;
+    &lt;div class="metric-card__label"&gt;Revenue&lt;/div&gt;
+    &lt;div class="metric-card__value"&gt;$2.4M&lt;/div&gt;
+    &lt;div class="metric-card__change metric-card__change--positive"&gt;
+        &lt;span class="metric-card__change-value"&gt;+12.5%&lt;/span&gt;
+        &lt;span class="metric-card__change-label"&gt;vs last month&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+                </div>
+            </div>
+
+            <!-- Hub Card -->
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Hub Card</h3>
+                    <span class="component-card__category">Data Display</span>
+                </div>
+                <div class="component-card__usage">
+                    <strong>When to use:</strong> Navigation shortcuts, quick actions, dashboard links.
+                </div>
+                <div class="component-card__preview">
+                    <div class="hub-card" style="max-width: 240px;">
+                        <div class="hub-card__icon">📊</div>
+                        <div class="hub-card__title">Reports</div>
+                        <div class="hub-card__description">View financial reports</div>
+                    </div>
+                </div>
+                <div class="component-card__code">
+<pre>&lt;div class="hub-card"&gt;
+    &lt;div class="hub-card__icon"&gt;📊&lt;/div&gt;
+    &lt;div class="hub-card__title"&gt;Reports&lt;/div&gt;
+    &lt;div class="hub-card__description"&gt;Description here&lt;/div&gt;
+&lt;/div&gt;</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMS & INPUTS -->
+        <section class="category-section">
+            <h2 class="category-title">📝 Forms & Inputs</h2>
+
+            <!-- Button -->
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Button</h3>
+                    <span class="component-card__category">Forms</span>
+                </div>
+                <div class="component-card__usage">
+                    <strong>When to use:</strong> Actions, form submissions, navigation.
+                </div>
+                <div class="component-card__preview">
+                    <div style="display: flex; gap: var(--space-2);">
+                        <button class="btn">Default</button>
+                        <button class="btn btn--primary">Primary</button>
+                        <button class="btn btn--sm">Small</button>
+                    </div>
+                </div>
+                <div class="component-card__code">
+<pre>&lt;button class="btn"&gt;Default&lt;/button&gt;
+&lt;button class="btn btn--primary"&gt;Primary&lt;/button&gt;
+&lt;button class="btn btn--sm"&gt;Small&lt;/button&gt;</pre>
+                </div>
+            </div>
+
+            <!-- Input Field -->
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Input Field</h3>
+                    <span class="component-card__category">Forms</span>
+                </div>
+                <div class="component-card__usage">
+                    <strong>When to use:</strong> Text input, forms, data entry.
+                </div>
+                <div class="component-card__preview">
+                    <div class="field">
+                        <label class="field__label">Label</label>
+                        <input type="text" class="input" placeholder="Enter text...">
+                    </div>
+                </div>
+                <div class="component-card__code">
+<pre>&lt;div class="field"&gt;
+    &lt;label class="field__label"&gt;Label&lt;/label&gt;
+    &lt;input type="text" class="input" placeholder="Enter text..."&gt;
+&lt;/div&gt;</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEEDBACK -->
+        <section class="category-section">
+            <h2 class="category-title">💬 Feedback</h2>
+
+            <!-- Badge -->
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Badge</h3>
+                    <span class="component-card__category">Feedback</span>
+                </div>
+                <div class="component-card__usage">
+                    <strong>When to use:</strong> Status indicators, labels, counts.
+                </div>
+                <div class="component-card__preview">
+                    <div style="display: flex; gap: var(--space-2); align-items: center;">
+                        <span class="badge">Default</span>
+                        <span class="badge badge--success">Success</span>
+                        <span class="badge badge--warning">Warning</span>
+                        <span class="badge badge--error">Error</span>
+                        <span class="badge badge--count">42</span>
+                    </div>
+                </div>
+                <div class="component-card__code">
+<pre>&lt;span class="badge"&gt;Default&lt;/span&gt;
+&lt;span class="badge badge--success"&gt;Success&lt;/span&gt;
+&lt;span class="badge badge--warning"&gt;Warning&lt;/span&gt;
+&lt;span class="badge badge--error"&gt;Error&lt;/span&gt;
+&lt;span class="badge badge--count"&gt;42&lt;/span&gt;</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ASSEMBLY TIPS -->
+        <section class="category-section">
+            <h2 class="category-title">💡 Assembly Tips</h2>
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">How to Assemble Pages</h3>
+                </div>
+                <div class="component-card__usage">
+                    <strong>Step 1:</strong> Pick a template from the Templates section (Dashboard, Presentation, Report, Data Review)
+                    <br><br>
+                    <strong>Step 2:</strong> Copy component HTML from this reference
+                    <br><br>
+                    <strong>Step 3:</strong> Replace the "DROP ZONE" placeholders in the template with actual components
+                    <br><br>
+                    <strong>Step 4:</strong> Customize content (text, values, labels)
+                    <br><br>
+                    <strong>Step 5:</strong> Test on mobile (resize browser to check responsive behavior)
+                </div>
+            </div>
+
+            <div class="component-card">
+                <div class="component-card__header">
+                    <h3 class="component-card__title">Required Imports</h3>
+                </div>
+                <div class="component-card__usage">
+                    All pages need this CSS import:
+                </div>
+                <div class="component-card__code">
+<pre>&lt;link rel="stylesheet" href="../css/proxa.css"&gt;</pre>
+                </div>
+                <div class="component-card__usage" style="margin-top: var(--space-3);">
+                    For interactive components (dropdowns, panels, modals), add:
+                </div>
+                <div class="component-card__code">
+<pre>&lt;script type="module"&gt;
+    import { initDropdowns } from '../js/dropdown.js';
+    import { showToast } from '../js/toast.js';
+    import { openPanel, closePanel } from '../js/slide-panel.js';
+
+    initDropdowns();
+&lt;/script&gt;</pre>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
