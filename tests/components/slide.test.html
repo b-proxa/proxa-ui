@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Component Test — Proxa</title>
+    <link rel="stylesheet" href="../../css/proxa.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .test-page {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+        .test-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+        .test-description {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-bottom: var(--space-3);
+        }
+        .test-file {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+        .test-section {
+            margin-bottom: var(--space-8);
+        }
+        .test-section__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .test-controls {
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+            padding: var(--space-3);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+        }
+        .test-controls label {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+        .test-controls select {
+            padding: var(--space-1) var(--space-2);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+        }
+        .slide-container {
+            background: var(--gray-100);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            text-decoration: none;
+            margin-bottom: var(--space-4);
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        /* Slide Component Styles - Isolated for testing */
+        .slide {
+            display: grid;
+            grid-template-columns: var(--col-split, 35%) 1fr;
+            grid-template-rows: auto 1fr;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: aspect-ratio 0.3s ease;
+        }
+
+        .slide__title {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .slide__section-header {
+            display: block;
+            font-size: var(--text-xs);
+            font-weight: 500;
+            color: var(--gray-400);
+            margin-bottom: var(--space-1);
+        }
+        .slide__title h1 {
+            margin: 0;
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .slide__description {
+            grid-column: 1;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* Important for flex children */
+            border-right: 1px solid var(--gray-100);
+        }
+        .slide__description-content {
+            flex: 1;
+            padding: var(--space-4);
+            overflow-y: auto;
+            min-height: 0; /* Important for overflow to work */
+        }
+
+        .slide__viz {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* Important for flex children */
+            padding: var(--space-3);
+        }
+        .slide__viz-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-2);
+            flex-shrink: 0;
+        }
+        .slide__viz-unit {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+        }
+        .slide__viz-legend {
+            display: flex;
+            gap: var(--space-3);
+            font-size: var(--text-xs);
+            color: var(--gray-600);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        .legend-color {
+            width: 12px;
+            height: 3px;
+            border-radius: 1px;
+        }
+        .slide__viz-content {
+            flex: 1;
+            min-height: 0; /* Critical - allows flex item to shrink below content size */
+            position: relative;
+        }
+        .chart-container {
+            position: absolute;
+            inset: 0;
+        }
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Wide format adjustments */
+        .slide--wide .slide__title h1 { font-size: var(--text-base); }
+        .slide--wide .slide__section-header { font-size: 10px; }
+        .slide--wide .markdown { font-size: 11px; line-height: 1.3; }
+        .slide--wide .markdown h1,
+        .slide--wide .markdown h2,
+        .slide--wide .markdown h3 { font-size: 12px; margin: 0.3em 0; }
+    </style>
+</head>
+<body>
+    <div class="test-page">
+        <a href="../index.html" class="back-link">← Back to Tests</a>
+
+        <header class="test-header">
+            <h1 class="test-title">Slide Component</h1>
+            <p class="test-description">Presentation slide with title, description, and visualization zones. Responsive to different aspect ratios.</p>
+            <span class="test-file">css/patterns/record.css (to be extracted to css/components/slide.css)</span>
+        </header>
+
+        <!-- Interactive Test -->
+        <section class="test-section">
+            <h2 class="test-section__title">Interactive Test</h2>
+            <div class="test-controls">
+                <label>
+                    Aspect Ratio:
+                    <select id="aspect-select">
+                        <option value="16/9" selected>16:9</option>
+                        <option value="16/4">16:4 (Wide)</option>
+                        <option value="4/3">4:3</option>
+                        <option value="1/1">1:1</option>
+                    </select>
+                </label>
+                <label>
+                    Description Width:
+                    <select id="width-select">
+                        <option value="25">25%</option>
+                        <option value="35" selected>35%</option>
+                        <option value="45">45%</option>
+                    </select>
+                </label>
+            </div>
+            <div class="slide-container">
+                <div class="slide" id="test-slide" style="aspect-ratio: 16/9;">
+                    <div class="slide__title">
+                        <span class="slide__section-header">Fall 2025 Management Presentation</span>
+                        <h1>Financial Performance 2024</h1>
+                    </div>
+                    <div class="slide__description">
+                        <div class="slide__description-content">
+                            <div class="markdown">
+                                <h3>Revenue Performance</h3>
+                                <ul>
+                                    <li><strong>2024 Revenue:</strong> $4,065,642</li>
+                                    <li><strong>YoY Growth (2023-2024):</strong> 4.9% increase</li>
+                                    <li><strong>CAGR (2021-2024):</strong> 22.8%</li>
+                                </ul>
+                                <h3>Expense Management</h3>
+                                <ul>
+                                    <li><strong>2024 Expenses:</strong> $2,937,648</li>
+                                    <li><strong>YoY Growth (2023-2024):</strong> 0.5% increase</li>
+                                    <li><strong>CAGR (2021-2024):</strong> 17.2%</li>
+                                </ul>
+                                <h3>Profit Trends</h3>
+                                <ul>
+                                    <li><strong>2024 Profit:</strong> $863,883</li>
+                                    <li><strong>YoY Growth (2023-2024):</strong> 9.3% increase</li>
+                                    <li><strong>CAGR (2021-2024):</strong> 39.5%</li>
+                                </ul>
+                                <p>The company demonstrates strong financial performance with revenue growth outpacing expense growth.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide__viz">
+                        <div class="slide__viz-header">
+                            <span class="slide__viz-unit">USD $</span>
+                            <div class="slide__viz-legend">
+                                <span class="legend-item"><span class="legend-color" style="background: #4a6fa5;"></span> Revenue</span>
+                                <span class="legend-item"><span class="legend-color" style="background: #6b8f71;"></span> Expenses</span>
+                                <span class="legend-item"><span class="legend-color" style="background: #c9a227;"></span> Profit</span>
+                            </div>
+                        </div>
+                        <div class="slide__viz-content">
+                            <div class="chart-container">
+                                <canvas id="test-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aspect Ratio Comparison -->
+        <section class="test-section">
+            <h2 class="test-section__title">Aspect Ratio Comparison (Static)</h2>
+            <div style="display: grid; gap: var(--space-6);">
+                <div>
+                    <p style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-2);">16:9 (Standard)</p>
+                    <div class="slide-container">
+                        <div class="slide" style="aspect-ratio: 16/9; max-width: 800px;">
+                            <div class="slide__title">
+                                <span class="slide__section-header">Section Header</span>
+                                <h1>Slide Title</h1>
+                            </div>
+                            <div class="slide__description">
+                                <div class="slide__description-content">
+                                    <div class="markdown">
+                                        <p>Description content area with standard padding.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide__viz">
+                                <div class="slide__viz-header">
+                                    <span class="slide__viz-unit">USD $</span>
+                                </div>
+                                <div class="slide__viz-content" style="background: var(--gray-50); display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                                    Chart Area
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p style="font-size: var(--text-xs); color: var(--gray-500); margin-bottom: var(--space-2);">16:4 (Wide)</p>
+                    <div class="slide-container">
+                        <div class="slide slide--wide" style="aspect-ratio: 16/4; max-width: 800px;">
+                            <div class="slide__title">
+                                <span class="slide__section-header">Section Header</span>
+                                <h1>Slide Title</h1>
+                            </div>
+                            <div class="slide__description">
+                                <div class="slide__description-content">
+                                    <div class="markdown">
+                                        <p>Description content area - should scroll if overflow.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide__viz">
+                                <div class="slide__viz-header">
+                                    <span class="slide__viz-unit">USD $</span>
+                                </div>
+                                <div class="slide__viz-content" style="background: var(--gray-50); display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                                    Chart Area
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Chart setup
+        let chart = null;
+        const chartData = {
+            labels: ['2021', '2022', '2023', '2024'],
+            datasets: [
+                { label: 'Revenue', data: [2188455, 3353462, 3876219, 4065642], borderColor: '#4a6fa5', backgroundColor: 'rgba(74, 111, 165, 0.1)', tension: 0.3 },
+                { label: 'Expenses', data: [1825722, 2370640, 2923720, 2937648], borderColor: '#6b8f71', backgroundColor: 'rgba(107, 143, 113, 0.1)', tension: 0.3 },
+                { label: 'Profit', data: [315354, 826852, 790265, 863883], borderColor: '#c9a227', backgroundColor: 'rgba(201, 162, 39, 0.1)', tension: 0.3 }
+            ]
+        };
+
+        function renderChart() {
+            const ctx = document.getElementById('test-chart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: v => '$' + (v/1000000).toFixed(1) + 'M',
+                                font: { size: 10 }
+                            }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Controls
+        document.getElementById('aspect-select').addEventListener('change', (e) => {
+            const slide = document.getElementById('test-slide');
+            slide.style.aspectRatio = e.target.value;
+            slide.classList.toggle('slide--wide', e.target.value === '16/4');
+            setTimeout(() => chart?.resize(), 100);
+        });
+
+        document.getElementById('width-select').addEventListener('change', (e) => {
+            document.getElementById('test-slide').style.setProperty('--col-split', e.target.value + '%');
+            setTimeout(() => chart?.resize(), 100);
+        });
+
+        // Init
+        renderChart();
+    </script>
+</body>
+</html>
