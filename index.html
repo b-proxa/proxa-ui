@@ -298,6 +298,130 @@
             font-size: var(--text-sm);
             height: 20px;
         }
+
+        /* ===================================
+           MOBILE RESPONSIVE STYLES
+           =================================== */
+
+        @media (max-width: 768px) {
+            /* App header adjustments */
+            .app-header {
+                flex-wrap: wrap;
+                padding: var(--space-3);
+            }
+
+            .app-header__divider {
+                display: none;
+            }
+
+            .app-tabs {
+                width: 100%;
+                overflow-x: auto;
+                margin-top: var(--space-2);
+                padding-bottom: var(--space-2);
+                gap: var(--space-1);
+            }
+
+            .app-tab {
+                white-space: nowrap;
+                padding: var(--space-2) var(--space-3);
+                font-size: var(--text-sm);
+            }
+
+            /* Pages layout - stack sidebar on mobile */
+            .pages-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .pages-sidebar {
+                width: 100%;
+                min-width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+                padding: var(--space-3);
+                max-height: 200px;
+                overflow-y: auto;
+            }
+
+            .pages-sidebar__title {
+                font-size: 11px;
+            }
+
+            .page-link {
+                padding: var(--space-2);
+                font-size: var(--text-xs);
+            }
+
+            .pages-preview {
+                height: calc(100vh - 300px);
+                min-height: 400px;
+            }
+
+            .pages-preview__frame {
+                border-radius: 0;
+            }
+
+            /* Content padding adjustments */
+            .app-content {
+                padding: var(--space-4);
+            }
+
+            /* Demo grids */
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Guide sections */
+            .guide-section {
+                margin-bottom: var(--space-6);
+                padding-bottom: var(--space-4);
+            }
+
+            .guide-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            /* Color swatches */
+            .color-swatch {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            /* Sandbox tab */
+            #tab-sandbox {
+                padding: var(--space-4);
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Even smaller screens */
+            .app-header {
+                padding: var(--space-2);
+            }
+
+            .app-content {
+                padding: var(--space-3);
+            }
+
+            .pages-sidebar {
+                padding: var(--space-2);
+                max-height: 150px;
+            }
+
+            .pages-preview {
+                height: calc(100vh - 250px);
+            }
+
+            .guide-title {
+                font-size: 1.25rem;
+            }
+
+            .demo-box {
+                padding: var(--space-3);
+            }
+        }
     </style>
 </head>
 <body>
