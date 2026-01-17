@@ -28,6 +28,13 @@
         .slide { grid-template-columns: var(--col-split, 35%) 6px 1fr; }
         .slide__title h1 { margin: 0; }
 
+        /* Wide format (16:4) - tighter spacing */
+        .slide.slide--wide .slide__title { padding: var(--space-2) var(--space-4); }
+        .slide.slide--wide .slide__description-content { padding: var(--space-2) var(--space-3); }
+        .slide.slide--wide .slide__description-content .markdown { font-size: var(--text-xs); }
+        .slide.slide--wide .slide__viz-header { padding: var(--space-1) var(--space-3); }
+        .slide.slide--wide .slide__viz-content { padding: var(--space-2); }
+
         /* Editable Markdown */
         .editable-markdown {
             position: relative; min-height: 80px; background: white;
@@ -514,6 +521,7 @@
                                         <label class="field__label">Aspect Ratio</label>
                                         <select class="select" id="style-aspect">
                                             <option value="16/9" selected>16:9</option>
+                                            <option value="16/4">16:4 (Wide)</option>
                                             <option value="4/3">4:3</option>
                                             <option value="1/1">1:1</option>
                                         </select>
@@ -835,6 +843,9 @@
             const slide = document.getElementById('slide');
             slide.style.setProperty('--col-split', state.layout.descWidth + '%');
             slide.style.aspectRatio = state.layout.aspectRatio;
+
+            // Toggle wide class for 16:4 format
+            slide.classList.toggle('slide--wide', state.layout.aspectRatio === '16/4');
 
             // Sync layout dropdowns
             document.getElementById('style-desc-width').value = state.layout.descWidth;
@@ -1640,7 +1651,9 @@
 
         document.getElementById('style-aspect').addEventListener('change', (e) => {
             state.layout.aspectRatio = e.target.value;
-            document.getElementById('slide').style.aspectRatio = e.target.value;
+            const slide = document.getElementById('slide');
+            slide.style.aspectRatio = e.target.value;
+            slide.classList.toggle('slide--wide', e.target.value === '16/4');
             saveState();
         });
 
