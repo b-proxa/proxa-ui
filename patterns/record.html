@@ -730,7 +730,11 @@
             comments: [
                 { text: 'Great progress on cost management this quarter.', author: 'Finance Team', time: 'Dec 1' }
             ],
-            attachments: []
+            attachments: [],
+            layout: {
+                descWidth: '35',
+                aspectRatio: '16/9'
+            }
         };
 
         let chart = null;
@@ -751,7 +755,8 @@
                     series: state.chart.series,
                     cellComments: state.chart.cellComments
                 },
-                comments: state.comments
+                comments: state.comments,
+                layout: state.layout
                 // Note: attachments are stored in Vercel Blob, not localStorage
             };
             try {
@@ -776,6 +781,10 @@
                         if (data.chart.cellComments) state.chart.cellComments = data.chart.cellComments;
                     }
                     if (data.comments) state.comments = data.comments;
+                    if (data.layout) {
+                        if (data.layout.descWidth) state.layout.descWidth = data.layout.descWidth;
+                        if (data.layout.aspectRatio) state.layout.aspectRatio = data.layout.aspectRatio;
+                    }
                     return true;
                 }
             } catch (e) {
@@ -821,6 +830,15 @@
             document.getElementById('field-title').value = state.title;
             document.getElementById('field-description').value = state.description;
             document.getElementById('field-description-display').innerHTML = DOMPurify.sanitize(marked.parse(state.description));
+
+            // Apply layout settings
+            const slide = document.getElementById('slide');
+            slide.style.setProperty('--col-split', state.layout.descWidth + '%');
+            slide.style.aspectRatio = state.layout.aspectRatio;
+
+            // Sync layout dropdowns
+            document.getElementById('style-desc-width').value = state.layout.descWidth;
+            document.getElementById('style-aspect').value = state.layout.aspectRatio;
         }
 
         function renderChart() {
@@ -1615,11 +1633,15 @@
 
         // Layout settings
         document.getElementById('style-desc-width').addEventListener('change', (e) => {
+            state.layout.descWidth = e.target.value;
             document.getElementById('slide').style.setProperty('--col-split', e.target.value + '%');
+            saveState();
         });
 
         document.getElementById('style-aspect').addEventListener('change', (e) => {
+            state.layout.aspectRatio = e.target.value;
             document.getElementById('slide').style.aspectRatio = e.target.value;
+            saveState();
         });
 
         // File upload / Attachments
