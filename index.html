@@ -175,6 +175,47 @@
             border-radius: var(--radius-lg);
             background: white;
         }
+
+        /* Mobile menu button - hidden on desktop */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            width: 56px;
+            height: 56px;
+            background: var(--gray-900);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: transform 0.2s ease;
+        }
+        .mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Mobile sidebar backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-backdrop.active {
+            opacity: 1;
+        }
         /* Record iframe layout */
         .record-layout {
             height: calc(100vh - 52px);
@@ -328,38 +369,62 @@
                 font-size: var(--text-sm);
             }
 
-            /* Pages layout - stack sidebar on mobile */
+            /* Pages layout - hamburger menu on mobile */
             .pages-layout {
-                flex-direction: column;
-                height: auto;
+                flex-direction: row;
+                height: calc(100vh - 52px);
             }
 
+            /* Show mobile menu button */
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            /* Show backdrop when active */
+            .sidebar-backdrop {
+                display: block;
+            }
+
+            /* Hide sidebar by default, show as overlay when active */
             .pages-sidebar {
-                width: 100%;
-                min-width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--gray-200);
-                padding: var(--space-3);
-                max-height: 200px;
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                min-width: 280px;
+                height: 100vh;
+                background: white;
+                border-right: 1px solid var(--gray-200);
+                padding: var(--space-4);
                 overflow-y: auto;
+                z-index: 999;
+                transition: left 0.3s ease;
+                box-shadow: var(--shadow-lg);
+            }
+
+            .pages-sidebar.active {
+                left: 0;
             }
 
             .pages-sidebar__title {
-                font-size: 11px;
-            }
-
-            .page-link {
-                padding: var(--space-2);
                 font-size: var(--text-xs);
             }
 
+            .page-link {
+                padding: var(--space-2) var(--space-3);
+                font-size: var(--text-sm);
+            }
+
+            /* Preview takes full width */
             .pages-preview {
-                height: calc(100vh - 300px);
-                min-height: 400px;
+                width: 100%;
+                height: calc(100vh - 52px);
+                padding: 0;
             }
 
             .pages-preview__frame {
                 border-radius: 0;
+                border: none;
             }
 
             /* Content padding adjustments */
@@ -406,12 +471,22 @@
             }
 
             .pages-sidebar {
-                padding: var(--space-2);
-                max-height: 150px;
+                width: 260px;
+                min-width: 260px;
+                left: -260px;
+                padding: var(--space-3);
+            }
+
+            .mobile-menu-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+                bottom: var(--space-3);
+                right: var(--space-3);
             }
 
             .pages-preview {
-                height: calc(100vh - 250px);
+                height: calc(100vh - 52px);
             }
 
             .guide-title {
@@ -580,6 +655,14 @@
             <div class="pages-preview">
                 <iframe src="templates/component-reference.html" class="pages-preview__frame" id="pages-frame"></iframe>
             </div>
+
+            <!-- Mobile menu button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                ☰
+            </button>
+
+            <!-- Backdrop overlay -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
         </div>
     </div>
 
@@ -854,6 +937,51 @@
         }).join('');
 
         document.getElementById('demo-waterfall').innerHTML = waterfallHTML + '<div class="waterfall__axis"></div>';
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.querySelector('#tab-pages .pages-sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+
+        function toggleMobileMenu() {
+            const isOpen = sidebar.classList.contains('active');
+
+            if (isOpen) {
+                // Close menu
+                sidebar.classList.remove('active');
+                backdrop.classList.remove('active');
+                mobileMenuBtn.textContent = '☰';
+            } else {
+                // Open menu
+                sidebar.classList.add('active');
+                backdrop.classList.add('active');
+                mobileMenuBtn.textContent = '✕';
+            }
+        }
+
+        function closeMobileMenu() {
+            sidebar.classList.remove('active');
+            backdrop.classList.remove('active');
+            mobileMenuBtn.textContent = '☰';
+        }
+
+        // Toggle menu on button click
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        }
+
+        // Close menu when backdrop is clicked
+        if (backdrop) {
+            backdrop.addEventListener('click', closeMobileMenu);
+        }
+
+        // Close menu when a page link is clicked
+        document.querySelectorAll('#tab-pages .page-link').forEach(link => {
+            link.addEventListener('click', () => {
+                // Small delay to allow link action to complete
+                setTimeout(closeMobileMenu, 100);
+            });
+        });
     </script>
 </body>
 </html>
