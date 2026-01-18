@@ -937,49 +937,72 @@
         }).join('');
 
         document.getElementById('demo-waterfall').innerHTML = waterfallHTML + '<div class="waterfall__axis"></div>';
+    </script>
 
-        // Mobile menu functionality
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const sidebar = document.querySelector('#tab-pages .pages-sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
+    <script>
+        // Mobile menu functionality - wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.querySelector('#tab-pages .pages-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
 
-        function toggleMobileMenu() {
-            const isOpen = sidebar.classList.contains('active');
+            // Debug: Check if elements exist
+            console.log('Mobile menu button:', mobileMenuBtn);
+            console.log('Sidebar:', sidebar);
+            console.log('Backdrop:', backdrop);
 
-            if (isOpen) {
-                // Close menu
+            function toggleMobileMenu() {
+                if (!sidebar || !backdrop || !mobileMenuBtn) {
+                    console.error('Mobile menu elements not found');
+                    return;
+                }
+
+                const isOpen = sidebar.classList.contains('active');
+                console.log('Toggle menu - currently open:', isOpen);
+
+                if (isOpen) {
+                    // Close menu
+                    sidebar.classList.remove('active');
+                    backdrop.classList.remove('active');
+                    mobileMenuBtn.textContent = '☰';
+                } else {
+                    // Open menu
+                    sidebar.classList.add('active');
+                    backdrop.classList.add('active');
+                    mobileMenuBtn.textContent = '✕';
+                }
+            }
+
+            function closeMobileMenu() {
+                if (!sidebar || !backdrop || !mobileMenuBtn) return;
+
                 sidebar.classList.remove('active');
                 backdrop.classList.remove('active');
                 mobileMenuBtn.textContent = '☰';
-            } else {
-                // Open menu
-                sidebar.classList.add('active');
-                backdrop.classList.add('active');
-                mobileMenuBtn.textContent = '✕';
             }
-        }
 
-        function closeMobileMenu() {
-            sidebar.classList.remove('active');
-            backdrop.classList.remove('active');
-            mobileMenuBtn.textContent = '☰';
-        }
+            // Toggle menu on button click
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Menu button clicked');
+                    toggleMobileMenu();
+                });
+            } else {
+                console.error('Mobile menu button not found');
+            }
 
-        // Toggle menu on button click
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-        }
+            // Close menu when backdrop is clicked
+            if (backdrop) {
+                backdrop.addEventListener('click', closeMobileMenu);
+            }
 
-        // Close menu when backdrop is clicked
-        if (backdrop) {
-            backdrop.addEventListener('click', closeMobileMenu);
-        }
-
-        // Close menu when a page link is clicked
-        document.querySelectorAll('#tab-pages .page-link').forEach(link => {
-            link.addEventListener('click', () => {
-                // Small delay to allow link action to complete
-                setTimeout(closeMobileMenu, 100);
+            // Close menu when a page link is clicked
+            document.querySelectorAll('#tab-pages .page-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    setTimeout(closeMobileMenu, 100);
+                });
             });
         });
     </script>
