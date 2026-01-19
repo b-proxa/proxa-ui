@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Component Reference - Quick Copy Guide</title>
+    <title>Component Reference</title>
     <link rel="stylesheet" href="../css/proxa.css">
     <style>
         body {
-            background: var(--gray-50);
+            background: var(--gray-100);
             margin: 0;
             padding: var(--space-6);
-            font-family: var(--font-sans);
         }
 
         .reference-container {
@@ -18,63 +17,21 @@
             margin: 0 auto;
         }
 
-        .reference-header {
-            margin-bottom: var(--space-6);
-            padding-bottom: var(--space-4);
-            border-bottom: 2px solid var(--gray-200);
-        }
-
-        .reference-title {
-            font-size: 2rem;
+        /* Section headers */
+        .section-title {
+            font-size: var(--text-xl);
             font-weight: 700;
             color: var(--gray-900);
-            margin-bottom: var(--space-2);
-        }
-
-        .reference-subtitle {
-            font-size: var(--text-base);
-            color: var(--gray-600);
-        }
-
-        /* Component card */
-        .component-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: var(--space-5);
-            margin-bottom: var(--space-5);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .component-card__header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: var(--space-4);
-            padding-bottom: var(--space-3);
-            border-bottom: 1px solid var(--gray-200);
+            margin-top: var(--space-8);
         }
 
-        .component-card__title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-800);
+        .section-title:first-of-type {
+            margin-top: 0;
         }
 
-        .component-card__category {
-            font-size: var(--text-xs);
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .component-card__preview {
-            padding: var(--space-4);
-            background: var(--gray-50);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--space-4);
-        }
-
-        .component-card__code {
+        /* Code blocks */
+        .code-block {
             background: var(--gray-900);
             color: var(--gray-100);
             padding: var(--space-4);
@@ -82,15 +39,16 @@
             font-family: var(--font-mono);
             font-size: var(--text-xs);
             overflow-x: auto;
-            position: relative;
+            margin-top: var(--space-3);
         }
 
-        .component-card__code pre {
+        .code-block pre {
             margin: 0;
             white-space: pre-wrap;
         }
 
-        .component-card__usage {
+        /* Usage notes */
+        .usage-note {
             font-size: var(--text-sm);
             color: var(--gray-600);
             margin-bottom: var(--space-3);
@@ -100,18 +58,12 @@
             border-radius: var(--radius-sm);
         }
 
-        /* Category sections */
-        .category-section {
-            margin-bottom: var(--space-8);
-        }
-
-        .category-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: var(--space-4);
-            padding-bottom: var(--space-2);
-            border-bottom: 2px solid var(--gray-300);
+        /* Preview area */
+        .preview-area {
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-3);
         }
 
         @media (max-width: 768px) {
@@ -119,33 +71,35 @@
                 padding: var(--space-4);
             }
 
-            .reference-title {
-                font-size: 1.5rem;
+            .code-block {
+                font-size: 11px;
             }
         }
     </style>
 </head>
 <body>
     <div class="reference-container">
-        <header class="reference-header">
-            <h1 class="reference-title">Component Reference</h1>
-            <p class="reference-subtitle">Quick copy-paste guide for assembling pages. Copy HTML snippets below and drop into templates.</p>
-        </header>
+        <!-- Header -->
+        <div style="margin-bottom: var(--space-6); padding-bottom: var(--space-4); border-bottom: 2px solid var(--gray-200);">
+            <h1 style="font-size: 2rem; font-weight: 700; color: var(--gray-900); margin-bottom: var(--space-2);">Component Reference</h1>
+            <p style="font-size: var(--text-base); color: var(--gray-600);">Quick copy-paste guide for assembling pages. Copy HTML snippets below and drop into templates.</p>
+        </div>
 
         <!-- LAYOUT COMPONENTS -->
-        <section class="category-section">
-            <h2 class="category-title">📦 Layout Components</h2>
+        <h2 class="section-title">📦 Layout Components</h2>
 
-            <!-- Card -->
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Card</h3>
-                    <span class="component-card__category">Layout</span>
-                </div>
-                <div class="component-card__usage">
+        <!-- Card -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">Card</span>
+                <span class="badge">Layout</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>When to use:</strong> Container for grouped content, forms, or data displays.
                 </div>
-                <div class="component-card__preview">
+
+                <div class="preview-area">
                     <div class="card">
                         <div class="card__header">
                             <span class="card__title">Card Title</span>
@@ -155,7 +109,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="component-card__code">
+
+                <div class="code-block">
 <pre>&lt;div class="card"&gt;
     &lt;div class="card__header"&gt;
         &lt;span class="card__title"&gt;Card Title&lt;/span&gt;
@@ -166,22 +121,23 @@
 &lt;/div&gt;</pre>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- DATA DISPLAY -->
-        <section class="category-section">
-            <h2 class="category-title">📊 Data Display</h2>
+        <h2 class="section-title">📊 Data Display</h2>
 
-            <!-- Metric Card -->
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Metric Card</h3>
-                    <span class="component-card__category">Data Display</span>
-                </div>
-                <div class="component-card__usage">
+        <!-- Metric Card -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">Metric Card</span>
+                <span class="badge badge--success">Data Display</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>When to use:</strong> KPI displays, dashboard metrics, financial summaries.
                 </div>
-                <div class="component-card__preview">
+
+                <div class="preview-area">
                     <div class="metric-card" style="max-width: 280px;">
                         <div class="metric-card__label">Revenue</div>
                         <div class="metric-card__value">$2.4M</div>
@@ -191,7 +147,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="component-card__code">
+
+                <div class="code-block">
 <pre>&lt;div class="metric-card"&gt;
     &lt;div class="metric-card__label"&gt;Revenue&lt;/div&gt;
     &lt;div class="metric-card__value"&gt;$2.4M&lt;/div&gt;
@@ -202,24 +159,28 @@
 &lt;/div&gt;</pre>
                 </div>
             </div>
+        </div>
 
-            <!-- Hub Card -->
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Hub Card</h3>
-                    <span class="component-card__category">Data Display</span>
-                </div>
-                <div class="component-card__usage">
+        <!-- Hub Card -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">Hub Card</span>
+                <span class="badge badge--success">Data Display</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>When to use:</strong> Navigation shortcuts, quick actions, dashboard links.
                 </div>
-                <div class="component-card__preview">
+
+                <div class="preview-area">
                     <div class="hub-card" style="max-width: 240px;">
                         <div class="hub-card__icon">📊</div>
                         <div class="hub-card__title">Reports</div>
                         <div class="hub-card__description">View financial reports</div>
                     </div>
                 </div>
-                <div class="component-card__code">
+
+                <div class="code-block">
 <pre>&lt;div class="hub-card"&gt;
     &lt;div class="hub-card__icon"&gt;📊&lt;/div&gt;
     &lt;div class="hub-card__title"&gt;Reports&lt;/div&gt;
@@ -227,74 +188,81 @@
 &lt;/div&gt;</pre>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- FORMS & INPUTS -->
-        <section class="category-section">
-            <h2 class="category-title">📝 Forms & Inputs</h2>
+        <h2 class="section-title">📝 Forms & Inputs</h2>
 
-            <!-- Button -->
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Button</h3>
-                    <span class="component-card__category">Forms</span>
-                </div>
-                <div class="component-card__usage">
+        <!-- Button -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">Button</span>
+                <span class="badge badge--warning">Forms</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>When to use:</strong> Actions, form submissions, navigation.
                 </div>
-                <div class="component-card__preview">
-                    <div style="display: flex; gap: var(--space-2);">
+
+                <div class="preview-area">
+                    <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
                         <button class="btn">Default</button>
                         <button class="btn btn--primary">Primary</button>
                         <button class="btn btn--sm">Small</button>
                     </div>
                 </div>
-                <div class="component-card__code">
+
+                <div class="code-block">
 <pre>&lt;button class="btn"&gt;Default&lt;/button&gt;
 &lt;button class="btn btn--primary"&gt;Primary&lt;/button&gt;
 &lt;button class="btn btn--sm"&gt;Small&lt;/button&gt;</pre>
                 </div>
             </div>
+        </div>
 
-            <!-- Input Field -->
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Input Field</h3>
-                    <span class="component-card__category">Forms</span>
-                </div>
-                <div class="component-card__usage">
+        <!-- Input Field -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">Input Field</span>
+                <span class="badge badge--warning">Forms</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>When to use:</strong> Text input, forms, data entry.
                 </div>
-                <div class="component-card__preview">
+
+                <div class="preview-area">
                     <div class="field">
                         <label class="field__label">Label</label>
                         <input type="text" class="input" placeholder="Enter text...">
                     </div>
                 </div>
-                <div class="component-card__code">
+
+                <div class="code-block">
 <pre>&lt;div class="field"&gt;
     &lt;label class="field__label"&gt;Label&lt;/label&gt;
     &lt;input type="text" class="input" placeholder="Enter text..."&gt;
 &lt;/div&gt;</pre>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- FEEDBACK -->
-        <section class="category-section">
-            <h2 class="category-title">💬 Feedback</h2>
+        <h2 class="section-title">💬 Feedback</h2>
 
-            <!-- Badge -->
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Badge</h3>
-                    <span class="component-card__category">Feedback</span>
-                </div>
-                <div class="component-card__usage">
+        <!-- Badge -->
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">Badge</span>
+                <span class="badge badge--error">Feedback</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>When to use:</strong> Status indicators, labels, counts.
                 </div>
-                <div class="component-card__preview">
-                    <div style="display: flex; gap: var(--space-2); align-items: center;">
+
+                <div class="preview-area">
+                    <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;">
                         <span class="badge">Default</span>
                         <span class="badge badge--success">Success</span>
                         <span class="badge badge--warning">Warning</span>
@@ -302,7 +270,8 @@
                         <span class="badge badge--count">42</span>
                     </div>
                 </div>
-                <div class="component-card__code">
+
+                <div class="code-block">
 <pre>&lt;span class="badge"&gt;Default&lt;/span&gt;
 &lt;span class="badge badge--success"&gt;Success&lt;/span&gt;
 &lt;span class="badge badge--warning"&gt;Warning&lt;/span&gt;
@@ -310,16 +279,17 @@
 &lt;span class="badge badge--count"&gt;42&lt;/span&gt;</pre>
                 </div>
             </div>
-        </section>
+        </div>
 
         <!-- ASSEMBLY TIPS -->
-        <section class="category-section">
-            <h2 class="category-title">💡 Assembly Tips</h2>
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">How to Assemble Pages</h3>
-                </div>
-                <div class="component-card__usage">
+        <h2 class="section-title">💡 Assembly Tips</h2>
+
+        <div class="card" style="margin-bottom: var(--space-5);">
+            <div class="card__header">
+                <span class="card__title">How to Assemble Pages</span>
+            </div>
+            <div class="card__body">
+                <div class="usage-note">
                     <strong>Step 1:</strong> Pick a template from the Templates section (Dashboard, Presentation, Report, Data Review)
                     <br><br>
                     <strong>Step 2:</strong> Copy component HTML from this reference
@@ -331,21 +301,24 @@
                     <strong>Step 5:</strong> Test on mobile (resize browser to check responsive behavior)
                 </div>
             </div>
+        </div>
 
-            <div class="component-card">
-                <div class="component-card__header">
-                    <h3 class="component-card__title">Required Imports</h3>
-                </div>
-                <div class="component-card__usage">
+        <div class="card">
+            <div class="card__header">
+                <span class="card__title">Required Imports</span>
+            </div>
+            <div class="card__body">
+                <p style="font-size: var(--text-sm); color: var(--gray-600); margin-bottom: var(--space-3);">
                     All pages need this CSS import:
-                </div>
-                <div class="component-card__code">
+                </p>
+                <div class="code-block">
 <pre>&lt;link rel="stylesheet" href="../css/proxa.css"&gt;</pre>
                 </div>
-                <div class="component-card__usage" style="margin-top: var(--space-3);">
+
+                <p style="font-size: var(--text-sm); color: var(--gray-600); margin: var(--space-4) 0 var(--space-3);">
                     For interactive components (dropdowns, panels, modals), add:
-                </div>
-                <div class="component-card__code">
+                </p>
+                <div class="code-block">
 <pre>&lt;script type="module"&gt;
     import { initDropdowns } from '../js/dropdown.js';
     import { showToast } from '../js/toast.js';
@@ -355,7 +328,7 @@
 &lt;/script&gt;</pre>
                 </div>
             </div>
-        </section>
+        </div>
 
     </div>
 </body>
