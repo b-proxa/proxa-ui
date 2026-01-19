@@ -175,6 +175,52 @@
             border-radius: var(--radius-lg);
             background: white;
         }
+
+        /* Mobile menu button - hidden on desktop */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            width: 56px;
+            height: 56px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+        .mobile-menu-btn:hover {
+            background: var(--gray-700);
+            transform: scale(1.05);
+        }
+        .mobile-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Mobile sidebar backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9997;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-backdrop.active {
+            opacity: 1;
+        }
         /* Record iframe layout */
         .record-layout {
             height: calc(100vh - 52px);
@@ -297,6 +343,164 @@
             color: var(--error);
             font-size: var(--text-sm);
             height: 20px;
+        }
+
+        /* ===================================
+           MOBILE RESPONSIVE STYLES
+           =================================== */
+
+        @media (max-width: 768px) {
+            /* App header adjustments */
+            .app-header {
+                flex-wrap: wrap;
+                padding: var(--space-3);
+            }
+
+            .app-header__divider {
+                display: none;
+            }
+
+            .app-tabs {
+                width: 100%;
+                overflow-x: auto;
+                margin-top: var(--space-2);
+                padding-bottom: var(--space-2);
+                gap: var(--space-1);
+            }
+
+            .app-tab {
+                white-space: nowrap;
+                padding: var(--space-2) var(--space-3);
+                font-size: var(--text-sm);
+            }
+
+            /* Pages layout - hamburger menu on mobile */
+            .pages-layout {
+                flex-direction: row;
+                height: calc(100vh - 52px);
+            }
+
+            /* Show mobile menu button */
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            /* Show backdrop when active */
+            .sidebar-backdrop {
+                display: block;
+            }
+
+            /* Hide sidebar by default, show as overlay when active */
+            .pages-sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                min-width: 280px;
+                height: 100vh;
+                background: white;
+                border-right: 1px solid var(--gray-200);
+                padding: var(--space-4);
+                overflow-y: auto;
+                z-index: 9998;
+                transition: left 0.3s ease;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            }
+
+            .pages-sidebar.active {
+                left: 0;
+            }
+
+            .pages-sidebar__title {
+                font-size: var(--text-xs);
+            }
+
+            .page-link {
+                padding: var(--space-2) var(--space-3);
+                font-size: var(--text-sm);
+            }
+
+            /* Preview takes full width */
+            .pages-preview {
+                width: 100%;
+                height: calc(100vh - 52px);
+                padding: 0;
+            }
+
+            .pages-preview__frame {
+                border-radius: 0;
+                border: none;
+            }
+
+            /* Content padding adjustments */
+            .app-content {
+                padding: var(--space-4);
+            }
+
+            /* Demo grids */
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Guide sections */
+            .guide-section {
+                margin-bottom: var(--space-6);
+                padding-bottom: var(--space-4);
+            }
+
+            .guide-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            /* Color swatches */
+            .color-swatch {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            /* Sandbox tab */
+            #tab-sandbox {
+                padding: var(--space-4);
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Even smaller screens */
+            .app-header {
+                padding: var(--space-2);
+            }
+
+            .app-content {
+                padding: var(--space-3);
+            }
+
+            .pages-sidebar {
+                width: 260px;
+                min-width: 260px;
+                left: -260px;
+                padding: var(--space-3);
+            }
+
+            .mobile-menu-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+                bottom: var(--space-3);
+                right: var(--space-3);
+            }
+
+            .pages-preview {
+                height: calc(100vh - 52px);
+            }
+
+            .guide-title {
+                font-size: 1.25rem;
+            }
+
+            .demo-box {
+                padding: var(--space-3);
+            }
         }
     </style>
 </head>
@@ -424,19 +628,46 @@
     <div class="tab-content" id="tab-pages">
         <div class="pages-layout">
             <aside class="pages-sidebar">
-                <div class="pages-sidebar__title">Pages</div>
+                <!-- STYLE GUIDE: Design tokens, elements, components -->
+                <div class="pages-sidebar__title">Style Guide</div>
                 <div class="pages-sidebar__list">
-                    <a href="#" class="page-link active" data-page="pages/dashboard.html" onclick="loadPage(this, 'pages/dashboard.html'); return false;">Dashboard</a>
-                    <a href="#" class="page-link" data-page="pages/presentation.html" onclick="loadPage(this, 'pages/presentation.html'); return false;">Presentation</a>
+                    <a href="#" class="page-link active" data-page="templates/component-reference.html" onclick="loadPage(this, 'templates/component-reference.html'); return false;">Component Reference</a>
+                    <a href="#" class="page-link" data-page="tests/foundations/tokens.html" onclick="loadPage(this, 'tests/foundations/tokens.html'); return false;">Tokens</a>
+                    <a href="#" class="page-link" data-page="tests/elements/button.test.html" onclick="loadPage(this, 'tests/elements/button.test.html'); return false;">Buttons</a>
+                    <a href="#" class="page-link" data-page="tests/elements/badge.test.html" onclick="loadPage(this, 'tests/elements/badge.test.html'); return false;">Badges</a>
+                    <a href="#" class="page-link" data-page="tests/components/metric-card.test.html" onclick="loadPage(this, 'tests/components/metric-card.test.html'); return false;">Metric Card</a>
+                    <a href="#" class="page-link" data-page="tests/components/hub-card.test.html" onclick="loadPage(this, 'tests/components/hub-card.test.html'); return false;">Hub Card</a>
+                    <a href="#" class="page-link" data-page="tests/components/file-item.test.html" onclick="loadPage(this, 'tests/components/file-item.test.html'); return false;">File Item</a>
+                    <a href="#" class="page-link" data-page="tests/components/fin-table.test.html" onclick="loadPage(this, 'tests/components/fin-table.test.html'); return false;">Financial Table</a>
                 </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Components</div>
+
+                <!-- TEMPLATES: Empty structural skeletons -->
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Templates</div>
                 <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" data-page="patterns/slide-test.html" onclick="loadPage(this, 'patterns/slide-test.html'); return false;">Slide Component</a>
+                    <a href="#" class="page-link" data-page="templates/dashboard-layout.html" onclick="loadPage(this, 'templates/dashboard-layout.html'); return false;">Dashboard Layout</a>
+                    <a href="#" class="page-link" data-page="templates/presentation-layout.html" onclick="loadPage(this, 'templates/presentation-layout.html'); return false;">Presentation Layout</a>
+                    <a href="#" class="page-link" data-page="templates/report-layout.html" onclick="loadPage(this, 'templates/report-layout.html'); return false;">Report Layout</a>
+                    <a href="#" class="page-link" data-page="templates/data-review-layout.html" onclick="loadPage(this, 'templates/data-review-layout.html'); return false;">Data Review Layout</a>
+                </div>
+
+                <!-- EXAMPLES: Finished pages with real content -->
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Examples</div>
+                <div class="pages-sidebar__list">
+                    <a href="#" class="page-link" data-page="pages/dashboard.html" onclick="loadPage(this, 'pages/dashboard.html'); return false;">Dashboard Example</a>
+                    <a href="#" class="page-link" data-page="pages/presentation.html" onclick="loadPage(this, 'pages/presentation.html'); return false;">Presentation Example</a>
                 </div>
             </aside>
             <div class="pages-preview">
-                <iframe src="pages/dashboard.html" class="pages-preview__frame" id="pages-frame"></iframe>
+                <iframe src="templates/component-reference.html" class="pages-preview__frame" id="pages-frame"></iframe>
             </div>
+
+            <!-- Mobile menu button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                ☰
+            </button>
+
+            <!-- Backdrop overlay -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
         </div>
     </div>
 
@@ -726,6 +957,74 @@
         }).join('');
 
         document.getElementById('demo-waterfall').innerHTML = waterfallHTML + '<div class="waterfall__axis"></div>';
+    </script>
+
+    <script>
+        // Mobile menu functionality - wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.querySelector('#tab-pages .pages-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            // Debug: Check if elements exist
+            console.log('Mobile menu button:', mobileMenuBtn);
+            console.log('Sidebar:', sidebar);
+            console.log('Backdrop:', backdrop);
+
+            function toggleMobileMenu() {
+                if (!sidebar || !backdrop || !mobileMenuBtn) {
+                    console.error('Mobile menu elements not found');
+                    return;
+                }
+
+                const isOpen = sidebar.classList.contains('active');
+                console.log('Toggle menu - currently open:', isOpen);
+
+                if (isOpen) {
+                    // Close menu
+                    sidebar.classList.remove('active');
+                    backdrop.classList.remove('active');
+                    mobileMenuBtn.textContent = '☰';
+                } else {
+                    // Open menu
+                    sidebar.classList.add('active');
+                    backdrop.classList.add('active');
+                    mobileMenuBtn.textContent = '✕';
+                }
+            }
+
+            function closeMobileMenu() {
+                if (!sidebar || !backdrop || !mobileMenuBtn) return;
+
+                sidebar.classList.remove('active');
+                backdrop.classList.remove('active');
+                mobileMenuBtn.textContent = '☰';
+            }
+
+            // Toggle menu on button click
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Menu button clicked');
+                    toggleMobileMenu();
+                });
+            } else {
+                console.error('Mobile menu button not found');
+            }
+
+            // Close menu when backdrop is clicked
+            if (backdrop) {
+                backdrop.addEventListener('click', closeMobileMenu);
+            }
+
+            // Close menu when a page link is clicked
+            document.querySelectorAll('#tab-pages .page-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    setTimeout(closeMobileMenu, 100);
+                });
+            });
+        });
     </script>
 </body>
 </html>
