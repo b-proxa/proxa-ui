@@ -560,7 +560,7 @@
                         const fileData = JSON.parse(fileItem.dataset.file);
                         openFilePanel(fileData);
                     } catch (err) {
-                        console.error('Failed to parse file data:', err, fileItem.dataset.file);
+                        // Silent fail - invalid file data
                     }
                 }
             });

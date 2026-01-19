@@ -54,8 +54,8 @@
 }
 
 .btn--danger:hover {
-    background: #c53030;
-    border-color: #c53030;
+    background: var(--error-dark);
+    border-color: var(--error-dark);
 }
 
 /* Size variants */

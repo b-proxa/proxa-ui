@@ -967,19 +967,10 @@
             const sidebar = document.querySelector('#tab-pages .pages-sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
 
-            // Debug: Check if elements exist
-            console.log('Mobile menu button:', mobileMenuBtn);
-            console.log('Sidebar:', sidebar);
-            console.log('Backdrop:', backdrop);
-
             function toggleMobileMenu() {
-                if (!sidebar || !backdrop || !mobileMenuBtn) {
-                    console.error('Mobile menu elements not found');
-                    return;
-                }
+                if (!sidebar || !backdrop || !mobileMenuBtn) return;
 
                 const isOpen = sidebar.classList.contains('active');
-                console.log('Toggle menu - currently open:', isOpen);
 
                 if (isOpen) {
                     // Close menu
@@ -1007,11 +998,8 @@
                 mobileMenuBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Menu button clicked');
                     toggleMobileMenu();
                 });
-            } else {
-                console.error('Mobile menu button not found');
             }
 
             // Close menu when backdrop is clicked
