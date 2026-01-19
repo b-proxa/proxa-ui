@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Layout Builder — Proxa</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        .builder-page {
+            padding: var(--space-4);
+            background: var(--gray-100);
+            min-height: 100vh;
+        }
+
+        /* Controls */
+        .builder-controls {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .control-group label {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+        .control-group select {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            background: white;
+            color: var(--gray-700);
+            cursor: pointer;
+        }
+        .split-indicator {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            margin-left: auto;
+        }
+
+        /* Preview container */
+        .builder-preview {
+            display: flex;
+            justify-content: center;
+            padding: var(--space-6);
+            background: var(--gray-200);
+            border-radius: var(--radius-lg);
+        }
+
+        /* Slide */
+        .slide-preview {
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+        }
+        .slide-preview.stacked {
+            width: 300px;
+            max-width: 300px;
+            min-height: 400px;
+            height: auto;
+        }
+
+        /* Grid regions */
+        .slide-region {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Layout mode overlay */
+        .layout-overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--gray-200);
+        }
+        .layout-overlay__content {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .layout-overlay__name {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+        }
+        .layout-overlay__padding-select {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 9px;
+            padding: 2px 4px;
+            border: 1px solid var(--gray-300);
+            border-radius: 3px;
+            background: white;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+
+        /* Resize handle */
+        .resize-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            margin-left: -4px;
+            cursor: col-resize;
+            background: transparent;
+            z-index: 10;
+        }
+        .resize-handle:hover {
+            background: rgba(74, 111, 165, 0.2);
+        }
+
+        /* Title component */
+        .comp-title {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .comp-title__section {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--gray-400);
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+        .comp-title__heading {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+        .compact .comp-title__section { font-size: 9px; }
+        .compact .comp-title__heading { font-size: 14px; }
+
+        /* Markdown component */
+        .comp-markdown {
+            height: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .comp-markdown__content {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--gray-700);
+        }
+        .comp-markdown__content h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin: 0 0 6px 0;
+        }
+        .comp-markdown__content h3 {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 12px 0 6px 0;
+        }
+        .comp-markdown__content p {
+            margin: 0 0 8px 0;
+        }
+        .comp-markdown__content ul {
+            margin: 0 0 8px 0;
+            padding-left: 16px;
+        }
+        .comp-markdown__content li {
+            margin-bottom: 4px;
+        }
+        .compact .comp-markdown__content { font-size: 10px; }
+        .compact .comp-markdown__content h2 { font-size: 11px; }
+        .compact .comp-markdown__content h3 { font-size: 10px; }
+
+        /* Chart component */
+        .comp-chart {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .comp-chart__legend {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 4px;
+            flex-shrink: 0;
+        }
+        .comp-chart__legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: var(--gray-600);
+        }
+        .comp-chart__legend-color {
+            width: 12px;
+            height: 2px;
+            border-radius: 1px;
+        }
+        .comp-chart__container {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comp-chart__canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .compact .comp-chart__legend { gap: 8px; margin-bottom: 2px; }
+        .compact .comp-chart__legend-item { font-size: 8px; }
+        .compact .comp-chart__legend-color { width: 8px; }
+
+        /* Table component */
+        .comp-table {
+            height: 100%;
+            overflow: auto;
+        }
+        .comp-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .comp-table th {
+            padding: 6px 8px;
+            text-align: left;
+            font-weight: 600;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .comp-table th:not(:first-child) {
+            text-align: right;
+        }
+        .comp-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .comp-table td:not(:first-child) {
+            text-align: right;
+        }
+        .compact .comp-table table { font-size: 9px; }
+
+        /* Image placeholder */
+        .comp-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .comp-image__placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed var(--gray-300);
+            border-radius: 4px;
+            color: var(--gray-400);
+            font-size: 12px;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .compact .comp-image__placeholder { font-size: 10px; }
+
+        /* Stacked layout (mobile) */
+        .slide-preview.stacked .slide-region {
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .slide-preview.stacked .slide-region.chart-region {
+            min-height: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-page">
+        <!-- Controls -->
+        <div class="builder-controls">
+            <div class="control-group">
+                <label>Layout</label>
+                <select id="layout-select">
+                    <option value="0">Title + 2 Columns</option>
+                    <option value="1">Two Columns</option>
+                    <option value="2">Header + Body + Footer</option>
+                    <option value="3">Sidebar + Content</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Aspect</label>
+                <select id="aspect-select">
+                    <option value="16:9">16:9 Desktop</option>
+                    <option value="16:4">16:4 Wide</option>
+                    <option value="4:3">4:3 Tablet</option>
+                    <option value="9:16">9:16 Mobile</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>View</label>
+                <select id="mode-select">
+                    <option value="layout">Layout</option>
+                    <option value="content">Content</option>
+                </select>
+            </div>
+            <span class="split-indicator" id="split-indicator">Split: 35%</span>
+        </div>
+
+        <!-- Preview -->
+        <div class="builder-preview">
+            <div class="slide-preview" id="slide-preview">
+                <!-- Regions rendered by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // DATA
+        // ============================================================
+        const ASPECT_RATIOS = {
+            '16:9': { width: 16, height: 9, label: 'Desktop', stack: false },
+            '16:4': { width: 16, height: 4, label: 'Wide', stack: false },
+            '4:3': { width: 4, height: 3, label: 'Tablet', stack: false },
+            '9:16': { width: 9, height: 16, label: 'Mobile', stack: true },
+        };
+
+        const PRESET_LAYOUTS = [
+            {
+                name: 'Title + 2 Columns',
+                regions: [
+                    { id: 'title', name: 'Title', row: 1, col: '1 / -1', component: 'title', padding: 12 },
+                    { id: 'left', name: 'Description', row: 2, col: 1, component: 'markdown', padding: 12 },
+                    { id: 'right', name: 'Visualization', row: 2, col: 2, component: 'chart', padding: 8 },
+                ],
+                rows: 'auto 1fr',
+                cols: '35% 1fr',
+                stackOrder: ['title', 'right', 'left']
+            },
+            {
+                name: 'Two Columns',
+                regions: [
+                    { id: 'left', name: 'Left', row: 1, col: 1, component: 'markdown', padding: 12 },
+                    { id: 'right', name: 'Right', row: 1, col: 2, component: 'chart', padding: 8 },
+                ],
+                rows: '1fr',
+                cols: '1fr 1fr',
+                stackOrder: ['left', 'right']
+            },
+            {
+                name: 'Header + Body + Footer',
+                regions: [
+                    { id: 'header', name: 'Header', row: 1, col: '1 / -1', component: 'title', padding: 12 },
+                    { id: 'body', name: 'Body', row: 2, col: '1 / -1', component: 'chart', padding: 8 },
+                    { id: 'footer', name: 'Footer', row: 3, col: '1 / -1', component: 'markdown', padding: 12 },
+                ],
+                rows: 'auto 1fr auto',
+                cols: '1fr',
+                stackOrder: ['header', 'body', 'footer']
+            },
+            {
+                name: 'Sidebar + Content',
+                regions: [
+                    { id: 'sidebar', name: 'Sidebar', row: '1 / -1', col: 1, component: 'markdown', padding: 12 },
+                    { id: 'content', name: 'Content', row: '1 / -1', col: 2, component: 'chart', padding: 8 },
+                ],
+                rows: '1fr',
+                cols: '25% 1fr',
+                stackOrder: ['content', 'sidebar']
+            },
+        ];
+
+        const SAMPLE_CHART_DATA = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [
+                { label: 'Revenue', data: [1200, 1400, 1300, 1550, 1480, 1720], color: '#4a6fa5' },
+                { label: 'Expenses', data: [850, 920, 880, 1020, 990, 1140], color: '#6b8f71' },
+            ]
+        };
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let state = {
+            layoutIndex: 0,
+            aspectRatio: '16:9',
+            mode: 'layout',
+            colSplit: 35,
+            layout: JSON.parse(JSON.stringify(PRESET_LAYOUTS[0])),
+        };
+
+        // ============================================================
+        // COMPONENTS
+        // ============================================================
+        function renderTitle(padding, compact) {
+            const p = compact ? Math.max(4, padding - 4) : padding;
+            return `
+                <div class="comp-title" style="padding: ${p}px;">
+                    <div class="comp-title__section">Fall 2025 Management Presentation</div>
+                    <h1 class="comp-title__heading">Financial Performance 2024</h1>
+                </div>
+            `;
+        }
+
+        function renderMarkdown(padding, compact) {
+            const p = compact ? Math.max(4, padding - 4) : padding;
+            return `
+                <div class="comp-markdown">
+                    <div class="comp-markdown__content" style="padding: ${p}px;">
+                        <h2>Key Highlights</h2>
+                        <p><strong>Revenue growth</strong> of 108% year-over-year demonstrates strong market position and validates our strategic investments.</p>
+                        <p>Our expansion into new markets contributed significantly, with APAC showing strong adoption rates.</p>
+                        <h3>Trends</h3>
+                        <ul>
+                            <li>Consistent upward trajectory across all quarters</li>
+                            <li>Expenses scaling efficiently with revenue growth</li>
+                            <li>Profit margins expanding significantly in H2</li>
+                            <li>Customer acquisition costs decreased 15%</li>
+                        </ul>
+                        <h3>Looking Ahead</h3>
+                        <p>Q1 2025 projections indicate continued momentum with expected revenue growth of 25-30% quarter-over-quarter.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChart(padding, compact, regionId) {
+            const p = compact ? Math.max(4, padding - 4) : padding;
+            return `
+                <div class="comp-chart" style="padding: ${p}px;">
+                    <div class="comp-chart__legend">
+                        ${SAMPLE_CHART_DATA.datasets.map(d => `
+                            <span class="comp-chart__legend-item">
+                                <span class="comp-chart__legend-color" style="background: ${d.color};"></span>
+                                ${d.label}
+                            </span>
+                        `).join('')}
+                    </div>
+                    <div class="comp-chart__container">
+                        <canvas class="comp-chart__canvas" data-region="${regionId}"></canvas>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTable(padding, compact) {
+            const p = compact ? Math.max(4, padding - 4) : padding;
+            const data = [
+                { month: 'Jan', revenue: 1200, expenses: 850 },
+                { month: 'Feb', revenue: 1400, expenses: 920 },
+                { month: 'Mar', revenue: 1300, expenses: 880 },
+                { month: 'Apr', revenue: 1550, expenses: 1020 },
+            ];
+            return `
+                <div class="comp-table" style="padding: ${p}px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Revenue</th>
+                                <th>Expenses</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(row => `
+                                <tr>
+                                    <td>${row.month}</td>
+                                    <td>$${row.revenue.toLocaleString()}</td>
+                                    <td>$${row.expenses.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderImage(padding, compact) {
+            const p = compact ? Math.max(4, padding - 4) : padding;
+            return `
+                <div class="comp-image" style="padding: ${p}px;">
+                    <div class="comp-image__placeholder">
+                        <span style="font-size: 20px; opacity: 0.5;">&#9634;</span>
+                        Image
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLayoutOverlay(region) {
+            const p = region.padding || 12;
+            return `
+                <div class="layout-overlay" style="padding: ${p}px;">
+                    <div class="layout-overlay__content">
+                        <span class="layout-overlay__name">${region.name}</span>
+                    </div>
+                    <select class="layout-overlay__padding-select" data-region="${region.id}">
+                        <option value="0" ${p === 0 ? 'selected' : ''}>0px</option>
+                        <option value="4" ${p === 4 ? 'selected' : ''}>4px</option>
+                        <option value="8" ${p === 8 ? 'selected' : ''}>8px</option>
+                        <option value="12" ${p === 12 ? 'selected' : ''}>12px</option>
+                        <option value="16" ${p === 16 ? 'selected' : ''}>16px</option>
+                        <option value="24" ${p === 24 ? 'selected' : ''}>24px</option>
+                    </select>
+                </div>
+            `;
+        }
+
+        function renderComponent(region, compact) {
+            switch (region.component) {
+                case 'title': return renderTitle(region.padding, compact);
+                case 'markdown': return renderMarkdown(region.padding, compact);
+                case 'chart': return renderChart(region.padding, compact, region.id);
+                case 'table': return renderTable(region.padding, compact);
+                case 'image': return renderImage(region.padding, compact);
+                default: return '';
+            }
+        }
+
+        // ============================================================
+        // CHART DRAWING
+        // ============================================================
+        function drawChart(canvas, compact) {
+            const container = canvas.parentElement;
+            if (!container) return;
+
+            const rect = container.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = rect.width * 2;
+            canvas.height = rect.height * 2;
+            ctx.scale(2, 2);
+
+            const w = rect.width;
+            const h = rect.height;
+
+            const padding = compact
+                ? { top: 8, right: 8, bottom: 18, left: 28 }
+                : { top: 12, right: 12, bottom: 24, left: 36 };
+
+            const chartW = w - padding.left - padding.right;
+            const chartH = h - padding.top - padding.bottom;
+
+            if (chartW < 20 || chartH < 20) return;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Grid lines
+            ctx.strokeStyle = '#e7e5e4';
+            ctx.lineWidth = 0.5;
+            const gridLines = compact ? 3 : 4;
+            for (let i = 0; i <= gridLines; i++) {
+                const y = padding.top + (chartH / gridLines) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(w - padding.right, y);
+                ctx.stroke();
+            }
+
+            // Data
+            const allValues = SAMPLE_CHART_DATA.datasets.flatMap(d => d.data);
+            const maxVal = Math.max(...allValues) * 1.1;
+            const minVal = 0;
+
+            SAMPLE_CHART_DATA.datasets.forEach((dataset) => {
+                ctx.strokeStyle = dataset.color;
+                ctx.lineWidth = compact ? 1 : 1.5;
+                ctx.beginPath();
+
+                dataset.data.forEach((val, i) => {
+                    const x = padding.left + (chartW / (dataset.data.length - 1)) * i;
+                    const y = padding.top + chartH - ((val - minVal) / (maxVal - minVal)) * chartH;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                // Points
+                if (!compact || chartH > 60) {
+                    dataset.data.forEach((val, i) => {
+                        const x = padding.left + (chartW / (dataset.data.length - 1)) * i;
+                        const y = padding.top + chartH - ((val - minVal) / (maxVal - minVal)) * chartH;
+                        ctx.fillStyle = dataset.color;
+                        ctx.beginPath();
+                        ctx.arc(x, y, compact ? 1.5 : 2.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                }
+            });
+
+            // X labels
+            ctx.fillStyle = '#78716c';
+            ctx.font = `${compact ? 8 : 9}px system-ui`;
+            ctx.textAlign = 'center';
+            SAMPLE_CHART_DATA.labels.forEach((label, i) => {
+                const x = padding.left + (chartW / (SAMPLE_CHART_DATA.labels.length - 1)) * i;
+                ctx.fillText(label, x, h - 4);
+            });
+
+            // Y labels
+            ctx.textAlign = 'right';
+            ctx.font = `${compact ? 7 : 9}px system-ui`;
+            for (let i = 0; i <= gridLines; i++) {
+                const val = minVal + ((maxVal - minVal) / gridLines) * (gridLines - i);
+                const y = padding.top + (chartH / gridLines) * i;
+                ctx.fillText((val / 1000).toFixed(1) + 'k', padding.left - 3, y + 3);
+            }
+        }
+
+        // ============================================================
+        // RENDER
+        // ============================================================
+        function render() {
+            const slide = document.getElementById('slide-preview');
+            const aspect = ASPECT_RATIOS[state.aspectRatio];
+            const shouldStack = aspect.stack;
+            const isCompact = state.aspectRatio === '16:4' || state.aspectRatio === '9:16';
+            const layout = state.layout;
+
+            // Update split indicator visibility
+            const splitIndicator = document.getElementById('split-indicator');
+            const hasResizableCol = layout.cols.includes('%') && !shouldStack;
+            splitIndicator.style.display = hasResizableCol ? 'block' : 'none';
+            splitIndicator.textContent = `Split: ${Math.round(state.colSplit)}%`;
+
+            // Slide classes and style
+            slide.className = 'slide-preview' + (shouldStack ? ' stacked' : '') + (isCompact ? ' compact' : '');
+
+            if (shouldStack) {
+                slide.style.cssText = 'width: 300px; max-width: 300px; min-height: 400px; height: auto; display: flex; flex-direction: column;';
+            } else {
+                const cols = layout.cols.includes('%')
+                    ? layout.cols.replace(/\d+%/, `${state.colSplit}%`)
+                    : layout.cols;
+                slide.style.cssText = `
+                    aspect-ratio: ${aspect.width} / ${aspect.height};
+                    width: 100%;
+                    max-width: 900px;
+                    display: grid;
+                    grid-template-rows: ${layout.rows};
+                    grid-template-columns: ${cols};
+                `;
+            }
+
+            // Render regions
+            let html = '';
+            const regions = shouldStack
+                ? layout.stackOrder.map(id => layout.regions.find(r => r.id === id)).filter(Boolean)
+                : layout.regions;
+
+            regions.forEach((region) => {
+                const isChart = region.component === 'chart';
+                const isAutoRow = !shouldStack && layout.rows.split(' ')[(typeof region.row === 'number' ? region.row : 1) - 1] === 'auto';
+
+                let style = '';
+                if (shouldStack) {
+                    style = isChart ? 'min-height: 200px; height: 200px;' : '';
+                } else {
+                    style = `grid-row: ${region.row}; grid-column: ${region.col};`;
+                    if (state.mode === 'layout' && isAutoRow) {
+                        style += ' min-height: 60px;';
+                    }
+                }
+
+                const content = state.mode === 'layout'
+                    ? renderLayoutOverlay(region)
+                    : renderComponent(region, isCompact);
+
+                html += `<div class="slide-region ${isChart ? 'chart-region' : ''}" style="${style}">${content}</div>`;
+            });
+
+            // Add resize handle
+            if (hasResizableCol && state.mode === 'content') {
+                html += `<div class="resize-handle" id="resize-handle" style="left: ${state.colSplit}%;"></div>`;
+            }
+
+            slide.innerHTML = html;
+
+            // Draw charts after render
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.comp-chart__canvas').forEach(canvas => {
+                    drawChart(canvas, isCompact);
+                });
+            });
+
+            // Attach padding change listeners
+            document.querySelectorAll('.layout-overlay__padding-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const regionId = e.target.dataset.region;
+                    const padding = parseInt(e.target.value);
+                    const region = state.layout.regions.find(r => r.id === regionId);
+                    if (region) {
+                        region.padding = padding;
+                        render();
+                    }
+                });
+            });
+
+            // Attach resize handle
+            const handle = document.getElementById('resize-handle');
+            if (handle) {
+                handle.addEventListener('mousedown', startResize);
+            }
+        }
+
+        // ============================================================
+        // RESIZE
+        // ============================================================
+        function startResize(e) {
+            e.preventDefault();
+            document.addEventListener('mousemove', doResize);
+            document.addEventListener('mouseup', stopResize);
+        }
+
+        function doResize(e) {
+            const slide = document.getElementById('slide-preview');
+            const rect = slide.getBoundingClientRect();
+            const pct = Math.max(20, Math.min(80, ((e.clientX - rect.left) / rect.width) * 100));
+            state.colSplit = pct;
+            render();
+        }
+
+        function stopResize() {
+            document.removeEventListener('mousemove', doResize);
+            document.removeEventListener('mouseup', stopResize);
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        document.getElementById('layout-select').addEventListener('change', (e) => {
+            state.layoutIndex = parseInt(e.target.value);
+            state.layout = JSON.parse(JSON.stringify(PRESET_LAYOUTS[state.layoutIndex]));
+            state.colSplit = 35;
+            render();
+        });
+
+        document.getElementById('aspect-select').addEventListener('change', (e) => {
+            state.aspectRatio = e.target.value;
+            render();
+        });
+
+        document.getElementById('mode-select').addEventListener('change', (e) => {
+            state.mode = e.target.value;
+            render();
+        });
+
+        // ResizeObserver for charts
+        const resizeObserver = new ResizeObserver(() => {
+            const isCompact = state.aspectRatio === '16:4' || state.aspectRatio === '9:16';
+            document.querySelectorAll('.comp-chart__canvas').forEach(canvas => {
+                drawChart(canvas, isCompact);
+            });
+        });
+
+        // Initial render
+        render();
+        resizeObserver.observe(document.getElementById('slide-preview'));
+    </script>
+</body>
+</html>
