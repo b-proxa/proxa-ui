@@ -594,9 +594,13 @@
     <div class="tab-content" id="tab-styleguide">
         <div class="pages-layout">
             <aside class="pages-sidebar">
-                <div class="pages-sidebar__title">Foundations</div>
+                <div class="pages-sidebar__title">Overview</div>
                 <div class="pages-sidebar__list">
-                    <a href="#" class="page-link active" onclick="loadStyleGuide(this, 'tests/foundations/tokens.html'); return false;">Tokens</a>
+                    <a href="#" class="page-link active" onclick="loadStyleGuide(this, 'templates/component-reference.html'); return false;">Component Reference</a>
+                </div>
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Foundations</div>
+                <div class="pages-sidebar__list">
+                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/foundations/tokens.html'); return false;">Tokens</a>
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Elements</div>
                 <div class="pages-sidebar__list">
@@ -612,7 +616,7 @@
                 </div>
             </aside>
             <div class="pages-preview">
-                <iframe src="tests/foundations/tokens.html" class="pages-preview__frame" id="styleguide-frame"></iframe>
+                <iframe src="templates/component-reference.html" class="pages-preview__frame" id="styleguide-frame"></iframe>
             </div>
         </div>
     </div>
@@ -628,23 +632,10 @@
     <div class="tab-content" id="tab-pages">
         <div class="pages-layout">
             <aside class="pages-sidebar">
-                <!-- STYLE GUIDE: Design tokens, elements, components -->
-                <div class="pages-sidebar__title">Style Guide</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link active" data-page="templates/component-reference.html" onclick="loadPage(this, 'templates/component-reference.html'); return false;">Component Reference</a>
-                    <a href="#" class="page-link" data-page="tests/foundations/tokens.html" onclick="loadPage(this, 'tests/foundations/tokens.html'); return false;">Tokens</a>
-                    <a href="#" class="page-link" data-page="tests/elements/button.test.html" onclick="loadPage(this, 'tests/elements/button.test.html'); return false;">Buttons</a>
-                    <a href="#" class="page-link" data-page="tests/elements/badge.test.html" onclick="loadPage(this, 'tests/elements/badge.test.html'); return false;">Badges</a>
-                    <a href="#" class="page-link" data-page="tests/components/metric-card.test.html" onclick="loadPage(this, 'tests/components/metric-card.test.html'); return false;">Metric Card</a>
-                    <a href="#" class="page-link" data-page="tests/components/hub-card.test.html" onclick="loadPage(this, 'tests/components/hub-card.test.html'); return false;">Hub Card</a>
-                    <a href="#" class="page-link" data-page="tests/components/file-item.test.html" onclick="loadPage(this, 'tests/components/file-item.test.html'); return false;">File Item</a>
-                    <a href="#" class="page-link" data-page="tests/components/fin-table.test.html" onclick="loadPage(this, 'tests/components/fin-table.test.html'); return false;">Financial Table</a>
-                </div>
-
                 <!-- TEMPLATES: Empty structural skeletons -->
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Templates</div>
+                <div class="pages-sidebar__title">Templates</div>
                 <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" data-page="templates/dashboard-layout.html" onclick="loadPage(this, 'templates/dashboard-layout.html'); return false;">Dashboard Layout</a>
+                    <a href="#" class="page-link active" data-page="templates/dashboard-layout.html" onclick="loadPage(this, 'templates/dashboard-layout.html'); return false;">Dashboard Layout</a>
                     <a href="#" class="page-link" data-page="templates/presentation-layout.html" onclick="loadPage(this, 'templates/presentation-layout.html'); return false;">Presentation Layout</a>
                     <a href="#" class="page-link" data-page="templates/report-layout.html" onclick="loadPage(this, 'templates/report-layout.html'); return false;">Report Layout</a>
                     <a href="#" class="page-link" data-page="templates/data-review-layout.html" onclick="loadPage(this, 'templates/data-review-layout.html'); return false;">Data Review Layout</a>
@@ -658,7 +649,7 @@
                 </div>
             </aside>
             <div class="pages-preview">
-                <iframe src="templates/component-reference.html" class="pages-preview__frame" id="pages-frame"></iframe>
+                <iframe src="templates/dashboard-layout.html" class="pages-preview__frame" id="pages-frame"></iframe>
             </div>
 
             <!-- Mobile menu button -->
