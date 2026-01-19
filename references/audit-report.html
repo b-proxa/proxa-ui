@@ -129,10 +129,6 @@
         }
         .toast--success { background: var(--success); }
         .toast--error { background: var(--error); }
-        #run-audit-btn:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
     </style>
 </head>
 <body>
@@ -156,9 +152,7 @@
                 <p class="doc-description">Comprehensive audit of the Proxa UI design system covering consistency, components, code quality, and design system alignment.</p>
             </div>
             <div class="doc-actions">
-                <button class="btn btn--primary" id="run-audit-btn" onclick="runAudit()">Run Audit</button>
-                <button class="btn btn--secondary" onclick="loadReport()">Refresh</button>
-                <a href="../AUDIT-REPORT.md" download class="btn btn--secondary">Download</a>
+                <a href="../AUDIT-REPORT.md" download class="btn">Download</a>
             </div>
         </div>
 
@@ -172,63 +166,16 @@
             const content = document.getElementById('content');
 
             try {
-                // Add cache-busting to ensure fresh content
                 const response = await fetch('../AUDIT-REPORT.md?t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 const markdown = await response.text();
-                // Sanitize markdown output to prevent XSS
                 content.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
             } catch (err) {
-                content.innerHTML = `<div class="error">Failed to load report: ${escapeHtml(err.message)}</div>`;
+                const div = document.createElement('div');
+                div.textContent = err.message;
+                content.innerHTML = `<div class="error">Failed to load report: ${div.innerHTML}</div>`;
             }
-        }
-
-        async function runAudit() {
-            const btn = document.getElementById('run-audit-btn');
-            const content = document.getElementById('content');
-
-            btn.disabled = true;
-            btn.textContent = 'Running...';
-
-            try {
-                const response = await fetch('/api/audit/run', { method: 'POST' });
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-                const result = await response.json();
-
-                // Show quick summary toast
-                showToast(`Audit complete: ${result.audit.summary.total} issues found`);
-
-                // Reload the markdown report
-                await loadReport();
-            } catch (err) {
-                showToast(`Audit failed: ${escapeHtml(err.message)}`, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Run Audit';
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            // Create toast if it doesn't exist
-            let toast = document.getElementById('toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'toast';
-                toast.className = 'toast';
-                document.body.appendChild(toast);
-            }
-
-            toast.textContent = message;
-            toast.className = 'toast show' + (type === 'error' ? ' toast--error' : ' toast--success');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
         }
 
         loadReport();
