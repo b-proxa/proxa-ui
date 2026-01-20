@@ -140,67 +140,58 @@
 <body>
     <div class="template-container">
 
-        <!-- HEADER: Title, actions, view tabs -->
+        <!-- ZONE: review-header | BLOCKS: button-group | REQUIRED: yes -->
         <header class="review-header">
             <div class="review-header__top">
-                <h1 class="review-title">Data Review Title</h1>
+                <h1 class="review-title">{REVIEW_TITLE}</h1>
                 <div class="review-actions">
                     <div class="drop-zone" style="min-height: 40px; padding: var(--space-2) var(--space-3);">
-                        DROP: Buttons<br>
-                        (Export, Share, etc.)
+                        Actions: Export, Share buttons
                     </div>
                 </div>
             </div>
 
-            <!-- View tabs -->
             <div class="review-tabs">
                 <div class="drop-zone" style="min-height: 40px; padding: var(--space-2) var(--space-3);">
-                    DROP: Tab components<br>
-                    (Output, Table, Comments, etc.)
+                    Tabs: Output, Table, Comments
                 </div>
             </div>
         </header>
+        <!-- /ZONE: review-header -->
 
-        <!-- MAIN CONTENT -->
         <main class="review-main">
 
-            <!-- SPLIT VIEW: Visualization + Data side-by-side -->
+            <!-- ZONE: split-view | BLOCKS: chart-container, metric-block, metric-card | REQUIRED: no -->
             <div class="review-split">
-                <!-- Left: Visualization -->
                 <section class="review-section">
                     <div class="review-section__header">
-                        <h2 class="review-section__title">Visualization</h2>
+                        <h2 class="review-section__title">{LEFT_TITLE}</h2>
                         <div class="review-section__actions">
                             <div class="drop-zone" style="min-height: 32px; padding: var(--space-1) var(--space-2);">
-                                Chart type selector
+                                Actions
                             </div>
                         </div>
                     </div>
                     <div class="drop-zone">
-                        DROP: Chart (line, bar, area)<br>
-                        OR Waterfall<br>
-                        OR Variance bars<br>
-                        OR Sparklines
+                        Left: chart or visualization
                     </div>
                 </section>
 
-                <!-- Right: Data summary -->
                 <section class="review-section">
                     <div class="review-section__header">
-                        <h2 class="review-section__title">Key Metrics</h2>
+                        <h2 class="review-section__title">{RIGHT_TITLE}</h2>
                     </div>
                     <div class="drop-zone">
-                        DROP: Metric blocks<br>
-                        OR Metric cards<br>
-                        OR Summary stats
+                        Right: metrics or summary
                     </div>
                 </section>
             </div>
+            <!-- /ZONE: split-view -->
 
-            <!-- FULL WIDTH: Data table -->
+            <!-- ZONE: data-table | BLOCKS: data-table, card | REQUIRED: no -->
             <section class="review-section">
                 <div class="review-section__header">
-                    <h2 class="review-section__title">Data Table</h2>
+                    <h2 class="review-section__title">{SECTION_TITLE}</h2>
                     <div class="review-section__actions">
                         <div class="drop-zone" style="min-height: 32px; padding: var(--space-1) var(--space-2);">
                             Table actions
@@ -208,13 +199,12 @@
                     </div>
                 </div>
                 <div class="drop-zone">
-                    DROP: Financial Table<br>
-                    OR Data Table (editable)<br>
-                    OR Comparison Table
+                    Data table or detailed view
                 </div>
             </section>
+            <!-- /ZONE: data-table -->
 
-            <!-- FULL WIDTH: Comments/Activity -->
+            <!-- ZONE: comments | BLOCKS: card, section | REQUIRED: no -->
             <section class="review-section">
                 <div class="review-section__header">
                     <h2 class="review-section__title">Comments & Activity</h2>
@@ -225,11 +215,10 @@
                     </div>
                 </div>
                 <div class="drop-zone" style="min-height: 200px;">
-                    DROP: Comments component<br>
-                    OR Activity feed<br>
-                    OR Change log
+                    Comments or activity feed
                 </div>
             </section>
+            <!-- /ZONE: comments -->
 
         </main>
 

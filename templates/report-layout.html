@@ -126,114 +126,88 @@
 <body>
     <div class="template-container">
 
-        <!-- REPORT HEADER -->
+        <!-- ZONE: report-header | REQUIRED: yes -->
         <header class="report-header">
-            <h1 class="report-title">Report Title</h1>
+            <h1 class="report-title">{REPORT_TITLE}</h1>
             <div class="report-meta">
                 <div class="report-meta__item">
                     <strong>Period:</strong>
-                    <span>Q4 2024</span>
+                    <span>{PERIOD}</span>
                 </div>
                 <div class="report-meta__item">
                     <strong>Date:</strong>
-                    <span>January 17, 2026</span>
+                    <span>{DATE}</span>
                 </div>
                 <div class="report-meta__item">
                     <strong>Prepared by:</strong>
-                    <span>Finance Team</span>
+                    <span>{AUTHOR}</span>
                 </div>
             </div>
         </header>
+        <!-- /ZONE: report-header -->
 
-        <!-- EXECUTIVE SUMMARY -->
+        <!-- BLOCK: report-section (repeatable) -->
+        <!-- ZONE: executive-summary | BLOCKS: section, card | REQUIRED: yes -->
         <section class="report-section">
             <h2 class="report-section__title">Executive Summary</h2>
             <div class="report-section__content">
                 <div class="drop-zone">
-                    DROP: Markdown content<br>
-                    OR Summary text<br>
-                    OR Key highlights
+                    Summary text, key highlights
                 </div>
             </div>
         </section>
+        <!-- /ZONE: executive-summary -->
 
-        <!-- KEY METRICS -->
+        <!-- ZONE: key-metrics | BLOCKS: metric-card, metric-block, metric-grid | REQUIRED: no -->
         <section class="report-section">
             <h2 class="report-section__title">Key Metrics</h2>
             <div class="metrics-grid">
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (Revenue)
-                </div>
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (Profit)
-                </div>
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (Growth)
-                </div>
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (Margin)
-                </div>
+                <div class="drop-zone">Metric Card</div>
+                <div class="drop-zone">Metric Card</div>
+                <div class="drop-zone">Metric Card</div>
+                <div class="drop-zone">Metric Card</div>
             </div>
         </section>
+        <!-- /ZONE: key-metrics -->
 
-        <!-- FINANCIAL PERFORMANCE -->
+        <!-- ZONE: visualization | BLOCKS: chart-container, data-table | REQUIRED: no -->
         <section class="report-section">
-            <h2 class="report-section__title">Financial Performance</h2>
+            <h2 class="report-section__title">{SECTION_TITLE}</h2>
             <div class="report-section__content">
                 <div class="drop-zone drop-zone--large">
-                    DROP: Chart (line, bar, area)<br>
-                    OR Waterfall Chart<br>
-                    OR Variance Bars
+                    Chart or visualization
                 </div>
             </div>
             <div class="report-section__content">
                 <div class="drop-zone">
-                    DROP: Analysis text<br>
-                    OR Commentary<br>
-                    Use .markdown class
+                    Analysis text (use .markdown class)
                 </div>
             </div>
         </section>
+        <!-- /ZONE: visualization -->
 
-        <!-- DETAILED DATA -->
+        <!-- ZONE: detailed-data | BLOCKS: data-table, card | REQUIRED: no -->
         <section class="report-section">
-            <h2 class="report-section__title">Detailed Analysis</h2>
+            <h2 class="report-section__title">{SECTION_TITLE}</h2>
             <div class="report-section__content">
                 <div class="drop-zone drop-zone--large">
-                    DROP: Financial Table<br>
-                    OR Data Table<br>
-                    OR Comparison Table
+                    Data table or detailed analysis
                 </div>
             </div>
         </section>
+        <!-- /ZONE: detailed-data -->
 
-        <!-- ADDITIONAL SECTION (Optional) -->
-        <section class="report-section">
-            <h2 class="report-section__title">Additional Insights</h2>
-            <div class="report-section__content">
-                <div class="drop-zone">
-                    DROP: Additional charts<br>
-                    OR Tables<br>
-                    OR Commentary
-                </div>
-            </div>
-        </section>
-
-        <!-- FOOTER/NOTES -->
+        <!-- ZONE: notes | BLOCKS: section, card | REQUIRED: no -->
         <section class="report-section">
             <h2 class="report-section__title">Notes & Methodology</h2>
             <div class="report-section__content">
                 <div class="drop-zone">
-                    DROP: Footnotes<br>
-                    OR Data sources<br>
-                    OR Methodology notes
+                    Footnotes, sources, methodology
                 </div>
             </div>
         </section>
+        <!-- /ZONE: notes -->
+        <!-- /BLOCK: report-section -->
 
     </div>
 

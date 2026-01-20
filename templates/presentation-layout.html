@@ -123,77 +123,54 @@
     <div class="template-container">
         <div class="presentation">
 
-            <!-- SLIDE 1: Title/Overview -->
+            <!-- BLOCK: slide (repeatable) -->
+            <!-- Copy this entire slide block to add more slides -->
+            <div class="slide">
+                <!-- ZONE: slide-header | REQUIRED: yes -->
+                <header class="slide__header">
+                    <h1 class="slide__title">{SLIDE_TITLE}</h1>
+                    <p class="slide__subtitle">{SUBTITLE}</p>
+                </header>
+                <!-- /ZONE: slide-header -->
+
+                <!-- ZONE: slide-description | BLOCKS: section, card | REQUIRED: yes -->
+                <div class="slide__description">
+                    <div class="drop-zone">
+                        Description: text, key points, analysis
+                    </div>
+                </div>
+                <!-- /ZONE: slide-description -->
+
+                <!-- ZONE: slide-visualization | BLOCKS: chart-container, metric-block, data-table | REQUIRED: yes -->
+                <div class="slide__visualization">
+                    <div class="drop-zone">
+                        Visualization: chart, table, metrics
+                    </div>
+                </div>
+                <!-- /ZONE: slide-visualization -->
+            </div>
+            <!-- /BLOCK: slide -->
+
+            <!-- BLOCK: slide (copy for additional slides) -->
             <div class="slide">
                 <header class="slide__header">
-                    <h1 class="slide__title">Slide Title Goes Here</h1>
-                    <p class="slide__subtitle">Optional subtitle or date</p>
+                    <h1 class="slide__title">{SLIDE_TITLE}</h1>
+                    <p class="slide__subtitle">{SUBTITLE}</p>
                 </header>
 
                 <div class="slide__description">
                     <div class="drop-zone">
-                        DROP: Markdown content<br>
-                        OR Text description<br>
-                        OR Key points list<br>
-                        <br>
-                        Use .markdown class for formatted content
+                        Description content
                     </div>
                 </div>
 
                 <div class="slide__visualization">
                     <div class="drop-zone">
-                        DROP: Chart (line, bar, area)<br>
-                        OR Waterfall<br>
-                        OR Variance bars<br>
-                        OR Metric blocks<br>
-                        OR Financial table
+                        Visualization content
                     </div>
                 </div>
             </div>
-
-            <!-- SLIDE 2: Data detail -->
-            <div class="slide">
-                <header class="slide__header">
-                    <h1 class="slide__title">Second Slide Title</h1>
-                    <p class="slide__subtitle">Supporting information</p>
-                </header>
-
-                <div class="slide__description">
-                    <div class="drop-zone">
-                        DROP: Analysis notes<br>
-                        OR Commentary<br>
-                        OR Insights
-                    </div>
-                </div>
-
-                <div class="slide__visualization">
-                    <div class="drop-zone">
-                        DROP: Visualization<br>
-                        OR Table<br>
-                        OR Comparison
-                    </div>
-                </div>
-            </div>
-
-            <!-- SLIDE 3: Add more slides as needed -->
-            <div class="slide">
-                <header class="slide__header">
-                    <h1 class="slide__title">Third Slide Title</h1>
-                    <p class="slide__subtitle">Additional context</p>
-                </header>
-
-                <div class="slide__description">
-                    <div class="drop-zone">
-                        DROP: Content here
-                    </div>
-                </div>
-
-                <div class="slide__visualization">
-                    <div class="drop-zone">
-                        DROP: Visualization here
-                    </div>
-                </div>
-            </div>
+            <!-- /BLOCK: slide -->
 
         </div>
     </div>

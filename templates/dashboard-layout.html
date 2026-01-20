@@ -100,66 +100,50 @@
 </head>
 <body>
     <div class="template-container">
-        <!-- HEADER ZONE: Navigation, branding, user menu -->
+        <!-- ZONE: header | BLOCKS: card | REQUIRED: yes -->
         <header class="template-header">
             <div class="drop-zone">
-                DROP: Header component with navigation and branding
+                Header: navigation, branding, user menu
             </div>
         </header>
+        <!-- /ZONE: header -->
 
-        <!-- MAIN CONTENT -->
         <main class="template-main">
 
-            <!-- METRICS ROW: KPI cards, metric blocks -->
+            <!-- ZONE: metrics-row | BLOCKS: metric-card, metric-grid, metric-block | REQUIRED: no -->
             <section class="metrics-row">
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (Revenue, Profit, etc.)
-                </div>
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (with sparkline)
-                </div>
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (YoY comparison)
-                </div>
-                <div class="drop-zone">
-                    DROP: Metric Card<br>
-                    (trend indicator)
-                </div>
+                <div class="drop-zone">Metric Card</div>
+                <div class="drop-zone">Metric Card</div>
+                <div class="drop-zone">Metric Card</div>
+                <div class="drop-zone">Metric Card</div>
             </section>
+            <!-- /ZONE: metrics-row -->
 
-            <!-- MAIN CONTENT GRID: Primary content + sidebar -->
             <div class="content-grid">
-                <!-- Primary content area -->
+                <!-- ZONE: content-primary | BLOCKS: chart-container, data-table, card | REQUIRED: yes -->
                 <div class="content-primary">
                     <div class="drop-zone" style="min-height: 400px;">
-                        DROP: Chart (line, bar, area)<br>
-                        OR Data Table<br>
-                        OR Waterfall Chart<br>
-                        OR Variance Bars
+                        Primary: chart, table, or visualization
                     </div>
                 </div>
+                <!-- /ZONE: content-primary -->
 
-                <!-- Sidebar: Activity, shortcuts, quick actions -->
+                <!-- ZONE: content-sidebar | BLOCKS: card, metric-block, button-group | REQUIRED: no -->
                 <aside class="content-sidebar">
                     <div class="drop-zone">
-                        DROP: Hub Cards<br>
-                        OR Recent Activity<br>
-                        OR Quick Actions
+                        Sidebar: cards, quick actions
                     </div>
                 </aside>
+                <!-- /ZONE: content-sidebar -->
             </div>
 
-            <!-- FULL WIDTH SECTION: Tables, detailed data -->
+            <!-- ZONE: content-full | BLOCKS: data-table, card, section | REQUIRED: no -->
             <section class="content-full">
                 <div class="drop-zone">
-                    DROP: Financial Table<br>
-                    OR Data Table<br>
-                    OR Activity Log
+                    Full-width: tables, detailed data
                 </div>
             </section>
+            <!-- /ZONE: content-full -->
 
         </main>
     </div>

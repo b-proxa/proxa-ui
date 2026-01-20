@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocks Library</title>
+    <link rel="stylesheet" href="../css/proxa.css">
+    <style>
+        body {
+            background: var(--gray-100);
+            margin: 0;
+            padding: var(--space-6);
+        }
+
+        .library-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Page header */
+        .library-header {
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .library-header__title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .library-header__desc {
+            font-size: var(--text-base);
+            color: var(--gray-600);
+            max-width: 600px;
+        }
+
+        /* Category sections */
+        .category {
+            margin-bottom: var(--space-8);
+        }
+
+        .category__title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        /* Block entries */
+        .block-entry {
+            background: white;
+            border: var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-5);
+            overflow: hidden;
+        }
+
+        .block-entry__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3) var(--space-4);
+            background: var(--gray-50);
+            border-bottom: var(--border);
+        }
+
+        .block-entry__name {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .block-entry__meta {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .block-entry__body {
+            padding: var(--space-4);
+        }
+
+        /* Usage note */
+        .usage-note {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            margin-bottom: var(--space-4);
+            padding: var(--space-3);
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            border-radius: var(--radius-sm);
+        }
+
+        /* Preview area */
+        .preview-area {
+            padding: var(--space-4);
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+        }
+
+        .preview-area--dark {
+            background: var(--gray-800);
+        }
+
+        /* Code block */
+        .code-block {
+            position: relative;
+            background: var(--gray-900);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-block__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-2) var(--space-3);
+            background: var(--gray-800);
+            border-bottom: 1px solid var(--gray-700);
+        }
+
+        .code-block__label {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+
+        .code-block__copy {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--gray-300);
+            background: var(--gray-700);
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .code-block__copy:hover {
+            background: var(--gray-600);
+            color: white;
+        }
+
+        .code-block__content {
+            padding: var(--space-3);
+            color: var(--gray-100);
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Variants list */
+        .variants {
+            margin-top: var(--space-3);
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .variants__title {
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-2);
+        }
+
+        .variants__list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+        }
+
+        .variant-tag {
+            font-size: var(--text-xs);
+            font-family: var(--font-mono);
+            padding: var(--space-1) var(--space-2);
+            background: var(--gray-100);
+            border-radius: var(--radius-sm);
+            color: var(--gray-600);
+        }
+
+        /* Responsive notes */
+        .responsive-note {
+            margin-top: var(--space-3);
+            padding: var(--space-2) var(--space-3);
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+        }
+
+        .responsive-note::before {
+            content: "Responsive: ";
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: var(--space-4);
+            }
+
+            .block-entry__header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-2);
+            }
+
+            .code-block__content {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="library-container">
+        <!-- Header -->
+        <div class="library-header">
+            <h1 class="library-header__title">Blocks Library</h1>
+            <p class="library-header__desc">Copy-paste HTML blocks for assembling pages. Each block is self-contained with responsive behavior built in. Use placeholders like {VALUE} for dynamic content.</p>
+        </div>
+
+        <!-- ============================================================
+             LAYOUT BLOCKS
+             ============================================================ -->
+        <section class="category">
+            <h2 class="category__title">Layout Blocks</h2>
+
+            <!-- BLOCK: card -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Card</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Container</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Grouping related content, forms, data displays. Basic container for most content.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="card" style="max-width: 400px;">
+                            <div class="card__header">
+                                <span class="card__title">Card Title</span>
+                                <div class="card__actions">
+                                    <button class="btn btn--sm">Action</button>
+                                </div>
+                            </div>
+                            <div class="card__body">
+                                <p style="font-size: var(--text-sm); color: var(--gray-600); margin: 0;">Card content goes here. This is a basic container for grouping related content.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: card -->
+&lt;div class="card"&gt;
+    &lt;div class="card__header"&gt;
+        &lt;span class="card__title"&gt;{TITLE}&lt;/span&gt;
+        &lt;div class="card__actions"&gt;
+            &lt;button class="btn btn--sm"&gt;{ACTION}&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="card__body"&gt;
+        {CONTENT}
+    &lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: card --></div>
+                    </div>
+
+                    <div class="variants">
+                        <div class="variants__title">Variants</div>
+                        <div class="variants__list">
+                            <span class="variant-tag">card--solid</span>
+                        </div>
+                    </div>
+                    <div class="responsive-note">Header/body padding reduces on mobile. Actions wrap to full width.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK: section -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Section</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Container</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Titled content areas in reports, dashboards. Provides visual separation between content groups.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="background: white; border: var(--border); border-radius: var(--radius-lg); padding: var(--space-4); max-width: 500px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: var(--border);">
+                                <h3 style="font-size: var(--text-base); font-weight: 600; color: var(--gray-800); margin: 0;">Section Title</h3>
+                                <button class="btn btn--sm">View All</button>
+                            </div>
+                            <p style="font-size: var(--text-sm); color: var(--gray-600); margin: 0;">Section content goes here.</p>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: section -->
+&lt;div class="card"&gt;
+    &lt;div class="card__body"&gt;
+        &lt;div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: var(--border);"&gt;
+            &lt;h3 style="font-size: var(--text-base); font-weight: 600; color: var(--gray-800); margin: 0;"&gt;{TITLE}&lt;/h3&gt;
+            &lt;button class="btn btn--sm"&gt;{ACTION}&lt;/button&gt;
+        &lt;/div&gt;
+        {CONTENT}
+    &lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: section --></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCK: split-view -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Split View</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Layout</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Side-by-side content, comparing data, chart + details layouts.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                            <div class="card">
+                                <div class="card__body" style="text-align: center; color: var(--gray-400);">Left Content</div>
+                            </div>
+                            <div class="card">
+                                <div class="card__body" style="text-align: center; color: var(--gray-400);">Right Content</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: split-view -->
+&lt;div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);"&gt;
+    &lt;div&gt;
+        {LEFT_CONTENT}
+    &lt;/div&gt;
+    &lt;div&gt;
+        {RIGHT_CONTENT}
+    &lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: split-view --></div>
+                    </div>
+                    <div class="responsive-note">Stacks to single column on mobile (768px).</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             DATA DISPLAY BLOCKS
+             ============================================================ -->
+        <section class="category">
+            <h2 class="category__title">Data Display Blocks</h2>
+
+            <!-- BLOCK: metric-card -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Metric Card</span>
+                    <div class="block-entry__meta">
+                        <span class="badge badge--success">KPI</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Single KPI display with optional trend indicator. Ideal for dashboard summaries.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="display: flex; gap: var(--space-4); flex-wrap: wrap;">
+                            <div class="metric-card" style="min-width: 180px;">
+                                <div class="metric-card__top">
+                                    <span class="metric-card__label">Revenue</span>
+                                    <span class="metric-card__change metric-card__change--positive">+12.5%</span>
+                                </div>
+                                <div class="metric-card__value">$2.4M</div>
+                            </div>
+                            <div class="metric-card" style="min-width: 180px;">
+                                <div class="metric-card__top">
+                                    <span class="metric-card__label">Expenses</span>
+                                    <span class="metric-card__change metric-card__change--negative">-3.2%</span>
+                                </div>
+                                <div class="metric-card__value">$1.8M</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: metric-card -->
+&lt;div class="metric-card"&gt;
+    &lt;div class="metric-card__top"&gt;
+        &lt;span class="metric-card__label"&gt;{LABEL}&lt;/span&gt;
+        &lt;span class="metric-card__change metric-card__change--{positive|negative}"&gt;{CHANGE}&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="metric-card__value"&gt;{VALUE}&lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: metric-card --></div>
+                    </div>
+
+                    <div class="variants">
+                        <div class="variants__title">Change variants</div>
+                        <div class="variants__list">
+                            <span class="variant-tag">metric-card__change--positive</span>
+                            <span class="variant-tag">metric-card__change--negative</span>
+                        </div>
+                    </div>
+                    <div class="responsive-note">Grid changes from 3-col to 2-col at 768px, 1-col at 480px.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK: metric-grid -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Metric Grid</span>
+                    <div class="block-entry__meta">
+                        <span class="badge badge--success">KPI</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Row of 2-4 KPIs. Auto-fits to available width. Use with metric-card blocks inside.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-card__top">
+                                    <span class="metric-card__label">Revenue</span>
+                                    <span class="metric-card__change metric-card__change--positive">+12%</span>
+                                </div>
+                                <div class="metric-card__value">$2.4M</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card__top">
+                                    <span class="metric-card__label">Profit</span>
+                                    <span class="metric-card__change metric-card__change--positive">+8%</span>
+                                </div>
+                                <div class="metric-card__value">$620K</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card__top">
+                                    <span class="metric-card__label">Margin</span>
+                                    <span class="metric-card__change metric-card__change--negative">-2%</span>
+                                </div>
+                                <div class="metric-card__value">25.8%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: metric-grid -->
+&lt;div class="metrics-grid"&gt;
+    {METRIC_CARDS}
+&lt;/div&gt;
+<!-- /BLOCK: metric-grid --></div>
+                    </div>
+                    <div class="responsive-note">3-col default, 2-col at 768px, 1-col at 480px.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK: metric-block -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Metric Block (Large)</span>
+                    <div class="block-entry__meta">
+                        <span class="badge badge--success">KPI</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Featured KPIs with larger typography. Includes trend badge and context text.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+                            <div class="metric-block">
+                                <div class="metric-block__label">Total Revenue</div>
+                                <div class="metric-block__value">$2.4M</div>
+                                <div class="metric-block__footer">
+                                    <span class="metric-block__trend metric-block__trend--up">+12.5%</span>
+                                    <span class="metric-block__context">vs last month</span>
+                                </div>
+                            </div>
+                            <div class="metric-block metric-block--highlight">
+                                <div class="metric-block__label">Net Profit</div>
+                                <div class="metric-block__value">$620K</div>
+                                <div class="metric-block__footer">
+                                    <span class="metric-block__trend metric-block__trend--up">+8.3%</span>
+                                    <span class="metric-block__context">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: metric-block -->
+&lt;div class="metric-block"&gt;
+    &lt;div class="metric-block__label"&gt;{LABEL}&lt;/div&gt;
+    &lt;div class="metric-block__value"&gt;{VALUE}&lt;/div&gt;
+    &lt;div class="metric-block__footer"&gt;
+        &lt;span class="metric-block__trend metric-block__trend--{up|down|neutral}"&gt;{CHANGE}&lt;/span&gt;
+        &lt;span class="metric-block__context"&gt;{CONTEXT}&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: metric-block --></div>
+                    </div>
+
+                    <div class="variants">
+                        <div class="variants__title">Variants</div>
+                        <div class="variants__list">
+                            <span class="variant-tag">metric-block--large</span>
+                            <span class="variant-tag">metric-block--highlight</span>
+                            <span class="variant-tag">metric-block__trend--up</span>
+                            <span class="variant-tag">metric-block__trend--down</span>
+                            <span class="variant-tag">metric-block__trend--neutral</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCK: chart-container -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Chart Container</span>
+                    <div class="block-entry__meta">
+                        <span class="badge badge--warning">Visualization</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Wrapping Chart.js or other chart libraries. Includes header with title, legend area, and responsive container.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="chart-wrap" style="max-width: 500px;">
+                            <div class="chart-wrap__header">
+                                <span class="chart-wrap__title">Revenue Trend</span>
+                                <span class="chart-wrap__unit">USD</span>
+                                <div class="chart-wrap__actions">
+                                    <select class="chart-type-select">
+                                        <option>Line</option>
+                                        <option>Bar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-wrap__body">
+                                <div class="chart-container" style="height: 150px; display: flex; align-items: center; justify-content: center; color: var(--gray-400);">
+                                    [Chart renders here]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: chart-container -->
+&lt;div class="chart-wrap"&gt;
+    &lt;div class="chart-wrap__header"&gt;
+        &lt;span class="chart-wrap__title"&gt;{TITLE}&lt;/span&gt;
+        &lt;span class="chart-wrap__unit"&gt;{UNIT}&lt;/span&gt;
+        &lt;div class="chart-wrap__actions"&gt;
+            &lt;select class="chart-type-select"&gt;
+                &lt;option&gt;Line&lt;/option&gt;
+                &lt;option&gt;Bar&lt;/option&gt;
+            &lt;/select&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="chart-wrap__body"&gt;
+        &lt;div class="chart-container"&gt;
+            &lt;canvas id="{CHART_ID}"&gt;&lt;/canvas&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: chart-container --></div>
+                    </div>
+
+                    <div class="variants">
+                        <div class="variants__title">Size variants</div>
+                        <div class="variants__list">
+                            <span class="variant-tag">chart-container--sm</span>
+                            <span class="variant-tag">chart-container--lg</span>
+                            <span class="variant-tag">chart-container--fixed</span>
+                        </div>
+                    </div>
+                    <div class="responsive-note">Container maintains aspect ratio. Min-height: 200px default.</div>
+                </div>
+            </div>
+
+            <!-- BLOCK: data-table -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Data Table</span>
+                    <div class="block-entry__meta">
+                        <span class="badge badge--warning">Table</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Tabular data display with sticky headers. Supports horizontal scroll on mobile.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="overflow-x: auto;">
+                            <table class="data-table" style="width: 100%; min-width: 400px;">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th style="text-align: right;">Amount</th>
+                                        <th style="text-align: right;">Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Product A</td>
+                                        <td>Electronics</td>
+                                        <td style="text-align: right;">$12,450</td>
+                                        <td style="text-align: right; color: var(--success);">+5.2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Product B</td>
+                                        <td>Software</td>
+                                        <td style="text-align: right;">$8,200</td>
+                                        <td style="text-align: right; color: var(--error);">-2.1%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: data-table -->
+&lt;div style="overflow-x: auto;"&gt;
+    &lt;table class="data-table"&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;{COL1}&lt;/th&gt;
+                &lt;th&gt;{COL2}&lt;/th&gt;
+                &lt;th style="text-align: right;"&gt;{COL3}&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;tr&gt;
+                &lt;td&gt;{DATA}&lt;/td&gt;
+                &lt;td&gt;{DATA}&lt;/td&gt;
+                &lt;td style="text-align: right;"&gt;{DATA}&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/div&gt;
+<!-- /BLOCK: data-table --></div>
+                    </div>
+                    <div class="responsive-note">Horizontal scroll on mobile. First column can be sticky with data-table CSS.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             FORM BLOCKS
+             ============================================================ -->
+        <section class="category">
+            <h2 class="category__title">Form Blocks</h2>
+
+            <!-- BLOCK: button-group -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Button Group</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Form</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Action buttons, form submissions, toolbar actions.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+                            <button class="btn">Cancel</button>
+                            <button class="btn btn--primary">Save Changes</button>
+                            <button class="btn btn--danger">Delete</button>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: button-group -->
+&lt;div style="display: flex; gap: var(--space-2); flex-wrap: wrap;"&gt;
+    &lt;button class="btn"&gt;{SECONDARY_ACTION}&lt;/button&gt;
+    &lt;button class="btn btn--primary"&gt;{PRIMARY_ACTION}&lt;/button&gt;
+&lt;/div&gt;
+<!-- /BLOCK: button-group --></div>
+                    </div>
+
+                    <div class="variants">
+                        <div class="variants__title">Button variants</div>
+                        <div class="variants__list">
+                            <span class="variant-tag">btn--primary</span>
+                            <span class="variant-tag">btn--danger</span>
+                            <span class="variant-tag">btn--sm</span>
+                            <span class="variant-tag">btn--lg</span>
+                            <span class="variant-tag">btn--icon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCK: input-field -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Input Field</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Form</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Text input, form fields, data entry.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="field" style="max-width: 300px;">
+                            <label class="field__label">Email Address</label>
+                            <input type="email" class="input" placeholder="Enter your email...">
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: input-field -->
+&lt;div class="field"&gt;
+    &lt;label class="field__label"&gt;{LABEL}&lt;/label&gt;
+    &lt;input type="{text|email|number}" class="input" placeholder="{PLACEHOLDER}"&gt;
+&lt;/div&gt;
+<!-- /BLOCK: input-field --></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCK: form-section -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Form Section</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Form</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Grouping related form fields with a title.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="card card--solid" style="max-width: 400px;">
+                            <div class="card__header">
+                                <span class="card__title">Account Settings</span>
+                            </div>
+                            <div class="card__body">
+                                <div class="field" style="margin-bottom: var(--space-4);">
+                                    <label class="field__label">Username</label>
+                                    <input type="text" class="input" value="johndoe">
+                                </div>
+                                <div class="field">
+                                    <label class="field__label">Email</label>
+                                    <input type="email" class="input" value="john@example.com">
+                                </div>
+                            </div>
+                            <div class="card__footer" style="justify-content: flex-end;">
+                                <button class="btn">Cancel</button>
+                                <button class="btn btn--primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: form-section -->
+&lt;div class="card card--solid"&gt;
+    &lt;div class="card__header"&gt;
+        &lt;span class="card__title"&gt;{SECTION_TITLE}&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="card__body"&gt;
+        {FORM_FIELDS}
+    &lt;/div&gt;
+    &lt;div class="card__footer" style="justify-content: flex-end;"&gt;
+        &lt;button class="btn"&gt;Cancel&lt;/button&gt;
+        &lt;button class="btn btn--primary"&gt;Save&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: form-section --></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             FEEDBACK BLOCKS
+             ============================================================ -->
+        <section class="category">
+            <h2 class="category__title">Feedback Blocks</h2>
+
+            <!-- BLOCK: badge -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Badge</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Status</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Status indicators, labels, counts, tags.
+                    </div>
+
+                    <div class="preview-area">
+                        <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;">
+                            <span class="badge">Default</span>
+                            <span class="badge badge--success">Success</span>
+                            <span class="badge badge--warning">Warning</span>
+                            <span class="badge badge--error">Error</span>
+                            <span class="badge badge--count">42</span>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: badge -->
+&lt;span class="badge badge--{success|warning|error}"&gt;{TEXT}&lt;/span&gt;
+<!-- /BLOCK: badge --></div>
+                    </div>
+
+                    <div class="variants">
+                        <div class="variants__title">Variants</div>
+                        <div class="variants__list">
+                            <span class="variant-tag">badge--success</span>
+                            <span class="variant-tag">badge--warning</span>
+                            <span class="variant-tag">badge--error</span>
+                            <span class="variant-tag">badge--count</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCK: empty-state -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Empty State</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Feedback</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> No data available, empty lists, placeholder content.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="chart-empty" style="min-height: 120px;">
+                            <div class="chart-empty__icon">--</div>
+                            <div class="chart-empty__text">No data available</div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: empty-state -->
+&lt;div class="chart-empty"&gt;
+    &lt;div class="chart-empty__icon"&gt;{ICON}&lt;/div&gt;
+    &lt;div class="chart-empty__text"&gt;{MESSAGE}&lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: empty-state --></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCK: loading-state -->
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">Loading State</span>
+                    <div class="block-entry__meta">
+                        <span class="badge">Feedback</span>
+                    </div>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Use for:</strong> Loading indicators, data fetching, async operations.
+                    </div>
+
+                    <div class="preview-area">
+                        <div class="chart-loading" style="min-height: 120px;">
+                            <div class="chart-loading__spinner"></div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">HTML</span>
+                            <button class="code-block__copy" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <div class="code-block__content"><!-- BLOCK: loading-state -->
+&lt;div class="chart-loading"&gt;
+    &lt;div class="chart-loading__spinner"&gt;&lt;/div&gt;
+&lt;/div&gt;
+<!-- /BLOCK: loading-state --></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             ASSEMBLY GUIDE
+             ============================================================ -->
+        <section class="category">
+            <h2 class="category__title">Assembly Guide</h2>
+
+            <div class="block-entry">
+                <div class="block-entry__header">
+                    <span class="block-entry__name">How to Assemble Pages</span>
+                </div>
+                <div class="block-entry__body">
+                    <div class="usage-note">
+                        <strong>Step 1:</strong> Pick a template from the Templates section (Dashboard, Presentation, Report, Data Review)<br><br>
+                        <strong>Step 2:</strong> Identify the ZONE comments in the template - these show where blocks go<br><br>
+                        <strong>Step 3:</strong> Copy block HTML from this library and paste into the appropriate zone<br><br>
+                        <strong>Step 4:</strong> Replace {PLACEHOLDER} values with actual content<br><br>
+                        <strong>Step 5:</strong> Test on mobile (resize browser to verify responsive behavior)
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-block__header">
+                            <span class="code-block__label">Template Zone Format</span>
+                        </div>
+                        <div class="code-block__content">&lt;!-- ZONE: metrics-row | BLOCKS: metric-card, metric-grid | REQUIRED: no --&gt;
+&lt;div class="metrics-row"&gt;
+    &lt;!-- Drop metric-card or metric-grid blocks here --&gt;
+&lt;/div&gt;
+&lt;!-- /ZONE: metrics-row --&gt;</div>
+                    </div>
+
+                    <div style="margin-top: var(--space-4);">
+                        <strong style="font-size: var(--text-sm); color: var(--gray-700);">Required CSS Import:</strong>
+                        <div class="code-block" style="margin-top: var(--space-2);">
+                            <div class="code-block__content">&lt;link rel="stylesheet" href="../css/proxa.css"&gt;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('.code-block__content').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
