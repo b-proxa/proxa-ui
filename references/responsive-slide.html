@@ -109,30 +109,52 @@
             padding: var(--space-6);
             color: var(--error);
         }
-        .status-badge {
-            display: inline-flex;
+        /* Status bar */
+        .status-bar {
+            display: flex;
             align-items: center;
-            gap: var(--space-1);
-            padding: var(--space-1) var(--space-2);
-            background: var(--success-light, #d1fae5);
-            color: var(--success-dark, #065f46);
-            font-size: var(--text-xs);
-            font-weight: 500;
-            border-radius: var(--radius-sm);
+            gap: var(--space-3);
+            padding: var(--space-3) 0;
+            margin-bottom: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
         }
+        .status-bar__label {
+            font-size: var(--text-xs);
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .status-badge:hover { transform: scale(1.05); }
+        .status-badge--ready { background: var(--fin-favorable-bg); color: var(--fin-favorable); }
+        .status-badge--wip { background: #fef3c7; color: #b45309; }
+        .status-badge--old { background: var(--gray-200); color: var(--gray-500); }
     </style>
 </head>
 <body>
-    <main class="doc-page">
+    <main class="doc-page" data-page-id="responsive-slide">
         <div class="doc-header">
             <div>
                 <h1 class="doc-title">Responsive Slide Layout</h1>
                 <p class="doc-description">CSS patterns for creating presentation slides and cards with fixed headers and flexible content zones that adapt to different aspect ratios.</p>
             </div>
             <div class="doc-actions">
-                <span class="status-badge">Skill</span>
                 <a href="RESPONSIVE-SLIDE.md" download class="btn">Download</a>
             </div>
+        </div>
+
+        <div class="status-bar">
+            <span class="status-bar__label">Status:</span>
+            <span id="status-badge" class="status-badge status-badge--ready" onclick="cycleStatus()">Ready</span>
         </div>
 
         <div id="content" class="doc-content">
@@ -163,7 +185,42 @@
             return div.innerHTML;
         }
 
+        // Status badge functionality
+        const PAGE_ID = document.querySelector('[data-page-id]').dataset.pageId;
+        const STATUS_ORDER = ['ready', 'wip', 'old'];
+        const STATUS_LABELS = { ready: 'Ready', wip: 'WIP', old: 'Old' };
+
+        async function cycleStatus() {
+            const badge = document.getElementById('status-badge');
+            const currentClass = [...badge.classList].find(c => c.startsWith('status-badge--'));
+            const currentStatus = currentClass ? currentClass.replace('status-badge--', '') : 'ready';
+            const nextStatus = STATUS_ORDER[(STATUS_ORDER.indexOf(currentStatus) + 1) % STATUS_ORDER.length];
+
+            badge.classList.remove(`status-badge--${currentStatus}`);
+            badge.classList.add(`status-badge--${nextStatus}`);
+            badge.textContent = STATUS_LABELS[nextStatus];
+
+            fetch('/api/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: PAGE_ID, status: nextStatus })
+            }).catch(err => console.error('Failed to save status:', err));
+        }
+
+        async function loadStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const statuses = await res.json();
+                if (statuses[PAGE_ID]) {
+                    const badge = document.getElementById('status-badge');
+                    badge.className = `status-badge status-badge--${statuses[PAGE_ID]}`;
+                    badge.textContent = STATUS_LABELS[statuses[PAGE_ID]];
+                }
+            } catch (err) {}
+        }
+
         loadSpec();
+        loadStatus();
     </script>
 </body>
 </html>
