@@ -18,7 +18,7 @@
 }
 
 .metric-block {
-    background: white;
+    background: var(--gray-150);
     border-radius: var(--radius-lg);
     padding: 20px;
     box-shadow: var(--shadow-sm);

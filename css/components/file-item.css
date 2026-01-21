@@ -8,7 +8,7 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-2) var(--space-3);
-    background: white;
+    background: var(--gray-150);
     border: 1px solid var(--gray-200);
     border-radius: var(--radius-sm);
     cursor: pointer;

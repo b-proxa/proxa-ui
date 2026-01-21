@@ -27,7 +27,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: white;
+    background: var(--gray-150);
     border: var(--border);
     border-radius: var(--radius-lg);
     overflow: hidden;

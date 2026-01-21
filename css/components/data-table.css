@@ -7,7 +7,7 @@
     overflow-x: auto;
     border: var(--border);
     border-radius: var(--radius-sm);
-    background: white;
+    background: var(--gray-150);
     display: inline-block;
 }
 
@@ -62,7 +62,7 @@
     position: sticky;
     left: 0;
     z-index: 1;
-    background: white;
+    background: var(--gray-150);
     text-align: left;
 }
 
