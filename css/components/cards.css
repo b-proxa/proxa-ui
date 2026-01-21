@@ -17,12 +17,12 @@
 
 /* Solid variant (for forms, elevated content) */
 .card--solid {
-    background: white;
+    background: var(--gray-50);
     box-shadow: var(--shadow-sm);
 }
 
 .card--solid:hover {
-    background: white;
+    background: var(--gray-50);
 }
 
 /* Card header */
