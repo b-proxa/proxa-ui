@@ -549,8 +549,6 @@
         <nav class="app-tabs">
             <button class="app-tab active" data-tab="home" onclick="switchTab('home')">Home</button>
             <button class="app-tab" data-tab="record" onclick="switchTab('record')">Record</button>
-            <button class="app-tab" data-tab="pages" onclick="switchTab('pages')">Pages</button>
-            <button class="app-tab" data-tab="styleguide" onclick="switchTab('styleguide')">Style</button>
             <button class="app-tab" data-tab="references" onclick="switchTab('references')">References</button>
         </nav>
     </header>
@@ -590,85 +588,10 @@
         </div>
     </div>
 
-    <!-- Style Guide Tab -->
-    <div class="tab-content" id="tab-styleguide">
-        <div class="pages-layout">
-            <aside class="pages-sidebar">
-                <div class="pages-sidebar__title">Overview</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link active" onclick="loadStyleGuide(this, 'templates/blocks-library.html'); return false;">Blocks Library</a>
-                </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Foundations</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/foundations/tokens.html'); return false;">Tokens</a>
-                </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Elements</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/elements/button.test.html'); return false;">Button</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/elements/badge.test.html'); return false;">Badge</a>
-                </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Components</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/components/metric-card.test.html'); return false;">Metric Card</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/components/hub-card.test.html'); return false;">Hub Card</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/components/file-item.test.html'); return false;">File Item</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, 'tests/components/fin-table.test.html'); return false;">Financial Table</a>
-                </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Data Viz</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, '_prototypes/metric-blocks.html'); return false;">Metric Blocks</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, '_prototypes/variance-bars.html'); return false;">Variance Bars</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, '_prototypes/waterfall-chart.html'); return false;">Waterfall Chart</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, '_prototypes/trend-dashboard.html'); return false;">Trend Dashboard</a>
-                    <a href="#" class="page-link" onclick="loadStyleGuide(this, '_prototypes/comparison-table.html'); return false;">Comparison Table</a>
-                </div>
-            </aside>
-            <div class="pages-preview">
-                <iframe src="templates/blocks-library.html" class="pages-preview__frame" id="styleguide-frame"></iframe>
-            </div>
-        </div>
-    </div>
-
     <!-- Record Tab -->
     <div class="tab-content" id="tab-record">
         <div class="record-layout">
             <iframe src="patterns/record.html" class="record-layout__frame" id="record-frame"></iframe>
-        </div>
-    </div>
-
-    <!-- Pages Tab -->
-    <div class="tab-content" id="tab-pages">
-        <div class="pages-layout">
-            <aside class="pages-sidebar">
-                <!-- TEMPLATES: Empty structural skeletons -->
-                <div class="pages-sidebar__title">Templates</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link active" data-page="templates/dashboard-layout.html" onclick="loadPage(this, 'templates/dashboard-layout.html'); return false;">Dashboard Layout</a>
-                    <a href="#" class="page-link" data-page="templates/presentation-layout.html" onclick="loadPage(this, 'templates/presentation-layout.html'); return false;">Presentation Layout</a>
-                    <a href="#" class="page-link" data-page="templates/report-layout.html" onclick="loadPage(this, 'templates/report-layout.html'); return false;">Report Layout</a>
-                    <a href="#" class="page-link" data-page="templates/data-review-layout.html" onclick="loadPage(this, 'templates/data-review-layout.html'); return false;">Data Review Layout</a>
-                </div>
-
-                <!-- EXAMPLES: Finished pages with synthetic data -->
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Examples</div>
-                <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" data-page="artifacts/dashboard.html" onclick="loadPage(this, 'artifacts/dashboard.html'); return false;">Dashboard</a>
-                    <a href="#" class="page-link" data-page="artifacts/report.html" onclick="loadPage(this, 'artifacts/report.html'); return false;">Report</a>
-                    <a href="#" class="page-link" data-page="artifacts/presentation.html" onclick="loadPage(this, 'artifacts/presentation.html'); return false;">Presentation</a>
-                    <a href="#" class="page-link" data-page="artifacts/data-review.html" onclick="loadPage(this, 'artifacts/data-review.html'); return false;">Data Review</a>
-                </div>
-            </aside>
-            <div class="pages-preview">
-                <iframe src="templates/dashboard-layout.html" class="pages-preview__frame" id="pages-frame"></iframe>
-            </div>
-
-            <!-- Mobile menu button -->
-            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                ☰
-            </button>
-
-            <!-- Backdrop overlay -->
-            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
         </div>
     </div>
 
