@@ -13,24 +13,34 @@
             padding: 0;
         }
 
-        .template-container {
+        .dashboard {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header zone */
-        .template-header {
+        .dashboard-header {
             background: white;
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: var(--border);
             padding: var(--space-4) var(--space-6);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        /* Main content area */
-        .template-main {
+        .dashboard-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .dashboard-subtitle {
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            margin-top: var(--space-1);
+        }
+
+        .dashboard-main {
             flex: 1;
             padding: var(--space-6);
             max-width: 1400px;
@@ -38,15 +48,15 @@
             width: 100%;
         }
 
-        /* Metrics row - for KPI cards */
+        /* Metrics row */
         .metrics-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: var(--space-4);
             margin-bottom: var(--space-6);
         }
 
-        /* Main content grid - 2 columns on desktop */
+        /* Content grid - 2 columns */
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 320px;
@@ -54,104 +64,242 @@
             margin-bottom: var(--space-6);
         }
 
-        .content-primary {
-            min-width: 0; /* Prevent grid blowout */
+        /* Sidebar items */
+        .sidebar-item {
+            padding: var(--space-3);
+            border-bottom: var(--border);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
         }
 
-        .content-sidebar {
-            min-width: 0;
+        .sidebar-item:last-child {
+            border-bottom: none;
         }
 
-        /* Full width content section */
-        .content-full {
-            margin-bottom: var(--space-6);
-        }
-
-        /* Placeholder styles to show zones */
-        .drop-zone {
-            border: 2px dashed var(--gray-300);
-            border-radius: var(--radius-lg);
-            padding: var(--space-6);
-            background: white;
-            min-height: 200px;
+        .sidebar-item__icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--gray-400);
+            font-size: 1rem;
+        }
+
+        .sidebar-item__content {
+            flex: 1;
+        }
+
+        .sidebar-item__title {
             font-size: var(--text-sm);
-            text-align: center;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .sidebar-item__meta {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
         }
 
         /* Mobile responsive */
         @media (max-width: 768px) {
-            .template-main {
+            .dashboard-main {
                 padding: var(--space-4);
             }
 
             .metrics-row {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
 
             .content-grid {
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 480px) {
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-2);
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="template-container">
-        <!-- ZONE: header | BLOCKS: card | REQUIRED: yes -->
-        <header class="template-header">
-            <div class="drop-zone">
-                Header: navigation, branding, user menu
+    <div class="dashboard">
+        <!-- ZONE: header -->
+        <header class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">{DASHBOARD_TITLE}</h1>
+                <p class="dashboard-subtitle">{SUBTITLE}</p>
             </div>
+            <span class="badge badge--success">{STATUS}</span>
         </header>
         <!-- /ZONE: header -->
 
-        <main class="template-main">
-
-            <!-- ZONE: metrics-row | BLOCKS: metric-card, metric-grid, metric-block | REQUIRED: no -->
+        <main class="dashboard-main">
+            <!-- ZONE: metrics-row -->
             <section class="metrics-row">
-                <div class="drop-zone">Metric Card</div>
-                <div class="drop-zone">Metric Card</div>
-                <div class="drop-zone">Metric Card</div>
-                <div class="drop-zone">Metric Card</div>
+                <div class="metric-card">
+                    <div class="metric-card__top">
+                        <span class="metric-card__label">{METRIC_1_LABEL}</span>
+                        <span class="metric-card__change metric-card__change--positive">{CHANGE_1}</span>
+                    </div>
+                    <div class="metric-card__value">{VALUE_1}</div>
+                    <div class="metric-card__context">{CONTEXT_1}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-card__top">
+                        <span class="metric-card__label">{METRIC_2_LABEL}</span>
+                        <span class="metric-card__change metric-card__change--positive">{CHANGE_2}</span>
+                    </div>
+                    <div class="metric-card__value">{VALUE_2}</div>
+                    <div class="metric-card__context">{CONTEXT_2}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-card__top">
+                        <span class="metric-card__label">{METRIC_3_LABEL}</span>
+                        <span class="metric-card__change metric-card__change--negative">{CHANGE_3}</span>
+                    </div>
+                    <div class="metric-card__value">{VALUE_3}</div>
+                    <div class="metric-card__context">{CONTEXT_3}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-card__top">
+                        <span class="metric-card__label">{METRIC_4_LABEL}</span>
+                        <span class="metric-card__change metric-card__change--positive">{CHANGE_4}</span>
+                    </div>
+                    <div class="metric-card__value">{VALUE_4}</div>
+                    <div class="metric-card__context">{CONTEXT_4}</div>
+                </div>
             </section>
             <!-- /ZONE: metrics-row -->
 
+            <!-- ZONE: content-grid -->
             <div class="content-grid">
-                <!-- ZONE: content-primary | BLOCKS: chart-container, data-table, card | REQUIRED: yes -->
-                <div class="content-primary">
-                    <div class="drop-zone" style="min-height: 400px;">
-                        Primary: chart, table, or visualization
+                <div class="card">
+                    <div class="card__header">
+                        <span class="card__title">{CHART_TITLE}</span>
+                        <span style="font-size: var(--text-xs); color: var(--gray-400);">{CHART_PERIOD}</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="chart-area">
+                            <div class="chart-bars">
+                                <div class="chart-bar" style="height: 65%;"></div>
+                                <div class="chart-bar" style="height: 72%;"></div>
+                                <div class="chart-bar" style="height: 68%;"></div>
+                                <div class="chart-bar" style="height: 80%;"></div>
+                                <div class="chart-bar" style="height: 75%;"></div>
+                                <div class="chart-bar" style="height: 85%;"></div>
+                                <div class="chart-bar" style="height: 90%;"></div>
+                                <div class="chart-bar" style="height: 82%;"></div>
+                                <div class="chart-bar" style="height: 95%;"></div>
+                                <div class="chart-bar" style="height: 100%;"></div>
+                                <div class="chart-bar" style="height: 92%;"></div>
+                                <div class="chart-bar" style="height: 98%;"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- /ZONE: content-primary -->
 
-                <!-- ZONE: content-sidebar | BLOCKS: card, metric-block, button-group | REQUIRED: no -->
-                <aside class="content-sidebar">
-                    <div class="drop-zone">
-                        Sidebar: cards, quick actions
+                <aside class="card">
+                    <div class="card__header">
+                        <span class="card__title">{SIDEBAR_TITLE}</span>
+                    </div>
+                    <div style="padding: 0;">
+                        <div class="sidebar-item">
+                            <div class="sidebar-item__icon">{ICON_1}</div>
+                            <div class="sidebar-item__content">
+                                <div class="sidebar-item__title">{LINK_1_TITLE}</div>
+                                <div class="sidebar-item__meta">{LINK_1_META}</div>
+                            </div>
+                        </div>
+                        <div class="sidebar-item">
+                            <div class="sidebar-item__icon">{ICON_2}</div>
+                            <div class="sidebar-item__content">
+                                <div class="sidebar-item__title">{LINK_2_TITLE}</div>
+                                <div class="sidebar-item__meta">{LINK_2_META}</div>
+                            </div>
+                        </div>
+                        <div class="sidebar-item">
+                            <div class="sidebar-item__icon">{ICON_3}</div>
+                            <div class="sidebar-item__content">
+                                <div class="sidebar-item__title">{LINK_3_TITLE}</div>
+                                <div class="sidebar-item__meta">{LINK_3_META}</div>
+                            </div>
+                        </div>
+                        <div class="sidebar-item">
+                            <div class="sidebar-item__icon">{ICON_4}</div>
+                            <div class="sidebar-item__content">
+                                <div class="sidebar-item__title">{LINK_4_TITLE}</div>
+                                <div class="sidebar-item__meta">{LINK_4_META}</div>
+                            </div>
+                        </div>
                     </div>
                 </aside>
-                <!-- /ZONE: content-sidebar -->
             </div>
+            <!-- /ZONE: content-grid -->
 
-            <!-- ZONE: content-full | BLOCKS: data-table, card, section | REQUIRED: no -->
-            <section class="content-full">
-                <div class="drop-zone">
-                    Full-width: tables, detailed data
+            <!-- ZONE: content-full -->
+            <div class="card">
+                <div class="card__header">
+                    <span class="card__title">{TABLE_TITLE}</span>
                 </div>
-            </section>
+                <div style="padding: 0;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>{COL_1}</th>
+                                <th>{COL_2}</th>
+                                <th class="text-right">{COL_3}</th>
+                                <th class="text-right">{COL_4}</th>
+                                <th class="text-right">{COL_5}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{ROW_1_COL_1}</td>
+                                <td>{ROW_1_COL_2}</td>
+                                <td class="text-right">{ROW_1_COL_3}</td>
+                                <td class="text-right text-positive">{ROW_1_COL_4}</td>
+                                <td class="text-right text-positive">{ROW_1_COL_5}</td>
+                            </tr>
+                            <tr>
+                                <td>{ROW_2_COL_1}</td>
+                                <td>{ROW_2_COL_2}</td>
+                                <td class="text-right">{ROW_2_COL_3}</td>
+                                <td class="text-right text-positive">{ROW_2_COL_4}</td>
+                                <td class="text-right text-positive">{ROW_2_COL_5}</td>
+                            </tr>
+                            <tr>
+                                <td>{ROW_3_COL_1}</td>
+                                <td>{ROW_3_COL_2}</td>
+                                <td class="text-right">{ROW_3_COL_3}</td>
+                                <td class="text-right text-positive">{ROW_3_COL_4}</td>
+                                <td class="text-right text-positive">{ROW_3_COL_5}</td>
+                            </tr>
+                            <tr>
+                                <td>{ROW_4_COL_1}</td>
+                                <td>{ROW_4_COL_2}</td>
+                                <td class="text-right">{ROW_4_COL_3}</td>
+                                <td class="text-right text-negative">{ROW_4_COL_4}</td>
+                                <td class="text-right text-positive">{ROW_4_COL_5}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <!-- /ZONE: content-full -->
-
         </main>
     </div>
-
-    <script type="module">
-        // Add any interactive elements here
-        // Import modules as needed:
-        // import { initDropdowns } from '../js/dropdown.js';
-    </script>
 </body>
 </html>

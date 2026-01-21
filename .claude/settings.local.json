@@ -17,7 +17,9 @@
       "Bash(ls:*)",
       "Bash(xargs:*)",
       "Bash(find:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "WebFetch(domain:proxa-ui.vercel.app)"
     ]
   }
 }
