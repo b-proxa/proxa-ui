@@ -81,22 +81,43 @@ Write anything here..."></textarea>
     <script>
         const editor = document.getElementById('notes-editor');
         const status = document.getElementById('save-status');
-        const STORAGE_KEY = 'proxa-notes';
         let saveTimeout;
 
-        // Load saved notes
-        function loadNotes() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                editor.value = saved;
+        // Load saved notes from API
+        async function loadNotes() {
+            status.textContent = 'Loading...';
+            try {
+                const res = await fetch('/api/notes');
+                const data = await res.json();
+                if (data.content) {
+                    editor.value = data.content;
+                }
+                status.textContent = 'Loaded';
+                status.classList.add('saved');
+            } catch (err) {
+                console.error('Load error:', err);
+                status.textContent = 'Failed to load';
             }
         }
 
-        // Save notes
-        function saveNotes() {
-            localStorage.setItem(STORAGE_KEY, editor.value);
-            status.textContent = 'Saved';
-            status.classList.add('saved');
+        // Save notes to API
+        async function saveNotes() {
+            try {
+                const res = await fetch('/api/notes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: editor.value })
+                });
+                if (res.ok) {
+                    status.textContent = 'Saved';
+                    status.classList.add('saved');
+                } else {
+                    status.textContent = 'Save failed';
+                }
+            } catch (err) {
+                console.error('Save error:', err);
+                status.textContent = 'Save failed';
+            }
         }
 
         // Debounced save on input
@@ -104,7 +125,7 @@ Write anything here..."></textarea>
             status.textContent = 'Saving...';
             status.classList.remove('saved');
             clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(saveNotes, 500);
+            saveTimeout = setTimeout(saveNotes, 1000);
         });
 
         // Save on blur
