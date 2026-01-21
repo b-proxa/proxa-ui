@@ -16,9 +16,8 @@
 }
 
 .app-header__logo {
-    font-weight: 700;
-    font-size: var(--text-lg);
     color: var(--gray-800);
+    flex-shrink: 0;
 }
 
 .app-header__divider {
