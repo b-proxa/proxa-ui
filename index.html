@@ -162,6 +162,39 @@
             font-weight: 500;
             border-left-color: var(--accent);
         }
+        /* Page link with status badge */
+        .page-link-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-2);
+        }
+        .status-badge {
+            padding: 2px 6px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-radius: 3px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.15s ease;
+        }
+        .status-badge:hover {
+            transform: scale(1.05);
+        }
+        .status-badge--ready {
+            background: var(--fin-favorable-bg);
+            color: var(--fin-favorable);
+        }
+        .status-badge--wip {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .status-badge--old {
+            background: var(--gray-200);
+            color: var(--gray-500);
+        }
         .pages-preview {
             flex: 1;
             background: var(--gray-100);
@@ -603,25 +636,64 @@
                 <div class="pages-sidebar__list">
                     <a href="#" class="page-link active" onclick="loadReference(this, 'references/index.html'); return false;">All Files</a>
                     <a href="#" class="page-link" onclick="loadReference(this, 'references/notes.html'); return false;">Notes</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, 'references/audit-report.html'); return false;">Audit Report</a>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="audit-report" onclick="loadReference(this, 'references/audit-report.html'); return false;">Audit Report</a>
+                        <span class="status-badge status-badge--ready" data-page="audit-report" onclick="cycleStatus(this)">Ready</span>
+                    </div>
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Specs</div>
                 <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" onclick="loadReference(this, 'references/ai-blocks.html'); return false;">AI Blocks</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, 'references/responsive-slide.html'); return false;">Responsive Slide</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, 'references/slide-layout-builder.html'); return false;">Slide Layout Builder</a>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="ai-blocks" onclick="loadReference(this, 'references/ai-blocks.html'); return false;">AI Blocks</a>
+                        <span class="status-badge status-badge--wip" data-page="ai-blocks" onclick="cycleStatus(this)">WIP</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="responsive-slide" onclick="loadReference(this, 'references/responsive-slide.html'); return false;">Responsive Slide</a>
+                        <span class="status-badge status-badge--ready" data-page="responsive-slide" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="slide-layout-builder" onclick="loadReference(this, 'references/slide-layout-builder.html'); return false;">Slide Layout Builder</a>
+                        <span class="status-badge status-badge--old" data-page="slide-layout-builder" onclick="cycleStatus(this)">Old</span>
+                    </div>
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Prototypes</div>
                 <div class="pages-sidebar__list">
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/financial-statement-real.html'); return false;">Financial Statement</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/trend-dashboard.html'); return false;">Trend Dashboard</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/waterfall-chart.html'); return false;">Waterfall Chart</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/comparison-table.html'); return false;">Comparison Table</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/metric-blocks.html'); return false;">Metric Blocks</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/variance-bars.html'); return false;">Variance Bars</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/competitive-analysis.html'); return false;">Competitive Analysis</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/selkirk-dashboard.html'); return false;">Selkirk Dashboard</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, '_prototypes/proxa-design-system-v2.html'); return false;">Design System v2</a>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="financial-statement" onclick="loadReference(this, '_prototypes/financial-statement-real.html'); return false;">Financial Statement</a>
+                        <span class="status-badge status-badge--ready" data-page="financial-statement" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="trend-dashboard" onclick="loadReference(this, '_prototypes/trend-dashboard.html'); return false;">Trend Dashboard</a>
+                        <span class="status-badge status-badge--ready" data-page="trend-dashboard" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="waterfall-chart" onclick="loadReference(this, '_prototypes/waterfall-chart.html'); return false;">Waterfall Chart</a>
+                        <span class="status-badge status-badge--ready" data-page="waterfall-chart" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="comparison-table" onclick="loadReference(this, '_prototypes/comparison-table.html'); return false;">Comparison Table</a>
+                        <span class="status-badge status-badge--ready" data-page="comparison-table" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="metric-blocks" onclick="loadReference(this, '_prototypes/metric-blocks.html'); return false;">Metric Blocks</a>
+                        <span class="status-badge status-badge--ready" data-page="metric-blocks" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="variance-bars" onclick="loadReference(this, '_prototypes/variance-bars.html'); return false;">Variance Bars</a>
+                        <span class="status-badge status-badge--ready" data-page="variance-bars" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="competitive-analysis" onclick="loadReference(this, '_prototypes/competitive-analysis.html'); return false;">Competitive Analysis</a>
+                        <span class="status-badge status-badge--wip" data-page="competitive-analysis" onclick="cycleStatus(this)">WIP</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="selkirk-dashboard" onclick="loadReference(this, '_prototypes/selkirk-dashboard.html'); return false;">Selkirk Dashboard</a>
+                        <span class="status-badge status-badge--ready" data-page="selkirk-dashboard" onclick="cycleStatus(this)">Ready</span>
+                    </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="design-system-v2" onclick="loadReference(this, '_prototypes/proxa-design-system-v2.html'); return false;">Design System v2</a>
+                        <span class="status-badge status-badge--old" data-page="design-system-v2" onclick="cycleStatus(this)">Old</span>
+                    </div>
                 </div>
             </aside>
             <div class="pages-preview">
@@ -706,6 +778,53 @@
             document.getElementById('references-frame').src = pageSrc;
         }
         window.loadReference = loadReference;
+
+        // Status badge cycling
+        const STATUS_ORDER = ['ready', 'wip', 'old'];
+        const STATUS_LABELS = { ready: 'Ready', wip: 'WIP', old: 'Old' };
+
+        async function cycleStatus(badge) {
+            const page = badge.dataset.page;
+            const currentClass = [...badge.classList].find(c => c.startsWith('status-badge--'));
+            const currentStatus = currentClass ? currentClass.replace('status-badge--', '') : 'ready';
+            const currentIndex = STATUS_ORDER.indexOf(currentStatus);
+            const nextStatus = STATUS_ORDER[(currentIndex + 1) % STATUS_ORDER.length];
+
+            // Update UI immediately
+            badge.classList.remove(`status-badge--${currentStatus}`);
+            badge.classList.add(`status-badge--${nextStatus}`);
+            badge.textContent = STATUS_LABELS[nextStatus];
+
+            // Save to API
+            try {
+                await fetch('/api/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ page, status: nextStatus })
+                });
+            } catch (err) {
+                console.error('Failed to save status:', err);
+            }
+        }
+        window.cycleStatus = cycleStatus;
+
+        // Load statuses on page load
+        async function loadStatuses() {
+            try {
+                const res = await fetch('/api/status');
+                const statuses = await res.json();
+                Object.entries(statuses).forEach(([page, status]) => {
+                    const badge = document.querySelector(`.status-badge[data-page="${page}"]`);
+                    if (badge) {
+                        badge.className = `status-badge status-badge--${status}`;
+                        badge.textContent = STATUS_LABELS[status];
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to load statuses:', err);
+            }
+        }
+        loadStatuses();
     </script>
 
     <script type="module">
