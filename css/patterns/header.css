@@ -46,6 +46,54 @@
     color: var(--gray-900);
 }
 
+/* Simple header with navigation (used in references) */
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    background: var(--gray-100);
+    border-bottom: var(--border);
+}
+
+.header__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.header__logo {
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--gray-800);
+}
+
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.header__nav-item {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-500);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.header__nav-item:hover {
+    color: var(--gray-700);
+    background: var(--gray-200);
+}
+
+.header__nav-item.active {
+    color: var(--gray-800);
+    background: var(--gray-200);
+}
+
 /* Content container */
 .app-content {
     padding: var(--space-6);

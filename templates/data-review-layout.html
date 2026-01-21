@@ -13,7 +13,7 @@
             padding: 0;
         }
 
-        .template-container {
+        .data-review {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -22,11 +22,8 @@
         /* Header with view controls */
         .review-header {
             background: white;
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: var(--border);
             padding: var(--space-4) var(--space-6);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .review-header__top {
@@ -50,7 +47,23 @@
         /* Tabs for different views */
         .review-tabs {
             display: flex;
-            gap: var(--space-2);
+            gap: var(--space-1);
+        }
+
+        .tab {
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--gray-500);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .tab--active {
+            color: var(--gray-800);
+            background: var(--gray-100);
         }
 
         /* Main content area */
@@ -70,13 +83,13 @@
             margin-bottom: var(--space-6);
         }
 
-        /* Full width sections */
+        /* Section panels */
         .review-section {
             background: white;
             border-radius: var(--radius-lg);
             padding: var(--space-5);
-            margin-bottom: var(--space-6);
             box-shadow: var(--shadow-sm);
+            border: var(--border);
         }
 
         .review-section__header {
@@ -85,7 +98,7 @@
             align-items: center;
             margin-bottom: var(--space-4);
             padding-bottom: var(--space-3);
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: var(--border);
         }
 
         .review-section__title {
@@ -99,20 +112,82 @@
             gap: var(--space-2);
         }
 
-        /* Placeholder styles */
-        .drop-zone {
-            border: 2px dashed var(--gray-300);
-            border-radius: var(--radius-md);
-            padding: var(--space-5);
-            background: var(--gray-50);
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray-400);
-            font-size: var(--text-sm);
-            text-align: center;
+        /* Metrics grid for summary */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
         }
+
+        /* Chart area placeholder */
+        .chart-area {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: linear-gradient(180deg, var(--accent-light) 0%, white 100%);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 80%;
+        }
+
+        .chart-bar {
+            width: 20px;
+            background: var(--accent);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            opacity: 0.8;
+        }
+
+        /* Data table wrapper */
+        .data-table-wrap {
+            overflow-x: auto;
+        }
+
+        /* Comment styles */
+        .comment {
+            padding: var(--space-3);
+            border-bottom: var(--border);
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+        .comment__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2);
+        }
+
+        .comment__author {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .comment__time {
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+        }
+
+        .comment__text {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* Helper classes */
+        .text-right { text-align: right; }
+        .text-mono { font-family: var(--font-mono); font-size: var(--text-xs); }
+        .text-positive { color: var(--fin-favorable); }
+        .text-negative { color: var(--fin-unfavorable); }
 
         /* Mobile responsive */
         @media (max-width: 768px) {
@@ -134,100 +209,198 @@
                 overflow-x: auto;
                 width: 100%;
             }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="template-container">
-
-        <!-- ZONE: review-header | BLOCKS: button-group | REQUIRED: yes -->
+    <div class="data-review">
+        <!-- ZONE: review-header -->
         <header class="review-header">
             <div class="review-header__top">
                 <h1 class="review-title">{REVIEW_TITLE}</h1>
                 <div class="review-actions">
-                    <div class="drop-zone" style="min-height: 40px; padding: var(--space-2) var(--space-3);">
-                        Actions: Export, Share buttons
-                    </div>
+                    <button class="btn btn--sm">{ACTION_1}</button>
+                    <button class="btn btn--sm btn--primary">{ACTION_2}</button>
                 </div>
             </div>
-
             <div class="review-tabs">
-                <div class="drop-zone" style="min-height: 40px; padding: var(--space-2) var(--space-3);">
-                    Tabs: Output, Table, Comments
-                </div>
+                <button class="tab tab--active">{TAB_1}</button>
+                <button class="tab">{TAB_2}</button>
+                <button class="tab">{TAB_3}</button>
+                <button class="tab">{TAB_4}</button>
             </div>
         </header>
         <!-- /ZONE: review-header -->
 
         <main class="review-main">
-
-            <!-- ZONE: split-view | BLOCKS: chart-container, metric-block, metric-card | REQUIRED: no -->
+            <!-- ZONE: split-view -->
             <div class="review-split">
                 <section class="review-section">
                     <div class="review-section__header">
-                        <h2 class="review-section__title">{LEFT_TITLE}</h2>
+                        <h2 class="review-section__title">{CHART_TITLE}</h2>
                         <div class="review-section__actions">
-                            <div class="drop-zone" style="min-height: 32px; padding: var(--space-1) var(--space-2);">
-                                Actions
-                            </div>
+                            <select class="btn btn--sm" style="border: var(--border); background: white;">
+                                <option>{PERIOD_1}</option>
+                                <option>{PERIOD_2}</option>
+                                <option>{PERIOD_3}</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="drop-zone">
-                        Left: chart or visualization
+                    <div class="chart-area">
+                        <div class="chart-bars">
+                            <div class="chart-bar" style="height: 65%;"></div>
+                            <div class="chart-bar" style="height: 72%;"></div>
+                            <div class="chart-bar" style="height: 68%;"></div>
+                            <div class="chart-bar" style="height: 80%;"></div>
+                            <div class="chart-bar" style="height: 75%;"></div>
+                            <div class="chart-bar" style="height: 85%;"></div>
+                            <div class="chart-bar" style="height: 90%;"></div>
+                            <div class="chart-bar" style="height: 82%;"></div>
+                            <div class="chart-bar" style="height: 95%;"></div>
+                            <div class="chart-bar" style="height: 100%;"></div>
+                            <div class="chart-bar" style="height: 92%;"></div>
+                            <div class="chart-bar" style="height: 98%;"></div>
+                        </div>
                     </div>
                 </section>
 
                 <section class="review-section">
                     <div class="review-section__header">
-                        <h2 class="review-section__title">{RIGHT_TITLE}</h2>
+                        <h2 class="review-section__title">{METRICS_TITLE}</h2>
+                        <span class="badge badge--success">{STATUS_BADGE}</span>
                     </div>
-                    <div class="drop-zone">
-                        Right: metrics or summary
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-card__label">{METRIC_1_LABEL}</div>
+                            <div class="metric-card__value">{METRIC_1_VALUE}</div>
+                            <div class="metric-card__change metric-card__change--positive">{METRIC_1_CHANGE}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-card__label">{METRIC_2_LABEL}</div>
+                            <div class="metric-card__value">{METRIC_2_VALUE}</div>
+                            <div class="metric-card__change metric-card__change--positive">{METRIC_2_CHANGE}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-card__label">{METRIC_3_LABEL}</div>
+                            <div class="metric-card__value">{METRIC_3_VALUE}</div>
+                            <div class="metric-card__change metric-card__change--positive">{METRIC_3_CHANGE}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-card__label">{METRIC_4_LABEL}</div>
+                            <div class="metric-card__value">{METRIC_4_VALUE}</div>
+                            <div class="metric-card__change metric-card__change--positive">{METRIC_4_CHANGE}</div>
+                        </div>
                     </div>
                 </section>
             </div>
             <!-- /ZONE: split-view -->
 
-            <!-- ZONE: data-table | BLOCKS: data-table, card | REQUIRED: no -->
-            <section class="review-section">
+            <!-- ZONE: data-table -->
+            <section class="review-section" style="margin-bottom: var(--space-6);">
                 <div class="review-section__header">
-                    <h2 class="review-section__title">{SECTION_TITLE}</h2>
+                    <h2 class="review-section__title">{TABLE_TITLE}</h2>
                     <div class="review-section__actions">
-                        <div class="drop-zone" style="min-height: 32px; padding: var(--space-1) var(--space-2);">
-                            Table actions
-                        </div>
+                        <button class="btn btn--sm">{TABLE_ACTION_1}</button>
+                        <button class="btn btn--sm">{TABLE_ACTION_2}</button>
                     </div>
                 </div>
-                <div class="drop-zone">
-                    Data table or detailed view
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>{COL_1}</th>
+                                <th class="text-right">{COL_2}</th>
+                                <th class="text-right">{COL_3}</th>
+                                <th class="text-right">{COL_4}</th>
+                                <th class="text-right">{COL_5}</th>
+                                <th class="text-right">{COL_6}</th>
+                                <th class="text-right">{COL_7}</th>
+                                <th>{COL_8}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{ROW_1_COL_1}</td>
+                                <td class="text-right text-mono">{ROW_1_COL_2}</td>
+                                <td class="text-right text-mono">{ROW_1_COL_3}</td>
+                                <td class="text-right text-mono">{ROW_1_COL_4}</td>
+                                <td class="text-right text-mono">{ROW_1_COL_5}</td>
+                                <td class="text-right text-mono"><strong>{ROW_1_COL_6}</strong></td>
+                                <td class="text-right text-positive">{ROW_1_COL_7}</td>
+                                <td><span class="badge badge--success">{ROW_1_STATUS}</span></td>
+                            </tr>
+                            <tr>
+                                <td>{ROW_2_COL_1}</td>
+                                <td class="text-right text-mono">{ROW_2_COL_2}</td>
+                                <td class="text-right text-mono">{ROW_2_COL_3}</td>
+                                <td class="text-right text-mono">{ROW_2_COL_4}</td>
+                                <td class="text-right text-mono">{ROW_2_COL_5}</td>
+                                <td class="text-right text-mono"><strong>{ROW_2_COL_6}</strong></td>
+                                <td class="text-right text-positive">{ROW_2_COL_7}</td>
+                                <td><span class="badge badge--success">{ROW_2_STATUS}</span></td>
+                            </tr>
+                            <tr>
+                                <td>{ROW_3_COL_1}</td>
+                                <td class="text-right text-mono">{ROW_3_COL_2}</td>
+                                <td class="text-right text-mono">{ROW_3_COL_3}</td>
+                                <td class="text-right text-mono">{ROW_3_COL_4}</td>
+                                <td class="text-right text-mono">{ROW_3_COL_5}</td>
+                                <td class="text-right text-mono"><strong>{ROW_3_COL_6}</strong></td>
+                                <td class="text-right text-positive">{ROW_3_COL_7}</td>
+                                <td><span class="badge badge--warning">{ROW_3_STATUS}</span></td>
+                            </tr>
+                            <tr class="row-total">
+                                <td>{TOTAL_LABEL}</td>
+                                <td class="text-right text-mono">{TOTAL_COL_2}</td>
+                                <td class="text-right text-mono">{TOTAL_COL_3}</td>
+                                <td class="text-right text-mono">{TOTAL_COL_4}</td>
+                                <td class="text-right text-mono">{TOTAL_COL_5}</td>
+                                <td class="text-right text-mono"><strong>{TOTAL_COL_6}</strong></td>
+                                <td class="text-right text-positive">{TOTAL_COL_7}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
             <!-- /ZONE: data-table -->
 
-            <!-- ZONE: comments | BLOCKS: card, section | REQUIRED: no -->
+            <!-- ZONE: comments -->
             <section class="review-section">
                 <div class="review-section__header">
-                    <h2 class="review-section__title">Comments & Activity</h2>
-                    <div class="review-section__actions">
-                        <div class="drop-zone" style="min-height: 32px; padding: var(--space-1) var(--space-2);">
-                            Filter/Sort
-                        </div>
-                    </div>
+                    <h2 class="review-section__title">{COMMENTS_TITLE}</h2>
+                    <button class="btn btn--sm">{ADD_COMMENT}</button>
                 </div>
-                <div class="drop-zone" style="min-height: 200px;">
-                    Comments or activity feed
+                <div>
+                    <div class="comment">
+                        <div class="comment__header">
+                            <span class="comment__author">{COMMENT_1_AUTHOR}</span>
+                            <span class="comment__time">{COMMENT_1_TIME}</span>
+                        </div>
+                        <div class="comment__text">{COMMENT_1_TEXT}</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment__header">
+                            <span class="comment__author">{COMMENT_2_AUTHOR}</span>
+                            <span class="comment__time">{COMMENT_2_TIME}</span>
+                        </div>
+                        <div class="comment__text">{COMMENT_2_TEXT}</div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment__header">
+                            <span class="comment__author">{COMMENT_3_AUTHOR}</span>
+                            <span class="comment__time">{COMMENT_3_TIME}</span>
+                        </div>
+                        <div class="comment__text">{COMMENT_3_TEXT}</div>
+                    </div>
                 </div>
             </section>
             <!-- /ZONE: comments -->
-
         </main>
-
     </div>
-
-    <script type="module">
-        // Import interactive modules:
-        // import { initDropdowns } from '../js/dropdown.js';
-        // import { initPanels } from '../js/slide-panel.js';
-    </script>
 </body>
 </html>

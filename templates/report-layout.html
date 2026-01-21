@@ -13,7 +13,7 @@
             padding: 0;
         }
 
-        .template-container {
+        .report {
             min-height: 100vh;
             max-width: 900px;
             margin: 0 auto;
@@ -39,11 +39,16 @@
             gap: var(--space-4);
             font-size: var(--text-sm);
             color: var(--gray-500);
+            flex-wrap: wrap;
         }
 
         .report-meta__item {
             display: flex;
             gap: var(--space-1);
+        }
+
+        .report-meta__item strong {
+            color: var(--gray-600);
         }
 
         /* Report sections */
@@ -64,6 +69,31 @@
             margin-bottom: var(--space-4);
         }
 
+        /* Prose for text content */
+        .prose {
+            font-size: var(--text-base);
+            line-height: 1.7;
+            color: var(--gray-700);
+        }
+
+        .prose p {
+            margin-bottom: var(--space-4);
+        }
+
+        .prose ul, .prose ol {
+            margin-bottom: var(--space-4);
+            padding-left: var(--space-5);
+        }
+
+        .prose li {
+            margin-bottom: var(--space-2);
+        }
+
+        .prose strong {
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+
         /* Two-column layout for metrics */
         .metrics-grid {
             display: grid;
@@ -72,28 +102,34 @@
             margin-bottom: var(--space-4);
         }
 
-        /* Placeholder styles */
-        .drop-zone {
-            border: 2px dashed var(--gray-300);
-            border-radius: var(--radius-md);
+        /* Callout box */
+        .callout {
             padding: var(--space-4);
-            background: var(--gray-50);
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray-400);
-            font-size: var(--text-sm);
-            text-align: center;
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-bottom: var(--space-4);
         }
 
-        .drop-zone--large {
-            min-height: 300px;
+        .callout__title {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: var(--space-2);
         }
+
+        .callout__text {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+
+        /* Helper classes */
+        .text-right { text-align: right; }
+        .text-positive { color: var(--fin-favorable); }
+        .text-negative { color: var(--fin-unfavorable); }
 
         /* Mobile responsive */
         @media (max-width: 768px) {
-            .template-container {
+            .report {
                 padding: var(--space-6) var(--space-4);
             }
 
@@ -113,20 +149,20 @@
 
         /* Print styles */
         @media print {
-            .template-container {
+            .report {
                 padding: 0;
+                max-width: none;
             }
 
-            .drop-zone {
-                border: 1px solid var(--gray-300);
+            .report-section {
+                break-inside: avoid;
             }
         }
     </style>
 </head>
 <body>
-    <div class="template-container">
-
-        <!-- ZONE: report-header | REQUIRED: yes -->
+    <div class="report">
+        <!-- ZONE: report-header -->
         <header class="report-header">
             <h1 class="report-title">{REPORT_TITLE}</h1>
             <div class="report-meta">
@@ -146,74 +182,178 @@
         </header>
         <!-- /ZONE: report-header -->
 
-        <!-- BLOCK: report-section (repeatable) -->
-        <!-- ZONE: executive-summary | BLOCKS: section, card | REQUIRED: yes -->
+        <!-- ZONE: executive-summary -->
         <section class="report-section">
             <h2 class="report-section__title">Executive Summary</h2>
-            <div class="report-section__content">
-                <div class="drop-zone">
-                    Summary text, key highlights
-                </div>
+            <div class="report-section__content prose">
+                <p>{SUMMARY_INTRO} <strong>{SUMMARY_HIGHLIGHT}</strong> {SUMMARY_DETAIL}</p>
+
+                <p>Key highlights for the period:</p>
+                <ul>
+                    <li><strong>{HIGHLIGHT_1_LABEL}:</strong> {HIGHLIGHT_1_VALUE}</li>
+                    <li><strong>{HIGHLIGHT_2_LABEL}:</strong> {HIGHLIGHT_2_VALUE}</li>
+                    <li><strong>{HIGHLIGHT_3_LABEL}:</strong> {HIGHLIGHT_3_VALUE}</li>
+                    <li><strong>{HIGHLIGHT_4_LABEL}:</strong> {HIGHLIGHT_4_VALUE}</li>
+                </ul>
+
+                <p>{SUMMARY_CLOSING}</p>
             </div>
         </section>
         <!-- /ZONE: executive-summary -->
 
-        <!-- ZONE: key-metrics | BLOCKS: metric-card, metric-block, metric-grid | REQUIRED: no -->
+        <!-- ZONE: key-metrics -->
         <section class="report-section">
             <h2 class="report-section__title">Key Metrics</h2>
             <div class="metrics-grid">
-                <div class="drop-zone">Metric Card</div>
-                <div class="drop-zone">Metric Card</div>
-                <div class="drop-zone">Metric Card</div>
-                <div class="drop-zone">Metric Card</div>
+                <div class="metric-card">
+                    <div class="metric-card__label">{METRIC_1_LABEL}</div>
+                    <div class="metric-card__value">{METRIC_1_VALUE}</div>
+                    <div class="metric-card__change metric-card__change--positive">{METRIC_1_CHANGE}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card__label">{METRIC_2_LABEL}</div>
+                    <div class="metric-card__value">{METRIC_2_VALUE}</div>
+                    <div class="metric-card__change metric-card__change--positive">{METRIC_2_CHANGE}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card__label">{METRIC_3_LABEL}</div>
+                    <div class="metric-card__value">{METRIC_3_VALUE}</div>
+                    <div class="metric-card__change metric-card__change--positive">{METRIC_3_CHANGE}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card__label">{METRIC_4_LABEL}</div>
+                    <div class="metric-card__value">{METRIC_4_VALUE}</div>
+                    <div class="metric-card__change metric-card__change--negative">{METRIC_4_CHANGE}</div>
+                </div>
             </div>
         </section>
         <!-- /ZONE: key-metrics -->
 
-        <!-- ZONE: visualization | BLOCKS: chart-container, data-table | REQUIRED: no -->
+        <!-- ZONE: financial-details -->
         <section class="report-section">
-            <h2 class="report-section__title">{SECTION_TITLE}</h2>
+            <h2 class="report-section__title">{TABLE_1_TITLE}</h2>
             <div class="report-section__content">
-                <div class="drop-zone drop-zone--large">
-                    Chart or visualization
-                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>{COL_1}</th>
+                            <th class="text-right">{COL_2}</th>
+                            <th class="text-right">{COL_3}</th>
+                            <th class="text-right">{COL_4}</th>
+                            <th class="text-right">{COL_5}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{ROW_1_COL_1}</td>
+                            <td class="text-right">{ROW_1_COL_2}</td>
+                            <td class="text-right">{ROW_1_COL_3}</td>
+                            <td class="text-right text-positive">{ROW_1_COL_4}</td>
+                            <td class="text-right">{ROW_1_COL_5}</td>
+                        </tr>
+                        <tr>
+                            <td>{ROW_2_COL_1}</td>
+                            <td class="text-right">{ROW_2_COL_2}</td>
+                            <td class="text-right">{ROW_2_COL_3}</td>
+                            <td class="text-right text-positive">{ROW_2_COL_4}</td>
+                            <td class="text-right">{ROW_2_COL_5}</td>
+                        </tr>
+                        <tr>
+                            <td>{ROW_3_COL_1}</td>
+                            <td class="text-right">{ROW_3_COL_2}</td>
+                            <td class="text-right">{ROW_3_COL_3}</td>
+                            <td class="text-right text-positive">{ROW_3_COL_4}</td>
+                            <td class="text-right">{ROW_3_COL_5}</td>
+                        </tr>
+                        <tr>
+                            <td>{ROW_4_COL_1}</td>
+                            <td class="text-right">{ROW_4_COL_2}</td>
+                            <td class="text-right">{ROW_4_COL_3}</td>
+                            <td class="text-right text-negative">{ROW_4_COL_4}</td>
+                            <td class="text-right">{ROW_4_COL_5}</td>
+                        </tr>
+                        <tr class="row-total">
+                            <td>{TOTAL_LABEL}</td>
+                            <td class="text-right">{TOTAL_COL_2}</td>
+                            <td class="text-right">{TOTAL_COL_3}</td>
+                            <td class="text-right text-positive">{TOTAL_COL_4}</td>
+                            <td class="text-right">{TOTAL_COL_5}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="report-section__content">
-                <div class="drop-zone">
-                    Analysis text (use .markdown class)
-                </div>
+
+            <div class="callout">
+                <div class="callout__title">Analysis</div>
+                <div class="callout__text">{ANALYSIS_TEXT}</div>
             </div>
         </section>
-        <!-- /ZONE: visualization -->
+        <!-- /ZONE: financial-details -->
 
-        <!-- ZONE: detailed-data | BLOCKS: data-table, card | REQUIRED: no -->
+        <!-- ZONE: operating-expenses -->
         <section class="report-section">
-            <h2 class="report-section__title">{SECTION_TITLE}</h2>
+            <h2 class="report-section__title">{TABLE_2_TITLE}</h2>
             <div class="report-section__content">
-                <div class="drop-zone drop-zone--large">
-                    Data table or detailed analysis
-                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>{EXPENSE_COL_1}</th>
+                            <th class="text-right">{EXPENSE_COL_2}</th>
+                            <th class="text-right">{EXPENSE_COL_3}</th>
+                            <th class="text-right">{EXPENSE_COL_4}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{EXPENSE_ROW_1_COL_1}</td>
+                            <td class="text-right">{EXPENSE_ROW_1_COL_2}</td>
+                            <td class="text-right">{EXPENSE_ROW_1_COL_3}</td>
+                            <td class="text-right text-negative">{EXPENSE_ROW_1_COL_4}</td>
+                        </tr>
+                        <tr>
+                            <td>{EXPENSE_ROW_2_COL_1}</td>
+                            <td class="text-right">{EXPENSE_ROW_2_COL_2}</td>
+                            <td class="text-right">{EXPENSE_ROW_2_COL_3}</td>
+                            <td class="text-right text-negative">{EXPENSE_ROW_2_COL_4}</td>
+                        </tr>
+                        <tr>
+                            <td>{EXPENSE_ROW_3_COL_1}</td>
+                            <td class="text-right">{EXPENSE_ROW_3_COL_2}</td>
+                            <td class="text-right">{EXPENSE_ROW_3_COL_3}</td>
+                            <td class="text-right text-negative">{EXPENSE_ROW_3_COL_4}</td>
+                        </tr>
+                        <tr>
+                            <td>{EXPENSE_ROW_4_COL_1}</td>
+                            <td class="text-right">{EXPENSE_ROW_4_COL_2}</td>
+                            <td class="text-right">{EXPENSE_ROW_4_COL_3}</td>
+                            <td class="text-right text-positive">{EXPENSE_ROW_4_COL_4}</td>
+                        </tr>
+                        <tr class="row-total">
+                            <td>{EXPENSE_TOTAL_LABEL}</td>
+                            <td class="text-right">{EXPENSE_TOTAL_COL_2}</td>
+                            <td class="text-right">{EXPENSE_TOTAL_COL_3}</td>
+                            <td class="text-right text-negative">{EXPENSE_TOTAL_COL_4}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
-        <!-- /ZONE: detailed-data -->
+        <!-- /ZONE: operating-expenses -->
 
-        <!-- ZONE: notes | BLOCKS: section, card | REQUIRED: no -->
+        <!-- ZONE: outlook -->
         <section class="report-section">
-            <h2 class="report-section__title">Notes & Methodology</h2>
-            <div class="report-section__content">
-                <div class="drop-zone">
-                    Footnotes, sources, methodology
-                </div>
+            <h2 class="report-section__title">{OUTLOOK_TITLE}</h2>
+            <div class="report-section__content prose">
+                <p>{OUTLOOK_INTRO}</p>
+                <ul>
+                    <li><strong>{PROJECTION_1_LABEL}:</strong> {PROJECTION_1_VALUE}</li>
+                    <li><strong>{PROJECTION_2_LABEL}:</strong> {PROJECTION_2_VALUE}</li>
+                    <li><strong>{PROJECTION_3_LABEL}:</strong> {PROJECTION_3_VALUE}</li>
+                </ul>
+                <p>{OUTLOOK_CLOSING}</p>
             </div>
         </section>
-        <!-- /ZONE: notes -->
-        <!-- /BLOCK: report-section -->
-
+        <!-- /ZONE: outlook -->
     </div>
-
-    <script type="module">
-        // Import modules as needed:
-        // import { initDropdowns } from '../js/dropdown.js';
-    </script>
 </body>
 </html>

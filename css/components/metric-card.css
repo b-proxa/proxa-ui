@@ -11,7 +11,7 @@
 
 .metric-card {
     padding: 14px;
-    background: transparent;
+    background: var(--gray-150);
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: background var(--transition-base);
