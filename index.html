@@ -229,13 +229,25 @@
             gap: var(--space-2);
             flex-shrink: 0;
         }
-        .ref-toolbar__actions .btn,
-        .ref-toolbar__actions .share-dropdown__btn {
-            padding: var(--space-1) var(--space-2);
+        .ref-toolbar__actions .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
             font-size: var(--text-xs);
+            font-weight: 500;
+            color: var(--gray-600);
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+        }
+        .ref-toolbar__actions .btn:hover {
+            background: var(--gray-200);
+        }
+        .ref-toolbar__actions .share-dropdown__btn {
+            padding: 6px 10px;
         }
         .ref-toolbar__actions .status-badge {
-            padding: var(--space-1) var(--space-2);
+            padding: 6px 10px;
             font-size: var(--text-xs);
         }
         /* Share dropdown */
@@ -825,13 +837,13 @@
                         <a href="#" class="page-link" data-page="responsive-slide" onclick="loadReference(this, 'references/responsive-slide.html'); return false;">Responsive Slide</a>
                         <span class="status-badge status-badge--ready" data-page="responsive-slide" onclick="cycleStatus(this)">Ready</span>
                     </div>
+                </div>
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Prototypes</div>
+                <div class="pages-sidebar__list">
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="slide-layout-builder" onclick="loadReference(this, 'references/slide-layout-builder.html'); return false;">Slide Layout Builder</a>
                         <span class="status-badge status-badge--old" data-page="slide-layout-builder" onclick="cycleStatus(this)">Old</span>
                     </div>
-                </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Prototypes</div>
-                <div class="pages-sidebar__list">
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="financial-statement" onclick="loadReference(this, '_prototypes/financial-statement-real.html'); return false;">Financial Statement</a>
                         <span class="status-badge status-badge--ready" data-page="financial-statement" onclick="cycleStatus(this)">Ready</span>
