@@ -818,17 +818,23 @@
     <div class="tab-content" id="tab-references">
         <div class="pages-layout">
             <aside class="pages-sidebar">
-                <div class="pages-sidebar__title">Documents</div>
+                <div class="pages-sidebar__title">Files</div>
                 <div class="pages-sidebar__list">
                     <a href="#" class="page-link active" onclick="loadReference(this, 'references/index.html'); return false;">All Files</a>
-                    <a href="#" class="page-link" onclick="loadReference(this, 'references/notes.html'); return false;">Notes</a>
+                    <a href="#" class="page-link" onclick="loadReference(this, 'references/index.html?filter=spreadsheets'); return false;">Spreadsheets</a>
+                    <a href="#" class="page-link" onclick="loadReference(this, 'references/index.html?filter=documents'); return false;">Documents</a>
+                    <a href="#" class="page-link" onclick="loadReference(this, 'references/index.html?filter=presentations'); return false;">Presentations</a>
+                </div>
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Notes</div>
+                <div class="pages-sidebar__list">
+                    <a href="#" class="page-link" onclick="loadReference(this, 'references/notes.html'); return false;">Scratch Pad</a>
+                </div>
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Specs</div>
+                <div class="pages-sidebar__list">
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="audit-report" onclick="loadReference(this, 'references/audit-report.html'); return false;">Audit Report</a>
                         <span class="status-badge status-badge--ready" data-page="audit-report" onclick="cycleStatus(this)">Ready</span>
                     </div>
-                </div>
-                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Specs</div>
-                <div class="pages-sidebar__list">
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="ai-blocks" onclick="loadReference(this, 'references/ai-blocks.html'); return false;">AI Blocks</a>
                         <span class="status-badge status-badge--wip" data-page="ai-blocks" onclick="cycleStatus(this)">WIP</span>
