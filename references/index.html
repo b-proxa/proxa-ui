@@ -293,19 +293,9 @@
         const fileList = document.getElementById('fileList');
         const toast = document.getElementById('toast');
 
-        // Get filter from URL params
-        const urlParams = new URLSearchParams(window.location.search);
-        let currentFilter = urlParams.get('filter') || 'all';
+        // Filter state (always show all)
+        let currentFilter = 'all';
         let listenersAttached = false;
-
-        // Update title based on filter
-        const titles = {
-            'all': 'All Files',
-            'spreadsheets': 'Spreadsheets',
-            'documents': 'Documents',
-            'presentations': 'Presentations'
-        };
-        document.getElementById('files-title').textContent = titles[currentFilter] || 'All Files';
 
         // Load files on page load
         loadFiles();
