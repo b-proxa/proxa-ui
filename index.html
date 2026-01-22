@@ -198,18 +198,44 @@
         /* Reference toolbar (above iframe) */
         .ref-toolbar {
             display: none;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-2) 0;
-            margin-bottom: var(--space-2);
+            flex-direction: column;
+            gap: var(--space-2);
+            padding: var(--space-4) 0;
+            margin-bottom: var(--space-3);
+            border-bottom: 1px solid var(--gray-200);
         }
         .ref-toolbar.active {
             display: flex;
         }
+        .ref-toolbar__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: var(--space-4);
+        }
+        .ref-toolbar__info {
+            flex: 1;
+        }
         .ref-toolbar__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-1);
+        }
+        .ref-toolbar__description {
             font-size: var(--text-sm);
-            font-weight: 600;
-            color: var(--gray-700);
+            color: var(--gray-500);
+            line-height: 1.5;
+        }
+        .ref-toolbar__actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        .ref-toolbar__meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
         }
         .ref-toolbar__status {
             display: flex;
@@ -219,9 +245,6 @@
         .ref-toolbar__label {
             font-size: var(--text-xs);
             color: var(--gray-400);
-        }
-        .ref-toolbar__spacer {
-            flex: 1;
         }
         /* Share dropdown */
         .share-dropdown {
@@ -775,19 +798,28 @@
             </aside>
             <div class="pages-preview">
                 <div class="ref-toolbar" id="ref-toolbar">
-                    <span class="ref-toolbar__title" id="ref-toolbar-title">Slide Layout Builder</span>
-                    <div class="ref-toolbar__status">
-                        <span class="ref-toolbar__label">Status:</span>
-                        <span id="ref-status-badge" class="status-badge status-badge--old" onclick="cycleRefStatus()">Old</span>
+                    <div class="ref-toolbar__header">
+                        <div class="ref-toolbar__info">
+                            <h1 class="ref-toolbar__title" id="ref-toolbar-title">Page Title</h1>
+                            <p class="ref-toolbar__description" id="ref-toolbar-description">Page description goes here.</p>
+                        </div>
+                        <div class="ref-toolbar__actions">
+                            <a href="#" id="ref-download-btn" class="btn" download>Download</a>
+                            <div class="share-dropdown">
+                                <button class="share-dropdown__btn" onclick="toggleShareMenu()">
+                                    Share ▾
+                                </button>
+                                <div class="share-dropdown__menu" id="share-menu">
+                                    <button class="share-dropdown__item" onclick="copyRefLink()">Copy Link</button>
+                                    <button class="share-dropdown__item" onclick="openInNewTab()">Open in New Tab</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ref-toolbar__spacer"></div>
-                    <div class="share-dropdown">
-                        <button class="share-dropdown__btn" onclick="toggleShareMenu()">
-                            Share ▾
-                        </button>
-                        <div class="share-dropdown__menu" id="share-menu">
-                            <button class="share-dropdown__item" onclick="copyRefLink()">Copy Link</button>
-                            <button class="share-dropdown__item" onclick="openInNewTab()">Open in New Tab</button>
+                    <div class="ref-toolbar__meta">
+                        <div class="ref-toolbar__status">
+                            <span class="ref-toolbar__label">Status:</span>
+                            <span id="ref-status-badge" class="status-badge status-badge--old" onclick="cycleRefStatus()">Old</span>
                         </div>
                     </div>
                 </div>
@@ -867,6 +899,75 @@
         let currentRefPage = null;
         let currentRefSrc = 'references/index.html';
 
+        // Page metadata for toolbar
+        const PAGE_META = {
+            'audit-report': {
+                title: 'Code Audit Report',
+                description: 'Comprehensive audit of the Proxa UI design system covering consistency, components, code quality, and design system alignment.',
+                download: 'AUDIT-REPORT.md'
+            },
+            'ai-blocks': {
+                title: 'AI Blocks Specification',
+                description: 'Feature specification for declarative AI automation - persistent, re-runnable prompts with human-in-the-loop review.',
+                download: 'references/AI-BLOCKS.md'
+            },
+            'responsive-slide': {
+                title: 'Responsive Slide Layout',
+                description: 'CSS patterns for creating presentation slides and cards with fixed headers and flexible content zones.',
+                download: 'references/RESPONSIVE-SLIDE.md'
+            },
+            'slide-layout-builder': {
+                title: 'Slide Layout Builder',
+                description: 'Interactive tool for building presentation slides with configurable layouts and aspect ratios.',
+                download: null
+            },
+            'financial-statement': {
+                title: 'Financial Statement',
+                description: 'Income statement prototype with variance analysis and financial data visualization.',
+                download: null
+            },
+            'trend-dashboard': {
+                title: 'Trend Dashboard',
+                description: 'Multi-metric dashboard with trend charts and KPI tracking.',
+                download: null
+            },
+            'waterfall-chart': {
+                title: 'Waterfall Chart',
+                description: 'Variance waterfall visualization showing changes between periods.',
+                download: null
+            },
+            'comparison-table': {
+                title: 'Comparison Table',
+                description: 'Side-by-side data comparison with highlighting and variance indicators.',
+                download: null
+            },
+            'metric-blocks': {
+                title: 'Metric Blocks',
+                description: 'Compact metric display components for dashboards and reports.',
+                download: null
+            },
+            'variance-bars': {
+                title: 'Variance Bars',
+                description: 'Horizontal variance bar charts for comparing actual vs budget.',
+                download: null
+            },
+            'competitive-analysis': {
+                title: 'Competitive Analysis',
+                description: 'Market comparison visualization with competitor metrics.',
+                download: null
+            },
+            'selkirk-dashboard': {
+                title: 'Selkirk Dashboard',
+                description: 'Custom dashboard implementation with multiple data views.',
+                download: null
+            },
+            'design-system-v2': {
+                title: 'Design System v2',
+                description: 'Updated design system documentation and component library.',
+                download: null
+            }
+        };
+
         function loadReference(link, pageSrc) {
             // Update active link in references sidebar only
             document.querySelectorAll('#tab-references .page-link').forEach(l => l.classList.remove('active'));
@@ -879,11 +980,24 @@
             const pageId = link.dataset?.page;
             const toolbar = document.getElementById('ref-toolbar');
             const titleEl = document.getElementById('ref-toolbar-title');
+            const descEl = document.getElementById('ref-toolbar-description');
+            const downloadBtn = document.getElementById('ref-download-btn');
+            const meta = PAGE_META[pageId];
 
-            if (pageId) {
+            if (pageId && meta) {
                 currentRefPage = pageId;
                 toolbar.classList.add('active');
-                titleEl.textContent = link.textContent.trim();
+                titleEl.textContent = meta.title;
+                descEl.textContent = meta.description;
+
+                // Update download button
+                if (meta.download) {
+                    downloadBtn.href = meta.download;
+                    downloadBtn.style.display = 'inline-flex';
+                } else {
+                    downloadBtn.style.display = 'none';
+                }
+
                 updateRefToolbarStatus(pageId);
             } else {
                 currentRefPage = null;
