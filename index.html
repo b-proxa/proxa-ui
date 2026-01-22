@@ -198,53 +198,45 @@
         /* Reference toolbar (above iframe) */
         .ref-toolbar {
             display: none;
-            flex-direction: column;
-            gap: var(--space-2);
-            padding: var(--space-4) 0;
-            margin-bottom: var(--space-3);
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: var(--space-4);
+            padding: var(--space-3) 0;
+            margin-bottom: var(--space-2);
             border-bottom: 1px solid var(--gray-200);
         }
         .ref-toolbar.active {
             display: flex;
         }
-        .ref-toolbar__header {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: var(--space-4);
-        }
         .ref-toolbar__info {
             flex: 1;
+            min-width: 0;
         }
         .ref-toolbar__title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--gray-900);
-            margin-bottom: var(--space-1);
+            margin-bottom: 2px;
         }
         .ref-toolbar__description {
-            font-size: var(--text-sm);
+            font-size: var(--text-xs);
             color: var(--gray-500);
-            line-height: 1.5;
+            line-height: 1.4;
         }
         .ref-toolbar__actions {
             display: flex;
             align-items: center;
             gap: var(--space-2);
+            flex-shrink: 0;
         }
-        .ref-toolbar__meta {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-        }
-        .ref-toolbar__status {
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-        }
-        .ref-toolbar__label {
+        .ref-toolbar__actions .btn,
+        .ref-toolbar__actions .share-dropdown__btn {
+            padding: var(--space-1) var(--space-2);
             font-size: var(--text-xs);
-            color: var(--gray-400);
+        }
+        .ref-toolbar__actions .status-badge {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
         }
         /* Share dropdown */
         .share-dropdown {
@@ -880,30 +872,23 @@
             </aside>
             <div class="pages-preview">
                 <div class="ref-toolbar" id="ref-toolbar">
-                    <div class="ref-toolbar__header">
-                        <div class="ref-toolbar__info">
-                            <h1 class="ref-toolbar__title" id="ref-toolbar-title">Page Title</h1>
-                            <p class="ref-toolbar__description" id="ref-toolbar-description">Page description goes here.</p>
-                        </div>
-                        <div class="ref-toolbar__actions">
-                            <a href="#" id="ref-download-btn" class="btn" download>Download</a>
-                            <div class="share-dropdown">
-                                <button class="share-dropdown__btn" onclick="toggleShareMenu()">
-                                    Share ▾
-                                </button>
-                                <div class="share-dropdown__menu" id="share-menu">
-                                    <button class="share-dropdown__item" onclick="copyRefLink()">Copy Link</button>
-                                    <button class="share-dropdown__item" onclick="openInNewTab()">Open in New Tab</button>
-                                </div>
-                            </div>
-                            <button class="btn btn--secondary" onclick="openNotesPanel()">Notes</button>
-                        </div>
+                    <div class="ref-toolbar__info">
+                        <h1 class="ref-toolbar__title" id="ref-toolbar-title">Page Title</h1>
+                        <p class="ref-toolbar__description" id="ref-toolbar-description">Page description goes here.</p>
                     </div>
-                    <div class="ref-toolbar__meta">
-                        <div class="ref-toolbar__status">
-                            <span class="ref-toolbar__label">Status:</span>
-                            <span id="ref-status-badge" class="status-badge status-badge--old" onclick="cycleRefStatus()">Old</span>
+                    <div class="ref-toolbar__actions">
+                        <span id="ref-status-badge" class="status-badge status-badge--old" onclick="cycleRefStatus()">Old</span>
+                        <a href="#" id="ref-download-btn" class="btn" download>Download</a>
+                        <div class="share-dropdown">
+                            <button class="share-dropdown__btn" onclick="toggleShareMenu()">
+                                Share ▾
+                            </button>
+                            <div class="share-dropdown__menu" id="share-menu">
+                                <button class="share-dropdown__item" onclick="copyRefLink()">Copy Link</button>
+                                <button class="share-dropdown__item" onclick="openInNewTab()">Open in New Tab</button>
+                            </div>
                         </div>
+                        <button class="btn" onclick="openNotesPanel()">Notes</button>
                     </div>
                 </div>
                 <iframe src="references/index.html" class="pages-preview__frame" id="references-frame"></iframe>
