@@ -296,6 +296,88 @@
         .share-dropdown__item:hover {
             background: var(--gray-100);
         }
+        /* Notes panel (slide-out drawer) */
+        .notes-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            max-width: 90vw;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        .notes-panel.open {
+            transform: translateX(0);
+        }
+        .notes-panel__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .notes-panel__title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .notes-panel__close {
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--gray-500);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .notes-panel__close:hover {
+            color: var(--gray-700);
+        }
+        .notes-panel__body {
+            flex: 1;
+            padding: var(--space-4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .notes-panel__editor {
+            flex: 1;
+            width: 100%;
+            padding: var(--space-3);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            resize: none;
+        }
+        .notes-panel__editor:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .notes-panel__status {
+            margin-top: var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--gray-400);
+        }
+        .notes-panel__overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            z-index: 999;
+        }
+        .notes-panel__overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
         .pages-preview {
             flex: 1;
             background: var(--gray-100);
@@ -814,6 +896,7 @@
                                     <button class="share-dropdown__item" onclick="openInNewTab()">Open in New Tab</button>
                                 </div>
                             </div>
+                            <button class="btn btn--secondary" onclick="openNotesPanel()">Notes</button>
                         </div>
                     </div>
                     <div class="ref-toolbar__meta">
@@ -1073,6 +1156,78 @@
             document.getElementById('share-menu').classList.remove('open');
         }
         window.openInNewTab = openInNewTab;
+
+        // Notes panel functionality
+        let notesSaveTimeout;
+        const notesEditor = document.getElementById('notes-panel-editor');
+        const notesStatus = document.getElementById('notes-panel-status');
+
+        async function openNotesPanel() {
+            if (!currentRefPage) return;
+
+            const panel = document.getElementById('notes-panel');
+            const overlay = document.getElementById('notes-overlay');
+            const title = document.getElementById('notes-panel-title');
+            const meta = PAGE_META[currentRefPage];
+
+            title.textContent = `Notes: ${meta?.title || currentRefPage}`;
+            panel.classList.add('open');
+            overlay.classList.add('open');
+
+            // Load notes for this page
+            notesStatus.textContent = 'Loading...';
+            try {
+                const res = await fetch(`/api/page-notes?page=${currentRefPage}`);
+                const data = await res.json();
+                notesEditor.value = data.notes || '';
+                notesStatus.textContent = 'Saved';
+            } catch (err) {
+                console.error('Failed to load notes:', err);
+                notesStatus.textContent = 'Error loading';
+            }
+
+            notesEditor.focus();
+        }
+        window.openNotesPanel = openNotesPanel;
+
+        function closeNotesPanel() {
+            document.getElementById('notes-panel').classList.remove('open');
+            document.getElementById('notes-overlay').classList.remove('open');
+        }
+        window.closeNotesPanel = closeNotesPanel;
+
+        // Auto-save notes on typing
+        notesEditor.addEventListener('input', () => {
+            notesStatus.textContent = 'Saving...';
+            clearTimeout(notesSaveTimeout);
+            notesSaveTimeout = setTimeout(savePageNotes, 500);
+        });
+
+        async function savePageNotes() {
+            if (!currentRefPage) return;
+
+            try {
+                await fetch('/api/page-notes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        page: currentRefPage,
+                        notes: notesEditor.value
+                    })
+                });
+                notesStatus.textContent = 'Saved';
+            } catch (err) {
+                console.error('Failed to save notes:', err);
+                notesStatus.textContent = 'Error saving';
+            }
+        }
+
+        // Close panel with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeNotesPanel();
+            }
+        });
 
         // Close share menu when clicking outside
         document.addEventListener('click', (e) => {
@@ -1360,5 +1515,18 @@
             });
         });
     </script>
+
+    <!-- Notes Panel (slide-out drawer) -->
+    <div class="notes-panel__overlay" id="notes-overlay" onclick="closeNotesPanel()"></div>
+    <div class="notes-panel" id="notes-panel">
+        <div class="notes-panel__header">
+            <span class="notes-panel__title" id="notes-panel-title">Page Notes</span>
+            <button class="notes-panel__close" onclick="closeNotesPanel()">&times; Close</button>
+        </div>
+        <div class="notes-panel__body">
+            <textarea class="notes-panel__editor" id="notes-panel-editor" placeholder="Add notes for this page..."></textarea>
+            <div class="notes-panel__status" id="notes-panel-status">Saved</div>
+        </div>
+    </div>
 </body>
 </html>
