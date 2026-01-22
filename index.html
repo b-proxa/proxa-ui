@@ -878,7 +878,6 @@
                     </div>
                     <div class="ref-toolbar__actions">
                         <span id="ref-status-badge" class="status-badge status-badge--old" onclick="cycleRefStatus()">Old</span>
-                        <a href="#" id="ref-download-btn" class="btn" download>Download</a>
                         <div class="share-dropdown">
                             <button class="share-dropdown__btn" onclick="toggleShareMenu()">
                                 Share ▾
@@ -886,6 +885,7 @@
                             <div class="share-dropdown__menu" id="share-menu">
                                 <button class="share-dropdown__item" onclick="copyRefLink()">Copy Link</button>
                                 <button class="share-dropdown__item" onclick="openInNewTab()">Open in New Tab</button>
+                                <a href="#" id="ref-download-btn" class="share-dropdown__item" download>Download</a>
                             </div>
                         </div>
                         <button class="btn" onclick="openNotesPanel()">Notes</button>
@@ -1058,10 +1058,10 @@
                 titleEl.textContent = meta.title;
                 descEl.textContent = meta.description;
 
-                // Update download button
+                // Update download option in share menu
                 if (meta.download) {
                     downloadBtn.href = meta.download;
-                    downloadBtn.style.display = 'inline-flex';
+                    downloadBtn.style.display = 'block';
                 } else {
                     downloadBtn.style.display = 'none';
                 }
