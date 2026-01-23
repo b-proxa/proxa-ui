@@ -1172,7 +1172,6 @@
                 notesEditor.value = data.notes || '';
                 notesStatus.textContent = 'Saved';
             } catch (err) {
-                console.error('Failed to load notes:', err);
                 notesStatus.textContent = 'Error loading';
             }
 
@@ -1207,7 +1206,6 @@
                 });
                 notesStatus.textContent = 'Saved';
             } catch (err) {
-                console.error('Failed to save notes:', err);
                 notesStatus.textContent = 'Error saving';
             }
         }
@@ -1250,7 +1248,7 @@
                     body: JSON.stringify({ page, status: nextStatus })
                 });
             } catch (err) {
-                console.error('Failed to save status:', err);
+                // Silent fail - status will sync on next load
             }
         }
         window.cycleStatus = cycleStatus;
@@ -1268,7 +1266,7 @@
                     }
                 });
             } catch (err) {
-                console.error('Failed to load statuses:', err);
+                // Silent fail - will use default statuses
             }
         }
         loadStatuses();

@@ -95,7 +95,6 @@ Write anything here..."></textarea>
                 status.textContent = 'Loaded';
                 status.classList.add('saved');
             } catch (err) {
-                console.error('Load error:', err);
                 status.textContent = 'Failed to load';
             }
         }
@@ -115,7 +114,6 @@ Write anything here..."></textarea>
                     status.textContent = 'Save failed';
                 }
             } catch (err) {
-                console.error('Save error:', err);
                 status.textContent = 'Save failed';
             }
         }
