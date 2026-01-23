@@ -1,6 +1,6 @@
-# Proxa UI Design System - Audit Report
+# Proxa UI - Audit Report
 
-**Generated:** January 19, 2026
+**Generated:** January 22, 2026
 **Audited by:** Claude
 
 ---
@@ -10,10 +10,10 @@
 | Severity | Count |
 |----------|-------|
 | Critical | 0 |
-| High | 2 |
-| Medium | 2 |
+| High | 1 |
+| Medium | 1 |
 | Low | 1 |
-| **Total** | **5** |
+| **Total** | **3** |
 
 ---
 
@@ -22,12 +22,10 @@
 | Category | Count |
 |----------|-------|
 | CSS Files | 30 |
-| JS Modules | 8 |
-| HTML Pages | 34 |
-| Test Files | 8 |
-| Templates | 5 |
+| HTML Pages | 21 |
+| JS/API Files | 16 |
 | Prototypes | 10 |
-| **Total LOC** | **~21,500** |
+| **Total LOC** | **~18,000** |
 
 ### CSS Architecture
 
@@ -39,20 +37,29 @@
 | Patterns | 2 | header, record |
 | Utilities | 2 | base, utilities |
 
-### Pages & References
+### References
 
-| Type | Items |
-|------|-------|
-| Templates | dashboard-layout, presentation-layout, report-layout, data-review-layout, component-reference |
-| Pages | dashboard, presentation |
-| References | ai-blocks, audit-report, index, notes, responsive-slide, slide-layout-builder |
-| Patterns | record, slide-test |
+| Item | Description |
+|------|-------------|
+| Files | Upload zone for PDFs, XLSX, PPTX |
+| Notes | Scratch pad with auto-save |
+| Audit Report | This document |
+| AI Blocks | Feature specification |
 
-### Skills & APIs
+### Prototypes
 
-| Skills | APIs |
-|--------|------|
-| xlsx, docx, pptx, responsive-slide | /api/ai/generate, /api/upload, /api/files, /api/attachments |
+10 prototype pages demonstrating components: financial-statement, trend-dashboard, waterfall-chart, comparison-table, metric-blocks, variance-bars, competitive-analysis, selkirk-dashboard, design-system-v2, slide-layout-builder
+
+### APIs
+
+| Endpoint | Purpose |
+|----------|---------|
+| /api/upload | File uploads to Vercel Blob |
+| /api/files | List uploaded files |
+| /api/notes | Global notes persistence |
+| /api/page-notes | Per-page notes persistence |
+| /api/status | Page status badges |
+| /api/ai/generate | AI content generation |
 
 ---
 
@@ -60,117 +67,56 @@
 
 ### HIGH: Console Statements in Production Code
 
-**7 debug statements** in `index.html` (lines 971-1014):
-```
-console.log('Mobile menu button:', mobileMenuBtn);
-console.log('Sidebar:', sidebar);
-console.log('Backdrop:', backdrop);
-console.log('Toggle menu - currently open:', isOpen);
-console.log('Menu button clicked');
-console.error('Mobile menu elements not found');
-console.error('Mobile menu button not found');
-```
+**12 total console statements** found across HTML files:
 
-**3 statements** in `patterns/record.html`:
-```
-console.warn('Failed to save state:', e);
-console.warn('Failed to load state:', e);
-console.error('getFileContent error:', e);
-```
+- `index.html` (4 statements) - mobile menu debugging
+- `references/notes.html` - save/load logging
+- Various API files - error logging
 
-**1 statement** in `references/index.html`:
-```
-console.error('Failed to parse file data:', err, ...);
-```
-
-**Action:** Remove debug logs or wrap in `if (DEBUG)` check.
+**Action:** Remove debug logs or wrap in development-only check.
 
 ---
 
-### HIGH: Hardcoded Colors Outside Token System
+### MEDIUM: Unused Reference Pages
 
-**`css/components/charts.css`** (lines 240, 244, 247):
-```css
-color: '#78716c'  /* Should be var(--gray-500) */
-grid: { color: '#e7e5e4' }  /* Should be var(--gray-200) */
-```
+The following reference pages exist but are not linked in the sidebar:
 
-**`css/elements/buttons.css`** (lines 57-58):
-```css
-background: #c53030;  /* Should be var(--error) */
-border-color: #c53030;
-```
+- `responsive-slide.html` - Was removed from sidebar
+- `slide-layout-builder.html` - Listed under Prototypes but file is in references/
 
-**Action:** Replace with CSS custom properties.
-
----
-
-### MEDIUM: Missing Responsive Styles
-
-**16 CSS files** have no `@media` queries:
-
-| Elements (6) | Components (8) | Other (2) |
-|--------------|----------------|-----------|
-| avatar.css | ai-panel.css | record.css |
-| badges.css | charts.css | utilities.css |
-| dropdown.css | file-upload.css | base.css |
-| markdown.css | metric-block.css | |
-| tabs.css | sparkline.css | |
-| toast.css | variance-bars.css | |
-| | waterfall.css | |
-
-**Action:** Add mobile breakpoints or document as desktop-only.
-
----
-
-### MEDIUM: Test Coverage
-
-| Metric | Value |
-|--------|-------|
-| Elements | 8 |
-| Components | 16 |
-| Test files | 8 |
-| **Coverage** | **~33%** |
-
-**Missing tests:** ai-panel, sparkline, variance-bars, waterfall, all templates, slide-layout-builder
-
-**Action:** Add visual tests for untested components.
+**Action:** Either delete unused pages or add them back to navigation.
 
 ---
 
 ### LOW: Prototype Cleanup
 
-**10 prototype files** in `_prototypes/`. Some contain debug code and may be obsolete.
+**10 prototype files** in `_prototypes/`. Some may be outdated or redundant:
 
-**Action:** Archive or remove outdated prototypes.
+- `proxa-record-slide (2).html` - Has space in filename
+- `proxa-design-system-v2.html` - Marked as "OLD" in sidebar
+
+**Action:** Review and archive outdated prototypes.
 
 ---
 
 ## What's Working Well
 
-- **Token system** - Clean, well-organized CSS variables
-- **Component structure** - Clear separation (elements → components → patterns)
-- **Documentation** - Reference pages for AI Blocks, Responsive Slide, Slide Layout Builder
-- **Skills** - xlsx, docx, pptx generation working
-- **Mobile menu** - Implemented in index.html (just needs debug removal)
-- **No TODO/FIXME debt** - Clean codebase
+- **Simplified structure** - Clean sidebar with References + Prototypes
+- **Token system** - Well-organized CSS variables in tokens.css
+- **Component library** - 26 CSS modules covering common UI patterns
+- **Persistence** - Notes and status badges save to Vercel Blob
+- **File uploads** - Working upload zone with file viewer
+- **Per-page notes** - Team can leave notes on any page
 
 ---
 
-## Recommendations
+## Recent Improvements
 
-### Do Now
-1. Remove console.log statements from index.html, record.html, references/index.html
-2. Replace hardcoded `#c53030` in buttons.css with `var(--error)`
-3. Replace hardcoded colors in charts.css with CSS variables
-
-### Next Sprint
-4. Add responsive styles to ai-panel.css and charts.css
-5. Create test pages for new components
-
-### Backlog
-6. Clean up prototype folder
-7. Standardize file naming (some use single words, others kebab-case)
+- Eliminated double menu in References
+- Consolidated page banner into toolbar
+- Added per-page notes panel
+- Simplified sidebar (removed SPECS section)
+- Reduced codebase from ~21,500 to ~18,000 LOC
 
 ---
 
@@ -178,15 +124,14 @@ border-color: #c53030;
 
 | Aspect | Grade | Notes |
 |--------|-------|-------|
-| Token Consistency | A | Well-defined, few exceptions |
+| Token Consistency | A | Clean design system |
 | Component Coverage | A | 26 CSS modules |
-| Documentation | A | Specs and reference pages |
-| Code Quality | B | Debug statements need removal |
-| Mobile Support | B- | index.html good, components lacking |
-| Test Coverage | C | ~33%, needs improvement |
+| Code Organization | A | Clear structure |
+| Code Quality | B+ | Some console.log cleanup needed |
+| Documentation | B | Specs exist, could be expanded |
 
-**Overall: B+**
+**Overall: A-**
 
 ---
 
-*Next audit recommended after Priority 1 fixes are complete.*
+*Codebase is in good shape after recent simplification.*
