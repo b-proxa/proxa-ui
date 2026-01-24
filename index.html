@@ -824,54 +824,54 @@
                     <a href="#" class="page-link" onclick="loadReference(this, 'references/notes.html'); return false;">Notes</a>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="audit-report" onclick="loadReference(this, 'references/audit-report.html'); return false;">Audit Report</a>
-                        <span class="status-badge status-badge--ready" data-page="audit-report" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="audit-report" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="ai-blocks" onclick="loadReference(this, 'references/ai-blocks.html'); return false;">AI Blocks</a>
-                        <span class="status-badge status-badge--wip" data-page="ai-blocks" onclick="cycleStatus(this)">WIP</span>
+                        <span class="status-badge status-badge--wip" data-page="ai-blocks" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
                     </div>
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Prototypes</div>
                 <div class="pages-sidebar__list">
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="slide-layout-builder" onclick="loadReference(this, 'references/slide-layout-builder.html'); return false;">Slide Layout Builder</a>
-                        <span class="status-badge status-badge--old" data-page="slide-layout-builder" onclick="cycleStatus(this)">Old</span>
+                        <span class="status-badge status-badge--old" data-page="slide-layout-builder" onclick="cycleStatus(this); event.stopPropagation();">Old</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="financial-statement" onclick="loadReference(this, '_prototypes/financial-statement-real.html'); return false;">Financial Statement</a>
-                        <span class="status-badge status-badge--ready" data-page="financial-statement" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="financial-statement" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="trend-dashboard" onclick="loadReference(this, '_prototypes/trend-dashboard.html'); return false;">Trend Dashboard</a>
-                        <span class="status-badge status-badge--ready" data-page="trend-dashboard" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="trend-dashboard" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="waterfall-chart" onclick="loadReference(this, '_prototypes/waterfall-chart.html'); return false;">Waterfall Chart</a>
-                        <span class="status-badge status-badge--ready" data-page="waterfall-chart" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="waterfall-chart" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="comparison-table" onclick="loadReference(this, '_prototypes/comparison-table.html'); return false;">Comparison Table</a>
-                        <span class="status-badge status-badge--ready" data-page="comparison-table" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="comparison-table" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="metric-blocks" onclick="loadReference(this, '_prototypes/metric-blocks.html'); return false;">Metric Blocks</a>
-                        <span class="status-badge status-badge--ready" data-page="metric-blocks" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="metric-blocks" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="variance-bars" onclick="loadReference(this, '_prototypes/variance-bars.html'); return false;">Variance Bars</a>
-                        <span class="status-badge status-badge--ready" data-page="variance-bars" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="variance-bars" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
-                        <a href="#" class="page-link" data-page="competitive-analysis" onclick="loadReference(this, '_prototypes/competitive-analysis.html'); return false;">Competitive Analysis</a>
-                        <span class="status-badge status-badge--wip" data-page="competitive-analysis" onclick="cycleStatus(this)">WIP</span>
+                        <a href="#" class="page-link" data-page="research-template" onclick="loadReference(this, '_prototypes/research-template.html'); return false;">Research Template</a>
+                        <span class="status-badge status-badge--wip" data-page="research-template" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="selkirk-dashboard" onclick="loadReference(this, '_prototypes/selkirk-dashboard.html'); return false;">Selkirk Dashboard</a>
-                        <span class="status-badge status-badge--ready" data-page="selkirk-dashboard" onclick="cycleStatus(this)">Ready</span>
+                        <span class="status-badge status-badge--ready" data-page="selkirk-dashboard" onclick="cycleStatus(this); event.stopPropagation();">Ready</span>
                     </div>
                     <div class="page-link-row">
                         <a href="#" class="page-link" data-page="design-system-v2" onclick="loadReference(this, '_prototypes/proxa-design-system-v2.html'); return false;">Design System v2</a>
-                        <span class="status-badge status-badge--old" data-page="design-system-v2" onclick="cycleStatus(this)">Old</span>
+                        <span class="status-badge status-badge--old" data-page="design-system-v2" onclick="cycleStatus(this); event.stopPropagation();">Old</span>
                     </div>
                 </div>
             </aside>
@@ -972,6 +972,10 @@
         let currentRefPage = null;
         let currentRefSrc = 'references/index.html';
 
+        // Status badge constants (must be defined before functions that use them)
+        const STATUS_ORDER = ['ready', 'wip', 'old'];
+        const STATUS_LABELS = { ready: 'Ready', wip: 'WIP', old: 'Old' };
+
         // Page metadata for toolbar
         const PAGE_META = {
             'audit-report': {
@@ -1024,9 +1028,9 @@
                 description: 'Horizontal variance bar charts for comparing actual vs budget.',
                 download: null
             },
-            'competitive-analysis': {
-                title: 'Competitive Analysis',
-                description: 'Market comparison visualization with competitor metrics.',
+            'research-template': {
+                title: 'Research Template',
+                description: 'AI-powered research template with competitor analysis, market trends, and key insights.',
                 download: null
             },
             'selkirk-dashboard': {
@@ -1224,10 +1228,7 @@
             }
         });
 
-        // Status badge cycling
-        const STATUS_ORDER = ['ready', 'wip', 'old'];
-        const STATUS_LABELS = { ready: 'Ready', wip: 'WIP', old: 'Old' };
-
+        // Status badge cycling (sidebar)
         async function cycleStatus(badge) {
             const page = badge.dataset.page;
             const currentClass = [...badge.classList].find(c => c.startsWith('status-badge--'));
