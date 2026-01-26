@@ -820,10 +820,30 @@
             padding: 12px 16px;
         }
         .calendar-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--gray-900);
             margin-bottom: 10px;
+        }
+        .calendar-xlsx-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: all 0.15s ease;
+        }
+        .calendar-xlsx-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
         }
         .calendar-detail-empty {
             font-size: 0.8rem;
@@ -2110,6 +2130,7 @@
 
         // ========== Calendar Module ==========
         let calWorksheets = [];
+        let calXlsxUrl = null;
         let calActiveView = { type: 'date' };
         let calCurrentDate = new Date(2026, 0, 26);
         let calSelectedDate = new Date(2026, 0, 26);
@@ -2129,6 +2150,7 @@
                     return;
                 }
 
+                calXlsxUrl = calendarFile.url;
                 const xlsxRes = await fetch(calendarFile.url);
                 const arrayBuffer = await xlsxRes.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -2261,7 +2283,17 @@
             if (calActiveView.type === 'worksheet') {
                 const ws = calWorksheets.find(w => w.id === calActiveView.id);
                 if (!ws) return;
-                header.textContent = ws.name;
+                header.innerHTML = `
+                    <span>${ws.name}</span>
+                    ${calXlsxUrl ? `<button class="calendar-xlsx-link" onclick="window.open('${calXlsxUrl}', '_blank')" title="Open spreadsheet">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="8" y1="13" x2="16" y2="13"/>
+                            <line x1="8" y1="17" x2="16" y2="17"/>
+                            <line x1="8" y1="9" x2="10" y2="9"/>
+                        </svg>
+                    </button>` : ''}`;
                 if (ws.items.length === 0) {
                     content.innerHTML = '<div class="calendar-detail-empty">No items in this worksheet</div>';
                 } else {
