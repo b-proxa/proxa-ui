@@ -2291,19 +2291,25 @@
             if (calActiveView.type === 'worksheet') {
                 const ws = calWorksheets.find(w => w.id === calActiveView.id);
                 if (!ws) return;
-                header.innerHTML = `
-                    <span>${ws.name}</span>
-                    ${calXlsxUrl ? `<button class="calendar-xlsx-link" onclick="window.open('${calXlsxUrl}', '_blank')" title="Open spreadsheet">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="8" y1="13" x2="16" y2="13"/>
-                            <line x1="8" y1="17" x2="16" y2="17"/>
-                            <line x1="8" y1="9" x2="10" y2="9"/>
-                        </svg>
-                    </button>` : ''}`;
+                header.innerHTML = `<span>${ws.name}</span>`;
+
+                const sourceSection = calXlsxUrl ? `
+                    <div class="detail-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                        <div class="detail-section-title">Source</div>
+                        <a href="${calXlsxUrl}" target="_blank" class="source-link">
+                            <div class="source-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="2" width="12" height="12" rx="2"/>
+                                    <path d="M5 6h6M5 8h6M5 10h3"/>
+                                </svg>
+                            </div>
+                            calendar-data.xlsx
+                        </a>
+                    </div>
+                ` : '';
+
                 if (ws.items.length === 0) {
-                    content.innerHTML = '<div class="calendar-detail-empty">No items in this worksheet</div>';
+                    content.innerHTML = `<div class="calendar-detail-empty">No items in this worksheet</div>${sourceSection}`;
                 } else {
                     content.innerHTML = `<div class="calendar-events calendar-list-view">${ws.items.map(item => `
                         <div class="calendar-event-item">
@@ -2313,7 +2319,7 @@
                                 ${item.notes ? `<div class="calendar-event-meta">${item.notes}</div>` : ''}
                             </div>
                         </div>
-                    `).join('')}</div>`;
+                    `).join('')}</div>${sourceSection}`;
                 }
             } else {
                 const dayName = calDays[calSelectedDate.getDay()];
