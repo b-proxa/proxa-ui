@@ -698,19 +698,29 @@
         }
 
         /* Calendar Module */
+        .calendar-panel-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .calendar-picker {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
         .calendar-worksheet-tabs {
             display: flex;
-            gap: 6px;
-            padding: 0 16px 12px;
+            gap: 4px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
         }
         .calendar-worksheet-tab {
-            padding: 6px 10px;
-            font-size: 0.75rem;
+            padding: 4px 8px;
+            font-size: 0.7rem;
             font-weight: 500;
             border: 1px solid var(--gray-200);
             background: white;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             transition: all 0.15s ease;
             color: var(--gray-600);
@@ -728,23 +738,23 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 16px 12px;
+            margin-bottom: 6px;
         }
         .calendar-month-title {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--gray-900);
         }
         .calendar-month-nav {
             display: flex;
-            gap: 4px;
+            gap: 2px;
         }
         .calendar-month-nav button {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border: none;
             background: transparent;
             border-radius: 4px;
@@ -759,28 +769,26 @@
         .calendar-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            padding: 0 16px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .calendar-weekday {
             text-align: center;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 500;
             color: var(--gray-400);
-            padding: 6px 0;
+            padding: 4px 0;
         }
         .calendar-days-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-            padding: 0 16px 16px;
+            gap: 1px;
         }
         .calendar-day-btn {
-            aspect-ratio: 1;
+            padding: 6px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--gray-700);
             border-radius: 4px;
             cursor: pointer;
@@ -807,14 +815,15 @@
             background: var(--gray-800);
         }
         .calendar-detail {
-            padding: 16px;
-            border-top: 1px solid var(--gray-200);
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
         }
         .calendar-detail-header {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--gray-900);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .calendar-detail-empty {
             font-size: 0.8rem;
@@ -825,15 +834,15 @@
         .calendar-events {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         .calendar-event-group-label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 600;
             color: var(--gray-400);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         .calendar-event-group-label:first-child {
             margin-top: 0;
@@ -864,11 +873,11 @@
             gap: 10px;
         }
         .calendar-list-date {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--gray-600);
             white-space: nowrap;
-            min-width: 80px;
+            min-width: 70px;
         }
         .calendar-list-content {
             flex: 1;
@@ -1294,44 +1303,47 @@
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
             </button>
         </div>
-        <div class="panel-content" style="padding: 0;">
-            <!-- Worksheet Tabs -->
-            <div class="calendar-worksheet-tabs" id="cal-worksheet-tabs"></div>
+        <div class="panel-content calendar-panel-content" style="padding: 0;">
+            <!-- Picker Section (fixed) -->
+            <div class="calendar-picker">
+                <!-- Worksheet Tabs -->
+                <div class="calendar-worksheet-tabs" id="cal-worksheet-tabs"></div>
 
-            <!-- Month Header -->
-            <div class="calendar-month-header">
-                <div class="calendar-month-nav">
-                    <button onclick="calPrevMonth()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M15 18l-6-6 6-6"/>
-                        </svg>
-                    </button>
+                <!-- Month Header -->
+                <div class="calendar-month-header">
+                    <div class="calendar-month-nav">
+                        <button onclick="calPrevMonth()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="calendar-month-title" id="cal-month-title">January 2026</div>
+                    <div class="calendar-month-nav">
+                        <button onclick="calNextMonth()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="calendar-month-title" id="cal-month-title">January 2026</div>
-                <div class="calendar-month-nav">
-                    <button onclick="calNextMonth()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 18l6-6-6-6"/>
-                        </svg>
-                    </button>
+
+                <!-- Weekdays -->
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">Su</div>
+                    <div class="calendar-weekday">Mo</div>
+                    <div class="calendar-weekday">Tu</div>
+                    <div class="calendar-weekday">We</div>
+                    <div class="calendar-weekday">Th</div>
+                    <div class="calendar-weekday">Fr</div>
+                    <div class="calendar-weekday">Sa</div>
                 </div>
+
+                <!-- Days Grid -->
+                <div class="calendar-days-grid" id="cal-days-grid"></div>
             </div>
 
-            <!-- Weekdays -->
-            <div class="calendar-weekdays">
-                <div class="calendar-weekday">Su</div>
-                <div class="calendar-weekday">Mo</div>
-                <div class="calendar-weekday">Tu</div>
-                <div class="calendar-weekday">We</div>
-                <div class="calendar-weekday">Th</div>
-                <div class="calendar-weekday">Fr</div>
-                <div class="calendar-weekday">Sa</div>
-            </div>
-
-            <!-- Days Grid -->
-            <div class="calendar-days-grid" id="cal-days-grid"></div>
-
-            <!-- Day Detail -->
+            <!-- Day Detail (scrollable) -->
             <div class="calendar-detail">
                 <div class="calendar-detail-header" id="cal-detail-header">Monday, January 26</div>
                 <div id="cal-detail-content">
