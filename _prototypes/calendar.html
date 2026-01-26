@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar — Proxa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            --accent: #4a6fa5;
+            --accent-light: #eef2f7;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 10px;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--gray-100);
+            min-height: 100vh;
+            color: var(--gray-800);
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Calendar */
+        .calendar {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        /* Calendar Header */
+        .calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .calendar-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 4px;
+        }
+
+        .calendar-nav button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: all 0.15s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            padding: 12px 16px 16px;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 8px;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gray-400);
+            padding: 8px 0;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .calendar-day:hover {
+            background: var(--gray-100);
+        }
+
+        .calendar-day.other-month {
+            color: var(--gray-300);
+        }
+
+        .calendar-day.today {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .calendar-day.selected {
+            background: var(--gray-900);
+            color: white;
+            font-weight: 500;
+        }
+
+        .calendar-day.selected:hover {
+            background: var(--gray-800);
+        }
+
+        /* Day Detail */
+        .day-detail {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .day-detail-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+        }
+
+        .day-detail-empty {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            padding: 24px 0;
+            text-align: center;
+        }
+
+        .day-events {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            padding: 12px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .event-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+
+        .event-meta {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calendar">
+            <div class="calendar-header">
+                <div class="calendar-nav">
+                    <button onclick="prevMonth()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="calendar-title" id="calendar-title">January 2026</div>
+                <div class="calendar-nav">
+                    <button onclick="nextMonth()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">Su</div>
+                    <div class="calendar-weekday">Mo</div>
+                    <div class="calendar-weekday">Tu</div>
+                    <div class="calendar-weekday">We</div>
+                    <div class="calendar-weekday">Th</div>
+                    <div class="calendar-weekday">Fr</div>
+                    <div class="calendar-weekday">Sa</div>
+                </div>
+                <div class="calendar-days" id="calendar-days"></div>
+            </div>
+
+            <div class="day-detail">
+                <div class="day-detail-header" id="day-detail-header">Thursday, January 15</div>
+                <div id="day-detail-content">
+                    <div class="day-detail-empty">Nothing scheduled today</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample events data (would come from spreadsheet)
+        const events = {
+            '2026-01-15': [
+                { title: 'Morning Tour – North Bowl', time: '8:00 AM', meta: '6 guests' },
+                { title: 'Afternoon – East Glades', time: '1:00 PM', meta: '4 guests' }
+            ],
+            '2026-01-16': [
+                { title: 'Full Day Adventure', time: '9:00 AM', meta: '8 guests' }
+            ],
+            '2026-01-18': [
+                { title: 'Morning Tour – West Ridge', time: '8:30 AM', meta: '5 guests' },
+                { title: 'Afternoon – North Bowl', time: '1:00 PM', meta: '6 guests' },
+                { title: 'Sunset Tour', time: '4:00 PM', meta: '3 guests' }
+            ],
+            '2026-01-22': [
+                { title: 'Private Group Tour', time: '10:00 AM', meta: '12 guests · VIP' }
+            ],
+            '2026-01-25': [
+                { title: 'Morning Tour – East Glades', time: '8:00 AM', meta: '6 guests' }
+            ]
+        };
+
+        const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        let currentDate = new Date(2026, 0, 15); // January 15, 2026
+        let selectedDate = new Date(2026, 0, 15);
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Update title
+            document.getElementById('calendar-title').textContent = `${months[month]} ${year}`;
+
+            // Get first day of month and total days
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            // Build calendar days
+            const container = document.getElementById('calendar-days');
+            container.innerHTML = '';
+
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const btn = createDayButton(day, 'other-month', new Date(year, month - 1, day));
+                container.appendChild(btn);
+            }
+
+            // Current month days
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === today.toDateString();
+                const isSelected = date.toDateString() === selectedDate.toDateString();
+
+                let className = '';
+                if (isToday) className += ' today';
+                if (isSelected) className += ' selected';
+
+                const btn = createDayButton(day, className.trim(), date);
+                container.appendChild(btn);
+            }
+
+            // Next month days
+            const totalCells = firstDay + daysInMonth;
+            const remaining = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
+            for (let day = 1; day <= remaining; day++) {
+                const btn = createDayButton(day, 'other-month', new Date(year, month + 1, day));
+                container.appendChild(btn);
+            }
+        }
+
+        function createDayButton(day, className, date) {
+            const btn = document.createElement('button');
+            btn.className = `calendar-day ${className}`;
+            btn.textContent = day;
+            btn.onclick = () => selectDate(date);
+            return btn;
+        }
+
+        function selectDate(date) {
+            selectedDate = date;
+            currentDate = new Date(date.getFullYear(), date.getMonth(), 1);
+            renderCalendar();
+            renderDayDetail();
+        }
+
+        function renderDayDetail() {
+            const header = document.getElementById('day-detail-header');
+            const content = document.getElementById('day-detail-content');
+
+            const dayName = days[selectedDate.getDay()];
+            const monthName = months[selectedDate.getMonth()];
+            const day = selectedDate.getDate();
+
+            header.textContent = `${dayName}, ${monthName} ${day}`;
+
+            const dateKey = formatDateKey(selectedDate);
+            const dayEvents = events[dateKey];
+
+            if (!dayEvents || dayEvents.length === 0) {
+                content.innerHTML = '<div class="day-detail-empty">Nothing scheduled today</div>';
+            } else {
+                content.innerHTML = `
+                    <div class="day-events">
+                        ${dayEvents.map(e => `
+                            <div class="event-item">
+                                <div class="event-title">${e.title}</div>
+                                <div class="event-meta">${e.time} · ${e.meta}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function formatDateKey(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function prevMonth() {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+            renderCalendar();
+        }
+
+        // Initial render
+        renderCalendar();
+        renderDayDetail();
+    </script>
+</body>
+</html>
