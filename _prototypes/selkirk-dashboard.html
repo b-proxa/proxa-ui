@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selkirk Snow Cat Skiing - Dashboard</title>
+    <!-- SheetJS for xlsx parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -694,6 +696,189 @@
                 font-size: 0.55rem;
             }
         }
+
+        /* Calendar Module */
+        .calendar-worksheet-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 0 16px 12px;
+            flex-wrap: wrap;
+        }
+        .calendar-worksheet-tab {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--gray-600);
+        }
+        .calendar-worksheet-tab:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+        .calendar-worksheet-tab.active {
+            background: var(--gray-900);
+            color: white;
+            border-color: var(--gray-900);
+        }
+        .calendar-month-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px 12px;
+        }
+        .calendar-month-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .calendar-month-nav {
+            display: flex;
+            gap: 4px;
+        }
+        .calendar-month-nav button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: all 0.15s ease;
+        }
+        .calendar-month-nav button:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            padding: 0 16px;
+            margin-bottom: 4px;
+        }
+        .calendar-weekday {
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--gray-400);
+            padding: 6px 0;
+        }
+        .calendar-days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            padding: 0 16px 16px;
+        }
+        .calendar-day-btn {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--gray-700);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+        }
+        .calendar-day-btn:hover {
+            background: var(--gray-100);
+        }
+        .calendar-day-btn.other-month {
+            color: var(--gray-300);
+        }
+        .calendar-day-btn.today {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .calendar-day-btn.selected {
+            background: var(--gray-900);
+            color: white;
+            font-weight: 500;
+        }
+        .calendar-day-btn.selected:hover {
+            background: var(--gray-800);
+        }
+        .calendar-detail {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .calendar-detail-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+        .calendar-detail-empty {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            padding: 20px 0;
+            text-align: center;
+        }
+        .calendar-events {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .calendar-event-group-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 6px;
+        }
+        .calendar-event-group-label:first-child {
+            margin-top: 0;
+        }
+        .calendar-event-item {
+            padding: 10px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+        }
+        .calendar-event-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .calendar-event-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .calendar-event-dates {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+        .calendar-list-view .calendar-event-item {
+            display: flex;
+            gap: 10px;
+        }
+        .calendar-list-date {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            white-space: nowrap;
+            min-width: 80px;
+        }
+        .calendar-list-content {
+            flex: 1;
+        }
+        .calendar-loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-400);
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -1109,38 +1294,48 @@
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
             </button>
         </div>
-        <div class="panel-content">
-            <div class="panel-section">
-                <div class="panel-section-title">Upcoming Tours</div>
-                <div class="panel-item">
-                    <div class="event-date">
-                        <div class="event-day">12</div>
-                        <div class="event-month">Jan</div>
-                    </div>
-                    <div class="panel-item-content">
-                        <div class="panel-item-title">Morning Tour — North Bowl</div>
-                        <div class="panel-item-meta">8 guests · Departs 8:00 AM</div>
-                    </div>
+        <div class="panel-content" style="padding: 0;">
+            <!-- Worksheet Tabs -->
+            <div class="calendar-worksheet-tabs" id="cal-worksheet-tabs"></div>
+
+            <!-- Month Header -->
+            <div class="calendar-month-header">
+                <div class="calendar-month-nav">
+                    <button onclick="calPrevMonth()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="panel-item">
-                    <div class="event-date">
-                        <div class="event-day">15</div>
-                        <div class="event-month">Jan</div>
-                    </div>
-                    <div class="panel-item-content">
-                        <div class="panel-item-title">Full Day — Summit Ridge</div>
-                        <div class="panel-item-meta">6 guests · Departs 7:30 AM</div>
-                    </div>
+                <div class="calendar-month-title" id="cal-month-title">January 2026</div>
+                <div class="calendar-month-nav">
+                    <button onclick="calNextMonth()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 18l6-6-6-6"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="panel-item">
-                    <div class="event-date">
-                        <div class="event-day">18</div>
-                        <div class="event-month">Jan</div>
-                    </div>
-                    <div class="panel-item-content">
-                        <div class="panel-item-title">Afternoon Tour — East Glades</div>
-                        <div class="panel-item-meta">4 guests · Departs 12:00 PM</div>
-                    </div>
+            </div>
+
+            <!-- Weekdays -->
+            <div class="calendar-weekdays">
+                <div class="calendar-weekday">Su</div>
+                <div class="calendar-weekday">Mo</div>
+                <div class="calendar-weekday">Tu</div>
+                <div class="calendar-weekday">We</div>
+                <div class="calendar-weekday">Th</div>
+                <div class="calendar-weekday">Fr</div>
+                <div class="calendar-weekday">Sa</div>
+            </div>
+
+            <!-- Days Grid -->
+            <div class="calendar-days-grid" id="cal-days-grid"></div>
+
+            <!-- Day Detail -->
+            <div class="calendar-detail">
+                <div class="calendar-detail-header" id="cal-detail-header">Monday, January 26</div>
+                <div id="cal-detail-content">
+                    <div class="calendar-loading">Loading calendar data...</div>
                 </div>
             </div>
         </div>
@@ -1900,6 +2095,228 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closePanel();
         });
+
+        // ========== Calendar Module ==========
+        let calWorksheets = [];
+        let calActiveView = { type: 'date' };
+        let calCurrentDate = new Date(2026, 0, 26);
+        let calSelectedDate = new Date(2026, 0, 26);
+        const calMonths = ['January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        const calDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        async function loadCalendarData() {
+            try {
+                const filesRes = await fetch('/api/files');
+                const files = await filesRes.json();
+                const calendarFile = files.find(f => f.name.includes('calendar-data.xlsx'));
+
+                if (!calendarFile) {
+                    console.log('No calendar-data.xlsx found, using sample data');
+                    useCalSampleData();
+                    return;
+                }
+
+                const xlsxRes = await fetch(calendarFile.url);
+                const arrayBuffer = await xlsxRes.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                calWorksheets = workbook.SheetNames.map((sheetName, idx) => {
+                    const sheet = workbook.Sheets[sheetName];
+                    const rows = XLSX.utils.sheet_to_json(sheet);
+                    return {
+                        id: sheetName.toLowerCase().replace(/\s+/g, '-'),
+                        name: sheetName,
+                        items: rows.map((row, i) => ({
+                            id: idx * 100 + i,
+                            title: row.Title || '',
+                            startDate: formatCalExcelDate(row.StartDate),
+                            endDate: formatCalExcelDate(row.EndDate),
+                            notes: row.Notes || ''
+                        }))
+                    };
+                });
+                console.log('Loaded calendar worksheets:', calWorksheets);
+            } catch (error) {
+                console.error('Error loading calendar data:', error);
+                useCalSampleData();
+            }
+            renderCalWorksheetTabs();
+            renderCalMonth();
+            renderCalDetail();
+        }
+
+        function formatCalExcelDate(value) {
+            if (!value) return '';
+            if (typeof value === 'string') {
+                const d = new Date(value);
+                if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
+                return value;
+            }
+            if (typeof value === 'number') {
+                const date = XLSX.SSF.parse_date_code(value);
+                return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
+            }
+            return '';
+        }
+
+        function useCalSampleData() {
+            calWorksheets = [
+                { id: 'team-schedule', name: 'Team Schedule', items: [
+                    { id: 1, title: 'Morning Grooming Crew', startDate: '2026-01-26', endDate: '2026-01-26', notes: '4:30 AM start' },
+                    { id: 2, title: 'Ski Patrol Training', startDate: '2026-01-27', endDate: '2026-01-27', notes: 'Avalanche response' },
+                ]},
+                { id: 'guest-schedule', name: 'Guest Schedule', items: [
+                    { id: 7, title: 'Johnson Family', startDate: '2026-01-26', endDate: '2026-01-30', notes: 'Cabin 4' },
+                ]},
+                { id: 'other', name: 'Other', items: [
+                    { id: 12, title: 'Live Music', startDate: '2026-01-26', endDate: '2026-01-26', notes: 'Lodge bar, 7-10 PM' },
+                ]}
+            ];
+        }
+
+        function renderCalWorksheetTabs() {
+            const container = document.getElementById('cal-worksheet-tabs');
+            container.innerHTML = calWorksheets.map(ws => `
+                <button class="calendar-worksheet-tab ${calActiveView.type === 'worksheet' && calActiveView.id === ws.id ? 'active' : ''}"
+                        onclick="selectCalWorksheet('${ws.id}')">${ws.name}</button>
+            `).join('');
+        }
+
+        function selectCalWorksheet(wsId) {
+            calActiveView = { type: 'worksheet', id: wsId };
+            renderCalWorksheetTabs();
+            renderCalMonth();
+            renderCalDetail();
+        }
+
+        function renderCalMonth() {
+            const year = calCurrentDate.getFullYear();
+            const month = calCurrentDate.getMonth();
+            document.getElementById('cal-month-title').textContent = `${calMonths[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            const container = document.getElementById('cal-days-grid');
+            container.innerHTML = '';
+
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                container.appendChild(createCalDayBtn(day, 'other-month', new Date(year, month - 1, day)));
+            }
+
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === today.toDateString();
+                const isSelected = calActiveView.type === 'date' && date.toDateString() === calSelectedDate.toDateString();
+                let className = '';
+                if (isToday) className += ' today';
+                if (isSelected) className += ' selected';
+                container.appendChild(createCalDayBtn(day, className.trim(), date));
+            }
+
+            const totalCells = firstDay + daysInMonth;
+            const remaining = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
+            for (let day = 1; day <= remaining; day++) {
+                container.appendChild(createCalDayBtn(day, 'other-month', new Date(year, month + 1, day)));
+            }
+        }
+
+        function createCalDayBtn(day, className, date) {
+            const btn = document.createElement('button');
+            btn.className = `calendar-day-btn ${className}`;
+            btn.textContent = day;
+            btn.onclick = () => selectCalDate(date);
+            return btn;
+        }
+
+        function selectCalDate(date) {
+            calSelectedDate = date;
+            calCurrentDate = new Date(date.getFullYear(), date.getMonth(), 1);
+            calActiveView = { type: 'date' };
+            renderCalWorksheetTabs();
+            renderCalMonth();
+            renderCalDetail();
+        }
+
+        function renderCalDetail() {
+            const header = document.getElementById('cal-detail-header');
+            const content = document.getElementById('cal-detail-content');
+
+            if (calActiveView.type === 'worksheet') {
+                const ws = calWorksheets.find(w => w.id === calActiveView.id);
+                if (!ws) return;
+                header.textContent = ws.name;
+                if (ws.items.length === 0) {
+                    content.innerHTML = '<div class="calendar-detail-empty">No items in this worksheet</div>';
+                } else {
+                    content.innerHTML = `<div class="calendar-events calendar-list-view">${ws.items.map(item => `
+                        <div class="calendar-event-item">
+                            <div class="calendar-list-date">${formatCalDisplayDate(item.startDate, item.endDate)}</div>
+                            <div class="calendar-list-content">
+                                <div class="calendar-event-title">${item.title}</div>
+                                ${item.notes ? `<div class="calendar-event-meta">${item.notes}</div>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}</div>`;
+                }
+            } else {
+                const dayName = calDays[calSelectedDate.getDay()];
+                const monthName = calMonths[calSelectedDate.getMonth()];
+                header.textContent = `${dayName}, ${monthName} ${calSelectedDate.getDate()}`;
+
+                const dateStr = formatCalDateKey(calSelectedDate);
+                const worksheetItems = calWorksheets.map(ws => ({
+                    ...ws,
+                    dayItems: ws.items.filter(item => dateStr >= item.startDate && dateStr <= item.endDate)
+                }));
+                const totalItems = worksheetItems.reduce((sum, ws) => sum + ws.dayItems.length, 0);
+
+                if (totalItems === 0) {
+                    content.innerHTML = '<div class="calendar-detail-empty">Nothing scheduled today</div>';
+                } else {
+                    content.innerHTML = `<div class="calendar-events">${worksheetItems.filter(ws => ws.dayItems.length > 0).map(ws => `
+                        <div class="calendar-event-group-label">${ws.name}</div>
+                        ${ws.dayItems.map(item => `
+                            <div class="calendar-event-item">
+                                <div class="calendar-event-title">${item.title}</div>
+                                ${item.notes ? `<div class="calendar-event-meta">${item.notes}</div>` : ''}
+                                ${item.startDate !== item.endDate ? `<div class="calendar-event-dates">${item.startDate} → ${item.endDate}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    `).join('')}</div>`;
+                }
+            }
+        }
+
+        function formatCalDisplayDate(start, end) {
+            const options = { month: 'short', day: 'numeric' };
+            const startDate = new Date(start + 'T00:00:00');
+            const startStr = startDate.toLocaleDateString('en-US', options);
+            if (start === end) return startStr;
+            const endDate = new Date(end + 'T00:00:00');
+            return `${startStr} → ${endDate.toLocaleDateString('en-US', options)}`;
+        }
+
+        function formatCalDateKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function calPrevMonth() {
+            calCurrentDate = new Date(calCurrentDate.getFullYear(), calCurrentDate.getMonth() - 1, 1);
+            renderCalMonth();
+        }
+
+        function calNextMonth() {
+            calCurrentDate = new Date(calCurrentDate.getFullYear(), calCurrentDate.getMonth() + 1, 1);
+            renderCalMonth();
+        }
+
+        // Load calendar data on page load
+        loadCalendarData();
     </script>
 </body>
 </html>
