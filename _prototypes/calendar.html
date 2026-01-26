@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar — Proxa</title>
+    <!-- SheetJS for xlsx parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -36,6 +38,37 @@
             max-width: 400px;
             margin: 0 auto;
             padding: 24px 16px;
+        }
+
+        /* Worksheet Tabs */
+        .worksheet-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .worksheet-tab {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+            background: white;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--gray-600);
+        }
+
+        .worksheet-tab:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .worksheet-tab.active {
+            background: var(--gray-900);
+            color: white;
+            border-color: var(--gray-900);
         }
 
         /* Calendar */
@@ -173,6 +206,19 @@
             gap: 12px;
         }
 
+        .event-group-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 8px;
+        }
+
+        .event-group-label:first-child {
+            margin-top: 0;
+        }
+
         .event-item {
             padding: 12px;
             background: var(--gray-50);
@@ -191,10 +237,53 @@
             font-size: 0.75rem;
             color: var(--gray-500);
         }
+
+        .event-dates {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 24px;
+            color: var(--gray-400);
+            font-size: 0.85rem;
+        }
+
+        /* Worksheet List View */
+        .worksheet-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .worksheet-list .event-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .worksheet-list .event-date {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            white-space: nowrap;
+            min-width: 90px;
+        }
+
+        .worksheet-list .event-content {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Worksheet Tabs -->
+        <div class="worksheet-tabs" id="worksheet-tabs">
+            <!-- Populated dynamically -->
+        </div>
+
         <div class="calendar">
             <div class="calendar-header">
                 <div class="calendar-nav">
@@ -228,43 +317,152 @@
             </div>
 
             <div class="day-detail">
-                <div class="day-detail-header" id="day-detail-header">Thursday, January 15</div>
+                <div class="day-detail-header" id="day-detail-header">Monday, January 26</div>
                 <div id="day-detail-content">
-                    <div class="day-detail-empty">Nothing scheduled today</div>
+                    <div class="loading">Loading calendar data...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Sample events data (would come from spreadsheet)
-        const events = {
-            '2026-01-15': [
-                { title: 'Morning Tour – North Bowl', time: '8:00 AM', meta: '6 guests' },
-                { title: 'Afternoon – East Glades', time: '1:00 PM', meta: '4 guests' }
-            ],
-            '2026-01-16': [
-                { title: 'Full Day Adventure', time: '9:00 AM', meta: '8 guests' }
-            ],
-            '2026-01-18': [
-                { title: 'Morning Tour – West Ridge', time: '8:30 AM', meta: '5 guests' },
-                { title: 'Afternoon – North Bowl', time: '1:00 PM', meta: '6 guests' },
-                { title: 'Sunset Tour', time: '4:00 PM', meta: '3 guests' }
-            ],
-            '2026-01-22': [
-                { title: 'Private Group Tour', time: '10:00 AM', meta: '12 guests · VIP' }
-            ],
-            '2026-01-25': [
-                { title: 'Morning Tour – East Glades', time: '8:00 AM', meta: '6 guests' }
-            ]
-        };
+        // Worksheets data - loaded from xlsx
+        let worksheets = [];
+
+        // View state
+        let activeView = { type: 'date' }; // { type: 'date' } or { type: 'worksheet', id: 'team' }
 
         const months = ['January', 'February', 'March', 'April', 'May', 'June',
                         'July', 'August', 'September', 'October', 'November', 'December'];
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-        let currentDate = new Date(2026, 0, 15); // January 15, 2026
-        let selectedDate = new Date(2026, 0, 15);
+        let currentDate = new Date(2026, 0, 26); // January 26, 2026
+        let selectedDate = new Date(2026, 0, 26);
+
+        // Load calendar data from xlsx file
+        async function loadCalendarData() {
+            try {
+                // Get file list from API
+                const filesRes = await fetch('/api/files');
+                const files = await filesRes.json();
+
+                // Find calendar-data.xlsx
+                const calendarFile = files.find(f => f.name.includes('calendar-data.xlsx'));
+
+                if (!calendarFile) {
+                    console.log('No calendar-data.xlsx found, using sample data');
+                    useSampleData();
+                    return;
+                }
+
+                // Fetch the xlsx file
+                const xlsxRes = await fetch(calendarFile.url);
+                const arrayBuffer = await xlsxRes.arrayBuffer();
+
+                // Parse with SheetJS
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                // Convert each sheet to our worksheets format
+                worksheets = workbook.SheetNames.map((sheetName, idx) => {
+                    const sheet = workbook.Sheets[sheetName];
+                    const rows = XLSX.utils.sheet_to_json(sheet);
+
+                    return {
+                        id: sheetName.toLowerCase().replace(/\s+/g, '-'),
+                        name: sheetName,
+                        items: rows.map((row, i) => ({
+                            id: idx * 100 + i,
+                            title: row.Title || '',
+                            startDate: formatExcelDate(row.StartDate),
+                            endDate: formatExcelDate(row.EndDate),
+                            notes: row.Notes || ''
+                        }))
+                    };
+                });
+
+                console.log('Loaded worksheets:', worksheets);
+
+            } catch (error) {
+                console.error('Error loading calendar data:', error);
+                useSampleData();
+            }
+
+            renderWorksheetTabs();
+            renderCalendar();
+            renderDayDetail();
+        }
+
+        // Format Excel date to YYYY-MM-DD
+        function formatExcelDate(value) {
+            if (!value) return '';
+
+            // If it's already a string date
+            if (typeof value === 'string') {
+                // Try to parse and reformat
+                const d = new Date(value);
+                if (!isNaN(d.getTime())) {
+                    return d.toISOString().split('T')[0];
+                }
+                return value;
+            }
+
+            // Excel serial date number
+            if (typeof value === 'number') {
+                const date = XLSX.SSF.parse_date_code(value);
+                return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
+            }
+
+            return '';
+        }
+
+        // Fallback sample data
+        function useSampleData() {
+            worksheets = [
+                {
+                    id: 'team-schedule',
+                    name: 'Team Schedule',
+                    items: [
+                        { id: 1, title: 'Morning Grooming Crew', startDate: '2026-01-26', endDate: '2026-01-26', notes: '4:30 AM start, runs 1-12' },
+                        { id: 2, title: 'Ski Patrol Training', startDate: '2026-01-27', endDate: '2026-01-27', notes: 'Avalanche response refresher' },
+                        { id: 3, title: 'Lift Maintenance Check', startDate: '2026-01-28', endDate: '2026-01-28', notes: 'Chair 3 annual inspection' },
+                    ]
+                },
+                {
+                    id: 'guest-schedule',
+                    name: 'Guest Schedule',
+                    items: [
+                        { id: 7, title: 'Johnson Family', startDate: '2026-01-26', endDate: '2026-01-30', notes: 'Cabin 4, 2 adults + 3 kids' },
+                        { id: 8, title: 'Corporate Retreat - Axion Inc', startDate: '2026-01-27', endDate: '2026-01-29', notes: '12 guests, conference room booked' },
+                    ]
+                },
+                {
+                    id: 'other',
+                    name: 'Other',
+                    items: [
+                        { id: 12, title: 'Live Music - Mountain Echo Band', startDate: '2026-01-26', endDate: '2026-01-26', notes: 'Lodge bar, 7-10 PM' },
+                        { id: 13, title: 'Wine Tasting Event', startDate: '2026-01-28', endDate: '2026-01-28', notes: 'Cellar room, 6 PM, 20 spots' },
+                    ]
+                }
+            ];
+        }
+
+        function renderWorksheetTabs() {
+            const container = document.getElementById('worksheet-tabs');
+            container.innerHTML = worksheets.map(ws => `
+                <button
+                    class="worksheet-tab ${activeView.type === 'worksheet' && activeView.id === ws.id ? 'active' : ''}"
+                    onclick="selectWorksheet('${ws.id}')"
+                >
+                    ${ws.name}
+                </button>
+            `).join('');
+        }
+
+        function selectWorksheet(wsId) {
+            activeView = { type: 'worksheet', id: wsId };
+            renderWorksheetTabs();
+            renderDayDetail();
+        }
 
         function renderCalendar() {
             const year = currentDate.getFullYear();
@@ -294,7 +492,7 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(year, month, day);
                 const isToday = date.toDateString() === today.toDateString();
-                const isSelected = date.toDateString() === selectedDate.toDateString();
+                const isSelected = activeView.type === 'date' && date.toDateString() === selectedDate.toDateString();
 
                 let className = '';
                 if (isToday) className += ' today';
@@ -324,6 +522,8 @@
         function selectDate(date) {
             selectedDate = date;
             currentDate = new Date(date.getFullYear(), date.getMonth(), 1);
+            activeView = { type: 'date' };
+            renderWorksheetTabs();
             renderCalendar();
             renderDayDetail();
         }
@@ -332,29 +532,77 @@
             const header = document.getElementById('day-detail-header');
             const content = document.getElementById('day-detail-content');
 
-            const dayName = days[selectedDate.getDay()];
-            const monthName = months[selectedDate.getMonth()];
-            const day = selectedDate.getDate();
+            if (activeView.type === 'worksheet') {
+                // Worksheet list view
+                const ws = worksheets.find(w => w.id === activeView.id);
+                if (!ws) return;
 
-            header.textContent = `${dayName}, ${monthName} ${day}`;
+                header.textContent = ws.name;
 
-            const dateKey = formatDateKey(selectedDate);
-            const dayEvents = events[dateKey];
-
-            if (!dayEvents || dayEvents.length === 0) {
-                content.innerHTML = '<div class="day-detail-empty">Nothing scheduled today</div>';
+                if (ws.items.length === 0) {
+                    content.innerHTML = '<div class="day-detail-empty">No items in this worksheet</div>';
+                } else {
+                    content.innerHTML = `
+                        <div class="worksheet-list">
+                            ${ws.items.map(item => `
+                                <div class="event-item">
+                                    <div class="event-date">${formatDisplayDate(item.startDate, item.endDate)}</div>
+                                    <div class="event-content">
+                                        <div class="event-title">${item.title}</div>
+                                        ${item.notes ? `<div class="event-meta">${item.notes}</div>` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
             } else {
-                content.innerHTML = `
-                    <div class="day-events">
-                        ${dayEvents.map(e => `
-                            <div class="event-item">
-                                <div class="event-title">${e.title}</div>
-                                <div class="event-meta">${e.time} · ${e.meta}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                // Date view - show merged events from all worksheets
+                const dayName = days[selectedDate.getDay()];
+                const monthName = months[selectedDate.getMonth()];
+                const day = selectedDate.getDate();
+
+                header.textContent = `${dayName}, ${monthName} ${day}`;
+
+                const dateStr = formatDateKey(selectedDate);
+
+                // Find events that span this date from all worksheets
+                const worksheetItems = worksheets.map(ws => ({
+                    ...ws,
+                    dayItems: ws.items.filter(item => dateStr >= item.startDate && dateStr <= item.endDate)
+                }));
+
+                const totalItems = worksheetItems.reduce((sum, ws) => sum + ws.dayItems.length, 0);
+
+                if (totalItems === 0) {
+                    content.innerHTML = '<div class="day-detail-empty">Nothing scheduled today</div>';
+                } else {
+                    content.innerHTML = `
+                        <div class="day-events">
+                            ${worksheetItems.filter(ws => ws.dayItems.length > 0).map(ws => `
+                                <div class="event-group-label">${ws.name}</div>
+                                ${ws.dayItems.map(item => `
+                                    <div class="event-item">
+                                        <div class="event-title">${item.title}</div>
+                                        ${item.notes ? `<div class="event-meta">${item.notes}</div>` : ''}
+                                        ${item.startDate !== item.endDate ? `<div class="event-dates">${item.startDate} → ${item.endDate}</div>` : ''}
+                                    </div>
+                                `).join('')}
+                            `).join('')}
+                        </div>
+                    `;
+                }
             }
+        }
+
+        function formatDisplayDate(start, end) {
+            const options = { month: 'short', day: 'numeric' };
+            const startDate = new Date(start + 'T00:00:00');
+            const startStr = startDate.toLocaleDateString('en-US', options);
+            if (start === end) return startStr;
+            const endDate = new Date(end + 'T00:00:00');
+            const endStr = endDate.toLocaleDateString('en-US', options);
+            return `${startStr} → ${endStr}`;
         }
 
         function formatDateKey(date) {
@@ -374,9 +622,8 @@
             renderCalendar();
         }
 
-        // Initial render
-        renderCalendar();
-        renderDayDetail();
+        // Initial load
+        loadCalendarData();
     </script>
 </body>
 </html>
