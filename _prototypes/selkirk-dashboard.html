@@ -533,6 +533,9 @@
         .source-link:hover {
             text-decoration: underline;
         }
+        .open-record-btn:hover {
+            background: var(--gray-700) !important;
+        }
         .source-icon {
             width: 28px;
             height: 28px;
@@ -1195,18 +1198,19 @@
                     <polyline points="2,20 11,16 20,18 29,12 38,14 47,8 56,10 65,4 74,6 83,3 92,2 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
                 </svg>
             </div>
-            <div class="metric-card" onclick="openPanel('satisfaction')">
+            <div class="metric-card metric-card--record" onclick="openPanel('record')">
                 <div class="metric-top">
-                    <span class="metric-label">Satisfaction</span>
-                    <span class="metric-change positive">
-                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
-                        +2.3%
-                    </span>
+                    <span class="metric-label">Financial Performance</span>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #4a6fa5;">
+                        <rect x="2" y="2" width="12" height="12" rx="2"/>
+                        <path d="M5 11V8M8 11V6M11 11V4"/>
+                    </svg>
                 </div>
-                <div class="metric-value">94%</div>
+                <div class="metric-value" style="font-size: 14px; color: var(--gray-600);">2024 Report</div>
                 <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-                    <path d="M2,26 L2,16 L11,14 L20,15 L29,12 L38,10 L47,12 L56,8 L65,10 L74,6 L83,8 L92,4 L98,5 L98,26 Z" fill="url(#grad-green)"/>
-                    <polyline points="2,16 11,14 20,15 29,12 38,10 47,12 56,8 65,10 74,6 83,8 92,4 98,5" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                    <defs><linearGradient id="grad-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a6fa5" stop-opacity="0.15"/><stop offset="100%" stop-color="#4a6fa5" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,22 L14,20 L26,18 L38,15 L50,13 L62,11 L74,8 L86,6 L98,3 L98,26 Z" fill="url(#grad-blue)"/>
+                    <polyline points="2,22 14,20 26,18 38,15 50,13 62,11 74,8 86,6 98,3" fill="none" stroke="#4a6fa5" stroke-width="1"/>
                 </svg>
             </div>
         </div>
@@ -2050,98 +2054,95 @@
             </div>
         </div>
     </div>
-    
-    <!-- Satisfaction Panel -->
-    <div class="panel" id="panel-satisfaction">
+
+    <!-- Record Panel (Financial Performance 2024) -->
+    <div class="panel" id="panel-record">
         <div class="panel-header">
-            <span class="panel-title">Satisfaction</span>
+            <span class="panel-title">Financial Performance 2024</span>
             <button class="panel-close" onclick="closePanel()">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
             </button>
         </div>
         <div class="panel-content">
-            <div class="metric-detail-value">94%</div>
-            <div class="metric-detail-change positive">
-                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
-                2.3% from last period
+            <!-- Mini Slide Preview -->
+            <div class="record-preview" style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); margin-bottom: 4px;">Fall 2025 Management Presentation</div>
+                <div style="font-size: 16px; font-weight: 600; color: var(--gray-800); margin-bottom: 12px;">Financial Performance 2024</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="font-size: 11px; line-height: 1.5; color: var(--gray-600);">
+                        <strong style="color: var(--gray-800);">Key Highlights</strong><br>
+                        Revenue growth of 108% YoY<br>
+                        Consistent upward trajectory<br>
+                        Profit margins expanding in H2
+                    </div>
+                    <div style="background: white; border-radius: 4px; padding: 8px;">
+                        <svg width="100%" height="60" viewBox="0 0 120 60" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="record-chart-grad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#4a6fa5" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#4a6fa5" stop-opacity="0.02"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,55 L10,52 L20,50 L30,45 L40,42 L50,38 L60,35 L70,30 L80,28 L90,22 L100,18 L110,12 L120,8 L120,60 L0,60 Z" fill="url(#record-chart-grad)"/>
+                            <polyline points="0,55 10,52 20,50 30,45 40,42 50,38 60,35 70,30 80,28 90,22 100,18 110,12 120,8" fill="none" stroke="#4a6fa5" stroke-width="1.5"/>
+                            <polyline points="0,58 10,56 20,54 30,50 40,48 50,45 60,42 70,38 80,36 90,32 100,30 110,26 120,22" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                            <polyline points="0,52 10,50 20,48 30,44 40,42 50,38 60,36 70,32 80,28 90,24 100,20 110,16 120,12" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        </svg>
+                        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 4px;">
+                            <span style="font-size: 9px; color: #4a6fa5;">Revenue</span>
+                            <span style="font-size: 9px; color: #6b8f71;">Expenses</span>
+                            <span style="font-size: 9px; color: #c9a227;">Profit</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="metric-detail-chart">
-                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="satisfaction-grad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
-                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M0,55 L30,52 L60,54 L90,48 L120,45 L150,48 L180,42 L210,45 L240,38 L270,40 L300,35 L330,32 L360,30 L360,100 L0,100 Z" fill="url(#satisfaction-grad)"/>
-                    <polyline points="0,55 30,52 60,54 90,48 120,45 150,48 180,42 210,45 240,38 270,40 300,35 330,32 360,30" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
-                </svg>
-            </div>
-            
+
             <div class="metric-detail-description">
-                <p>Guest satisfaction reached 94% based on post-trip surveys (n=156). This represents the highest score in company history and exceeds the industry benchmark of 87%.</p>
-                <p>Top positive mentions: guide expertise (92%), terrain variety (89%), safety protocols (88%), lodge amenities (85%). Areas for improvement: parking logistics (72%), cell coverage (68%).</p>
-                <p>Net Promoter Score improved to +67, with 78% of guests indicating they would recommend Selkirk to friends.</p>
+                <p><strong>Revenue growth</strong> of 108% year-over-year demonstrates strong market position with consistent upward trajectory across all quarters.</p>
+                <p>Expenses scaling efficiently with revenue. Profit margins expanding in H2 with year-end performance exceeding targets.</p>
             </div>
-            
+
             <div class="detail-section">
                 <div class="detail-section-title">Comments</div>
                 <div class="comment">
-                    <div class="comment-avatar">KL</div>
+                    <div class="comment-avatar">FT</div>
                     <div class="comment-content">
                         <div class="comment-header">
-                            <span class="comment-author">Kevin Lee</span>
-                            <span class="comment-time">2 days ago</span>
+                            <span class="comment-author">Finance Team</span>
+                            <span class="comment-time">Dec 1</span>
                         </div>
-                        <div class="comment-text">Safety scores are up after the new beacon training protocol. Team is doing great work.</div>
-                    </div>
-                </div>
-                <div class="comment">
-                    <div class="comment-avatar">JD</div>
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-author">Jake Donovan</span>
-                            <span class="comment-time">6 days ago</span>
-                        </div>
-                        <div class="comment-text">Looking into Starlink for improved cell coverage at the lodge. Should have proposal ready next week.</div>
+                        <div class="comment-text">Great progress on cost management this quarter.</div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="detail-section">
                 <div class="detail-section-title">Metadata</div>
                 <div class="detail-meta">
                     <div class="detail-meta-row">
-                        <span class="detail-meta-label">Owner</span>
-                        <span class="detail-meta-value">Maria Rodriguez</span>
+                        <span class="detail-meta-label">Type</span>
+                        <span class="detail-meta-value">Presentation Record</span>
                     </div>
                     <div class="detail-meta-row">
                         <span class="detail-meta-label">Last updated</span>
-                        <span class="detail-meta-value">Jan 6, 2026</span>
-                    </div>
-                    <div class="detail-meta-row">
-                        <span class="detail-meta-label">Update frequency</span>
-                        <span class="detail-meta-value">Weekly</span>
+                        <span class="detail-meta-value">Dec 1, 2025</span>
                     </div>
                     <div class="detail-meta-row">
                         <span class="detail-meta-label">Period</span>
-                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                        <span class="detail-meta-value">Jan – Dec 2024</span>
                     </div>
                 </div>
             </div>
-            
+
             <div class="detail-section">
-                <div class="detail-section-title">Source</div>
-                <a href="#" class="source-link">
-                    <div class="source-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="2" width="12" height="12" rx="2"/>
-                            <path d="M5 6h6M5 8h6M5 10h3"/>
-                        </svg>
-                    </div>
-                    satisfaction-dec-2025.xlsx
-                </a>
+                <div class="detail-section-title">Actions</div>
+                <button onclick="openRecord()" class="open-record-btn" style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px; background: var(--gray-800); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="12" height="12" rx="2"/>
+                        <path d="M5 11V8M8 11V6M11 11V4"/>
+                    </svg>
+                    Open Full Record
+                </button>
             </div>
         </div>
     </div>
@@ -2283,7 +2284,17 @@
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.body.style.overflow = '';
         }
-        
+
+        function openRecord() {
+            // Switch to Record tab in parent sandbox
+            if (window.parent && window.parent.switchTab) {
+                window.parent.switchTab('record');
+            } else {
+                // Fallback if not in iframe
+                alert('Open Record page (Financial Performance 2024)');
+            }
+        }
+
         // Close on escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closePanel();
