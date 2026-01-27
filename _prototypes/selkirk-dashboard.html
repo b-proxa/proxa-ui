@@ -848,58 +848,131 @@
             color: var(--gray-600);
         }
 
-        /* XLSX Preview Panel */
-        .xlsx-preview-tabs {
+        /* XLSX Preview Panel - mimics Claude.ai artifact viewer */
+        .xlsx-preview-header {
             display: flex;
-            gap: 0;
-            border-bottom: 1px solid var(--gray-200);
-            padding: 0 16px;
-            background: var(--gray-50);
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e5e5e5;
+            background: #fafafa;
+            font-size: 13px;
         }
-        .xlsx-preview-tab {
-            padding: 10px 14px;
-            font-size: 0.75rem;
-            font-weight: 500;
+        .xlsx-preview-dims {
+            color: #666;
+        }
+        .xlsx-preview-dims strong {
+            color: #333;
+            font-weight: 600;
+        }
+        .spreadsheet {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+        .spreadsheet__tabs {
+            display: flex;
+            gap: 2px;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .spreadsheet__tab {
+            padding: 6px 14px;
+            font-size: 12px;
+            color: #666;
+            background: #e8e8e8;
             border: none;
-            background: transparent;
+            border-radius: 4px 4px 0 0;
             cursor: pointer;
-            color: var(--gray-500);
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-            transition: all 0.15s ease;
         }
-        .xlsx-preview-tab:hover {
-            color: var(--gray-700);
+        .spreadsheet__tab:hover {
+            background: #ddd;
         }
-        .xlsx-preview-tab.active {
-            color: var(--gray-900);
-            border-bottom-color: var(--gray-900);
+        .spreadsheet__tab.active {
+            background: white;
+            color: #333;
+            font-weight: 500;
         }
-        .xlsx-preview-table {
-            padding: 16px;
+        .spreadsheet__grid {
+            flex: 1;
             overflow: auto;
         }
-        .xlsx-preview-table table {
-            width: 100%;
+        .spreadsheet__table {
             border-collapse: collapse;
-            font-size: 0.75rem;
+            min-width: 100%;
         }
-        .xlsx-preview-table th {
-            text-align: left;
+        .spreadsheet__table th,
+        .spreadsheet__table td {
+            border: 1px solid #eee;
             padding: 8px 12px;
-            background: var(--gray-100);
-            font-weight: 600;
-            color: var(--gray-700);
-            border-bottom: 1px solid var(--gray-200);
+            text-align: left;
             white-space: nowrap;
         }
-        .xlsx-preview-table td {
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--gray-100);
-            color: var(--gray-700);
+        .spreadsheet__table th {
+            background: #fafafa;
+            font-weight: 400;
+            color: #666;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
-        .xlsx-preview-table tr:hover td {
-            background: var(--gray-50);
+        .spreadsheet__table td {
+            background: white;
+        }
+        .spreadsheet__row-num {
+            background: #fafafa !important;
+            color: #999;
+            text-align: center !important;
+            width: 40px;
+            min-width: 40px;
+            font-weight: 400;
+            border-right: 1px solid #ddd;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .spreadsheet__corner {
+            background: #fafafa !important;
+            width: 40px;
+            min-width: 40px;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        .xlsx-preview-meta {
+            padding: 16px;
+            border-top: 1px solid #e5e5e5;
+            background: #fafafa;
+        }
+        .xlsx-preview-meta-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .xlsx-preview-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        .xlsx-preview-meta-label {
+            color: #666;
+        }
+        .xlsx-preview-meta-value {
+            color: #333;
+            text-align: right;
+            word-break: break-all;
         }
 
         .calendar-detail-empty {
@@ -2189,9 +2262,12 @@
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
             </button>
         </div>
-        <div class="panel-content" style="padding: 0;">
-            <div class="xlsx-preview-tabs" id="xlsx-preview-tabs"></div>
-            <div class="xlsx-preview-table" id="xlsx-preview-table"></div>
+        <div class="panel-content" style="padding: 0; display: flex; flex-direction: column;">
+            <div class="xlsx-preview-header">
+                <div class="xlsx-preview-dims"><strong>XLSX</strong> <span id="xlsx-dims">0 rows × 0 columns</span></div>
+            </div>
+            <div id="xlsx-spreadsheet-container" style="flex: 1; display: flex; flex-direction: column; min-height: 0;"></div>
+            <div class="xlsx-preview-meta" id="xlsx-preview-meta"></div>
         </div>
     </div>
 
@@ -2454,56 +2530,107 @@
         let xlsxPreviewData = null;
         let xlsxPreviewActiveSheet = 0;
 
+        function getColumnLetter(index) {
+            let letter = '';
+            while (index >= 0) {
+                letter = String.fromCharCode((index % 26) + 65) + letter;
+                index = Math.floor(index / 26) - 1;
+            }
+            return letter;
+        }
+
         function openXlsxPreview() {
             if (!calWorksheets.length) return;
 
-            // Build preview data from calWorksheets
-            xlsxPreviewData = calWorksheets.map(ws => ({
-                name: ws.name,
-                headers: ['StartDate', 'EndDate', 'Title', 'Notes'],
-                rows: ws.items.map(item => [item.startDate, item.endDate, item.title, item.notes])
-            }));
+            // Build preview data from calWorksheets (with header row)
+            xlsxPreviewData = calWorksheets.map(ws => {
+                const headers = ['StartDate', 'EndDate', 'Title', 'Notes'];
+                const dataRows = ws.items.map(item => [item.startDate, item.endDate, item.title, item.notes]);
+                return {
+                    name: ws.name,
+                    data: [headers, ...dataRows]
+                };
+            });
 
             xlsxPreviewActiveSheet = 0;
-            renderXlsxPreviewTabs();
-            renderXlsxPreviewTable();
+            renderXlsxSpreadsheet();
+            renderXlsxMeta();
             openPanel('xlsx-preview');
-        }
-
-        function renderXlsxPreviewTabs() {
-            const container = document.getElementById('xlsx-preview-tabs');
-            container.innerHTML = xlsxPreviewData.map((sheet, idx) => `
-                <button class="xlsx-preview-tab ${idx === xlsxPreviewActiveSheet ? 'active' : ''}"
-                        onclick="selectXlsxSheet(${idx})">${sheet.name}</button>
-            `).join('');
         }
 
         function selectXlsxSheet(idx) {
             xlsxPreviewActiveSheet = idx;
-            renderXlsxPreviewTabs();
-            renderXlsxPreviewTable();
+            renderXlsxSpreadsheet();
         }
 
-        function renderXlsxPreviewTable() {
-            const container = document.getElementById('xlsx-preview-table');
+        function renderXlsxSpreadsheet() {
+            const container = document.getElementById('xlsx-spreadsheet-container');
+            const dimsEl = document.getElementById('xlsx-dims');
             const sheet = xlsxPreviewData[xlsxPreviewActiveSheet];
 
-            if (!sheet || !sheet.rows.length) {
-                container.innerHTML = '<div style="text-align: center; color: var(--gray-400); padding: 40px;">No data</div>';
+            if (!sheet || !sheet.data.length) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">No data in spreadsheet</div>';
+                dimsEl.textContent = '0 rows × 0 columns';
                 return;
             }
 
+            const data = sheet.data;
+            const rowCount = data.length;
+            const colCount = Math.max(...data.map(row => row ? row.length : 0), 0);
+
+            dimsEl.textContent = `${rowCount} rows × ${colCount} columns`;
+
+            let html = '<div class="spreadsheet">';
+
+            // Sheet tabs (if multiple sheets)
+            if (xlsxPreviewData.length > 1) {
+                html += '<div class="spreadsheet__tabs">';
+                xlsxPreviewData.forEach((s, i) => {
+                    const activeClass = i === xlsxPreviewActiveSheet ? ' active' : '';
+                    html += `<button class="spreadsheet__tab${activeClass}" onclick="selectXlsxSheet(${i})">${s.name}</button>`;
+                });
+                html += '</div>';
+            }
+
+            // Grid
+            html += '<div class="spreadsheet__grid"><table class="spreadsheet__table">';
+
+            // Column headers (A, B, C...)
+            html += '<thead><tr><th class="spreadsheet__corner"></th>';
+            for (let c = 0; c < colCount; c++) {
+                html += `<th>${getColumnLetter(c)}</th>`;
+            }
+            html += '</tr></thead>';
+
+            // Data rows
+            html += '<tbody>';
+            data.forEach((row, r) => {
+                html += `<tr><td class="spreadsheet__row-num">${r + 1}</td>`;
+                for (let c = 0; c < colCount; c++) {
+                    const cell = row && row[c] !== undefined ? row[c] : '';
+                    html += `<td>${cell}</td>`;
+                }
+                html += '</tr>';
+            });
+            html += '</tbody></table></div></div>';
+
+            container.innerHTML = html;
+        }
+
+        function renderXlsxMeta() {
+            const container = document.getElementById('xlsx-preview-meta');
+            const totalRows = xlsxPreviewData.reduce((sum, s) => sum + s.data.length, 0);
+
             container.innerHTML = `
-                <table>
-                    <thead>
-                        <tr>${sheet.headers.map(h => `<th>${h}</th>`).join('')}</tr>
-                    </thead>
-                    <tbody>
-                        ${sheet.rows.map(row => `
-                            <tr>${row.map(cell => `<td>${cell || ''}</td>`).join('')}</tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                <div class="xlsx-preview-meta-title">Metadata</div>
+                <div class="xlsx-preview-meta-row">
+                    <span class="xlsx-preview-meta-label">Sheets</span>
+                    <span class="xlsx-preview-meta-value">${xlsxPreviewData.length}</span>
+                </div>
+                <div class="xlsx-preview-meta-row">
+                    <span class="xlsx-preview-meta-label">Location</span>
+                    <span class="xlsx-preview-meta-value">${calXlsxUrl ? calXlsxUrl.split('/').pop() : 'calendar-data.xlsx'}</span>
+                </div>
             `;
         }
 
