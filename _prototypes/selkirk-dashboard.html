@@ -533,8 +533,71 @@
         .source-link:hover {
             text-decoration: underline;
         }
+        /* Record preview panel */
+        .record-preview {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .record-preview__section {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+        .record-preview__title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 12px;
+        }
+        .record-preview__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .record-preview__highlights {
+            font-size: 11px;
+            line-height: 1.5;
+            color: var(--gray-600);
+        }
+        .record-preview__highlights strong {
+            color: var(--gray-800);
+        }
+        .record-preview__chart {
+            background: white;
+            border-radius: 4px;
+            padding: 8px;
+        }
+        .record-preview__legend {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+        .record-preview__legend span {
+            font-size: 9px;
+        }
+        .open-record-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: var(--gray-800);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
         .open-record-btn:hover {
-            background: var(--gray-700) !important;
+            background: var(--gray-700);
         }
         .source-icon {
             width: 28px;
@@ -850,134 +913,6 @@
             background: var(--gray-100);
             color: var(--gray-600);
         }
-
-        /* XLSX Preview Panel - mimics Claude.ai artifact viewer */
-        .xlsx-preview-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 16px;
-            border-bottom: 1px solid #e5e5e5;
-            background: #fafafa;
-            font-size: 13px;
-        }
-        .xlsx-preview-dims {
-            color: #666;
-        }
-        .xlsx-preview-dims strong {
-            color: #333;
-            font-weight: 600;
-        }
-        .spreadsheet {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: 13px;
-            color: #1a1a1a;
-        }
-        .spreadsheet__tabs {
-            display: flex;
-            gap: 2px;
-            padding: 8px 12px;
-            background: #f5f5f5;
-            border-bottom: 1px solid #e5e5e5;
-        }
-        .spreadsheet__tab {
-            padding: 6px 14px;
-            font-size: 12px;
-            color: #666;
-            background: #e8e8e8;
-            border: none;
-            border-radius: 4px 4px 0 0;
-            cursor: pointer;
-        }
-        .spreadsheet__tab:hover {
-            background: #ddd;
-        }
-        .spreadsheet__tab.active {
-            background: white;
-            color: #333;
-            font-weight: 500;
-        }
-        .spreadsheet__grid {
-            flex: 1;
-            overflow: auto;
-        }
-        .spreadsheet__table {
-            border-collapse: collapse;
-            min-width: 100%;
-        }
-        .spreadsheet__table th,
-        .spreadsheet__table td {
-            border: 1px solid #eee;
-            padding: 8px 12px;
-            text-align: left;
-            white-space: nowrap;
-        }
-        .spreadsheet__table th {
-            background: #fafafa;
-            font-weight: 400;
-            color: #666;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-        .spreadsheet__table td {
-            background: white;
-        }
-        .spreadsheet__row-num {
-            background: #fafafa !important;
-            color: #999;
-            text-align: center !important;
-            width: 40px;
-            min-width: 40px;
-            font-weight: 400;
-            border-right: 1px solid #ddd;
-            position: sticky;
-            left: 0;
-            z-index: 1;
-        }
-        .spreadsheet__corner {
-            background: #fafafa !important;
-            width: 40px;
-            min-width: 40px;
-            position: sticky;
-            left: 0;
-            top: 0;
-            z-index: 2;
-        }
-        .xlsx-preview-meta {
-            padding: 16px;
-            border-top: 1px solid #e5e5e5;
-            background: #fafafa;
-        }
-        .xlsx-preview-meta-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-        .xlsx-preview-meta-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 4px 0;
-        }
-        .xlsx-preview-meta-label {
-            color: #666;
-        }
-        .xlsx-preview-meta-value {
-            color: #333;
-            text-align: right;
-            word-break: break-all;
-        }
-
         .calendar-detail-empty {
             font-size: 0.8rem;
             color: var(--gray-400);
@@ -1040,6 +975,133 @@
             padding: 20px;
             color: var(--gray-400);
             font-size: 0.8rem;
+        }
+
+        /* XLSX Preview Panel */
+        .xlsx-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            font-size: 13px;
+        }
+        .xlsx-preview-dims {
+            color: var(--gray-500);
+        }
+        .xlsx-preview-dims strong {
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+        .spreadsheet {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 13px;
+            color: var(--gray-900);
+        }
+        .spreadsheet__tabs {
+            display: flex;
+            gap: 2px;
+            padding: 8px 12px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .spreadsheet__tab {
+            padding: 6px 14px;
+            font-size: 12px;
+            color: var(--gray-500);
+            background: var(--gray-200);
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+        }
+        .spreadsheet__tab:hover {
+            background: var(--gray-300);
+        }
+        .spreadsheet__tab.active {
+            background: white;
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+        .spreadsheet__grid {
+            flex: 1;
+            overflow: auto;
+        }
+        .spreadsheet__table {
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+        .spreadsheet__table th,
+        .spreadsheet__table td {
+            border: 1px solid var(--gray-100);
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .spreadsheet__table th {
+            background: var(--gray-50);
+            font-weight: 400;
+            color: var(--gray-500);
+            text-align: center;
+            border-bottom: 1px solid var(--gray-300);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .spreadsheet__table td {
+            background: white;
+        }
+        .spreadsheet__row-num {
+            background: var(--gray-50) !important;
+            color: var(--gray-400);
+            text-align: center !important;
+            width: 40px;
+            min-width: 40px;
+            font-weight: 400;
+            border-right: 1px solid var(--gray-300);
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .spreadsheet__corner {
+            background: var(--gray-50) !important;
+            width: 40px;
+            min-width: 40px;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        .xlsx-preview-meta {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        .xlsx-preview-meta-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .xlsx-preview-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        .xlsx-preview-meta-label {
+            color: var(--gray-500);
+        }
+        .xlsx-preview-meta-value {
+            color: var(--gray-800);
+            text-align: right;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -1125,7 +1187,7 @@
         <!-- Metrics Section -->
         <div class="section-header">Metrics</div>
         <div class="metrics-grid">
-            <div class="metric-card" onclick="openPanel('revenue')" style="cursor: pointer;">
+            <div class="metric-card" onclick="openPanel('revenue')">
                 <div class="metric-top">
                     <span class="metric-label">Revenue</span>
                     <span class="metric-change negative">
@@ -1198,7 +1260,7 @@
                     <polyline points="2,20 11,16 20,18 29,12 38,14 47,8 56,10 65,4 74,6 83,3 92,2 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
                 </svg>
             </div>
-            <div class="metric-card metric-card--record" onclick="openPanel('record')">
+            <div class="metric-card" onclick="openPanel('record')">
                 <div class="metric-top">
                     <span class="metric-label">Financial Performance</span>
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #4a6fa5;">
@@ -2065,17 +2127,17 @@
         </div>
         <div class="panel-content">
             <!-- Mini Slide Preview -->
-            <div class="record-preview" style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); margin-bottom: 4px;">Fall 2025 Management Presentation</div>
-                <div style="font-size: 16px; font-weight: 600; color: var(--gray-800); margin-bottom: 12px;">Financial Performance 2024</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div style="font-size: 11px; line-height: 1.5; color: var(--gray-600);">
-                        <strong style="color: var(--gray-800);">Key Highlights</strong><br>
+            <div class="record-preview">
+                <div class="record-preview__section">Fall 2025 Management Presentation</div>
+                <div class="record-preview__title">Financial Performance 2024</div>
+                <div class="record-preview__grid">
+                    <div class="record-preview__highlights">
+                        <strong>Key Highlights</strong><br>
                         Revenue growth of 108% YoY<br>
                         Consistent upward trajectory<br>
                         Profit margins expanding in H2
                     </div>
-                    <div style="background: white; border-radius: 4px; padding: 8px;">
+                    <div class="record-preview__chart">
                         <svg width="100%" height="60" viewBox="0 0 120 60" preserveAspectRatio="none">
                             <defs>
                                 <linearGradient id="record-chart-grad" x1="0" y1="0" x2="0" y2="1">
@@ -2088,10 +2150,10 @@
                             <polyline points="0,58 10,56 20,54 30,50 40,48 50,45 60,42 70,38 80,36 90,32 100,30 110,26 120,22" fill="none" stroke="#6b8f71" stroke-width="1"/>
                             <polyline points="0,52 10,50 20,48 30,44 40,42 50,38 60,36 70,32 80,28 90,24 100,20 110,16 120,12" fill="none" stroke="#c9a227" stroke-width="1"/>
                         </svg>
-                        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 4px;">
-                            <span style="font-size: 9px; color: #4a6fa5;">Revenue</span>
-                            <span style="font-size: 9px; color: #6b8f71;">Expenses</span>
-                            <span style="font-size: 9px; color: #c9a227;">Profit</span>
+                        <div class="record-preview__legend">
+                            <span style="color: #4a6fa5;">Revenue</span>
+                            <span style="color: #6b8f71;">Expenses</span>
+                            <span style="color: #c9a227;">Profit</span>
                         </div>
                     </div>
                 </div>
@@ -2136,7 +2198,7 @@
 
             <div class="detail-section">
                 <div class="detail-section-title">Actions</div>
-                <button onclick="openRecord()" class="open-record-btn" style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px; background: var(--gray-800); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s;">
+                <button onclick="openRecord()" class="open-record-btn">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="2" width="12" height="12" rx="2"/>
                         <path d="M5 11V8M8 11V6M11 11V4"/>
