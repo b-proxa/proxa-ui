@@ -205,8 +205,9 @@
                         <div class="dropdown__divider"></div>
                         <div class="dropdown__section">
                             <div class="dropdown__label">Copy</div>
-                            <button class="dropdown__item">CSV</button>
-                            <button class="dropdown__item">JSON</button>
+                            <button class="dropdown__item" onclick="copyAsHTML()">HTML</button>
+                            <button class="dropdown__item" onclick="copyAsCSV()">CSV</button>
+                            <button class="dropdown__item" onclick="copyAsJSON()">JSON</button>
                         </div>
                     </div>
                 </div>
@@ -703,6 +704,66 @@
         }
 
         initDropdowns();
+
+        // ============================================================
+        // EXPORT / COPY
+        // ============================================================
+        function copyAsHTML() {
+            const html = document.documentElement.outerHTML;
+            navigator.clipboard.writeText(html).then(() => {
+                showToast('HTML copied to clipboard', 'success');
+            }).catch(() => {
+                // Fallback: select into textarea
+                const ta = document.createElement('textarea');
+                ta.value = html;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('HTML copied to clipboard', 'success');
+            });
+            closeDropdowns();
+        }
+
+        function copyAsCSV() {
+            const rows = [state.chart.labels.slice()];
+            state.chart.series.forEach(s => {
+                rows[0]; // labels already added
+            });
+            // Build CSV: header row = metric, then date columns
+            let csv = ',' + state.chart.labels.join(',') + '\n';
+            state.chart.series.forEach(s => {
+                csv += s.name + ',' + s.data.join(',') + '\n';
+            });
+            navigator.clipboard.writeText(csv).then(() => {
+                showToast('CSV copied to clipboard', 'success');
+            });
+            closeDropdowns();
+        }
+
+        function copyAsJSON() {
+            const data = {
+                sectionHeader: state.sectionHeader,
+                title: state.title,
+                description: state.description,
+                chart: {
+                    type: state.chart.type,
+                    labels: state.chart.labels,
+                    series: state.chart.series.map(s => ({
+                        name: s.name,
+                        data: s.data
+                    }))
+                }
+            };
+            navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => {
+                showToast('JSON copied to clipboard', 'success');
+            });
+            closeDropdowns();
+        }
+
+        function closeDropdowns() {
+            document.querySelectorAll('.dropdown__menu.open').forEach(m => m.classList.remove('open'));
+        }
 
         // ============================================================
         // STATE
