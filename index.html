@@ -874,6 +874,10 @@
                         <span class="status-badge status-badge--wip" data-page="calendar" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
                     </div>
                     <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="pptx-data-view" onclick="loadReference(this, '_prototypes/pptx-data-view.html'); return false;">PPTX Data View</a>
+                        <span class="status-badge status-badge--wip" data-page="pptx-data-view" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
+                    </div>
+                    <div class="page-link-row">
                         <a href="#" class="page-link" data-page="design-system-v2" onclick="loadReference(this, '_prototypes/proxa-design-system-v2.html'); return false;">Design System v2</a>
                         <span class="status-badge status-badge--old" data-page="design-system-v2" onclick="cycleStatus(this); event.stopPropagation();">Old</span>
                     </div>
@@ -1045,6 +1049,11 @@
             'calendar': {
                 title: 'Calendar',
                 description: 'Mobile-friendly calendar with mini month view and day details.',
+                download: null
+            },
+            'pptx-data-view': {
+                title: 'PPTX Data View',
+                description: 'Extract and view tabular data from PowerPoint presentations.',
                 download: null
             },
             'design-system-v2': {

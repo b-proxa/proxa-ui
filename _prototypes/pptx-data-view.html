@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPTX Data View</title>
+    <style>
+        :root {
+            --gray-50: #fafaf8;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            --accent: #6b8f71;
+            --success: #6b8f71;
+            --error: #b54848;
+            --warning: #c9a227;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gray-800);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-icon svg {
+            color: white;
+        }
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .header-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* Main content */
+        .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Upload area */
+        .upload-area {
+            background: white;
+            border: 2px dashed var(--gray-300);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 32px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .upload-area:hover {
+            border-color: var(--gray-400);
+            background: var(--gray-50);
+        }
+        .upload-area.dragover {
+            border-color: var(--accent);
+            background: rgba(107, 143, 113, 0.05);
+        }
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+        }
+        .upload-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+        .upload-hint {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+        .upload-hint a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .upload-hint a:hover {
+            text-decoration: underline;
+        }
+
+        /* File info bar */
+        .file-info {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+        }
+        .file-info.visible {
+            display: flex;
+        }
+        .file-info-icon {
+            width: 36px;
+            height: 36px;
+            background: #d35230;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+        .file-info-details {
+            flex: 1;
+        }
+        .file-info-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+        .file-info-meta {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        .file-info-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+        .btn--sm {
+            padding: 5px 10px;
+            font-size: 0.75rem;
+        }
+        .btn--primary {
+            background: var(--gray-800);
+            border-color: var(--gray-800);
+            color: white;
+        }
+        .btn--primary:hover {
+            background: var(--gray-700);
+        }
+        .btn--icon {
+            padding: 6px;
+            min-width: 28px;
+            justify-content: center;
+        }
+
+        /* Slide sections */
+        .slide-section {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .slide-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .slide-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slide-number {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            background: var(--gray-200);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .slide-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .slide-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* Data tables */
+        .data-table-wrapper {
+            padding: 16px;
+        }
+        .data-table-wrapper + .data-table-wrapper {
+            border-top: 1px solid var(--gray-100);
+        }
+        .data-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .data-table-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .data-table-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid var(--gray-200);
+        }
+        .data-table th {
+            background: var(--gray-50);
+            font-weight: 500;
+            color: var(--gray-600);
+            font-size: 0.8rem;
+        }
+        .data-table td {
+            color: var(--gray-800);
+        }
+        .data-table tr:hover td {
+            background: var(--gray-50);
+        }
+        .data-table td.numeric {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        .data-table td.positive {
+            color: var(--success);
+        }
+        .data-table td.negative {
+            color: var(--error);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-400);
+        }
+        .empty-state-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            color: var(--gray-300);
+        }
+        .empty-state-text {
+            font-size: 0.9rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gray-800);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast--success {
+            background: var(--success);
+        }
+
+        /* Summary bar */
+        .summary-bar {
+            display: flex;
+            gap: 24px;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .summary-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+        .summary-divider {
+            width: 1px;
+            background: var(--gray-200);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M9 17V7l7 10V7"/>
+            </svg>
+        </div>
+        <div>
+            <div class="header-title">PPTX Data View</div>
+            <div class="header-subtitle">Extract and view tabular data from presentations</div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Upload area -->
+        <div class="upload-area" id="upload-area">
+            <div class="upload-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+            </div>
+            <div class="upload-title">Drop a PPTX file here</div>
+            <div class="upload-hint">or <a href="#" id="browse-link">browse</a> to upload</div>
+            <input type="file" id="file-input" accept=".pptx" style="display: none;">
+        </div>
+
+        <!-- File info (shown after upload) -->
+        <div class="file-info" id="file-info">
+            <div class="file-info-icon">PPTX</div>
+            <div class="file-info-details">
+                <div class="file-info-name" id="file-name">Q4 2024 Financial Review.pptx</div>
+                <div class="file-info-meta" id="file-meta">4 slides • 6 tables extracted</div>
+            </div>
+            <div class="file-info-actions">
+                <button class="btn btn--sm" onclick="exportAll()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Export All
+                </button>
+                <button class="btn btn--sm" onclick="clearFile()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Summary bar -->
+        <div class="summary-bar" id="summary-bar" style="display: none;">
+            <div class="summary-item">
+                <span class="summary-value" id="summary-slides">4</span>
+                <span class="summary-label">Slides</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+                <span class="summary-value" id="summary-tables">6</span>
+                <span class="summary-label">Tables</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-item">
+                <span class="summary-value" id="summary-rows">47</span>
+                <span class="summary-label">Data Rows</span>
+            </div>
+        </div>
+
+        <!-- Data sections (populated by JS) -->
+        <div id="data-sections"></div>
+    </div>
+
+    <script>
+        // Mock data representing extracted PPTX content
+        const mockPptxData = {
+            filename: 'Q4 2024 Financial Review.pptx',
+            slides: [
+                {
+                    number: 1,
+                    title: 'Executive Summary',
+                    tables: [
+                        {
+                            label: 'Key Performance Indicators',
+                            headers: ['Metric', 'Q4 2024', 'Q3 2024', 'Change'],
+                            rows: [
+                                ['Revenue', '$4.2M', '$3.8M', '+10.5%'],
+                                ['Gross Margin', '68%', '65%', '+3pp'],
+                                ['Operating Income', '$890K', '$720K', '+23.6%'],
+                                ['Customer Count', '1,247', '1,156', '+7.9%'],
+                            ],
+                            numericCols: [1, 2],
+                            changeCols: [3]
+                        }
+                    ]
+                },
+                {
+                    number: 2,
+                    title: 'Revenue Analysis',
+                    tables: [
+                        {
+                            label: 'Monthly Revenue Breakdown',
+                            headers: ['Month', 'Product', 'Services', 'Total'],
+                            rows: [
+                                ['October', '$980K', '$420K', '$1.4M'],
+                                ['November', '$1.1M', '$380K', '$1.48M'],
+                                ['December', '$920K', '$400K', '$1.32M'],
+                            ],
+                            numericCols: [1, 2, 3]
+                        },
+                        {
+                            label: 'Revenue by Channel',
+                            headers: ['Channel', 'Revenue', '% of Total'],
+                            rows: [
+                                ['Direct Sales', '$2.1M', '50%'],
+                                ['Partners', '$1.3M', '31%'],
+                                ['Online', '$800K', '19%'],
+                            ],
+                            numericCols: [1, 2]
+                        }
+                    ]
+                },
+                {
+                    number: 3,
+                    title: 'Regional Performance',
+                    tables: [
+                        {
+                            label: 'Performance by Region',
+                            headers: ['Region', 'Revenue', 'Growth', 'Customers', 'Avg Deal Size'],
+                            rows: [
+                                ['North America', '$2.4M', '+12%', '687', '$42K'],
+                                ['Europe', '$1.1M', '+8%', '312', '$38K'],
+                                ['Asia Pacific', '$520K', '+22%', '186', '$31K'],
+                                ['Latin America', '$180K', '+15%', '62', '$28K'],
+                            ],
+                            numericCols: [1, 3, 4],
+                            changeCols: [2]
+                        }
+                    ]
+                },
+                {
+                    number: 4,
+                    title: 'Quarterly Comparison',
+                    tables: [
+                        {
+                            label: 'P&L Summary',
+                            headers: ['Line Item', 'Q4 2024', 'Q4 2023', 'YoY Change'],
+                            rows: [
+                                ['Total Revenue', '$4.2M', '$3.5M', '+20%'],
+                                ['Cost of Revenue', '$1.34M', '$1.19M', '+13%'],
+                                ['Gross Profit', '$2.86M', '$2.31M', '+24%'],
+                                ['Operating Expenses', '$1.97M', '$1.72M', '+15%'],
+                                ['Operating Income', '$890K', '$590K', '+51%'],
+                                ['Net Income', '$712K', '$472K', '+51%'],
+                            ],
+                            numericCols: [1, 2],
+                            changeCols: [3]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // DOM elements
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const browseLink = document.getElementById('browse-link');
+        const fileInfo = document.getElementById('file-info');
+        const summaryBar = document.getElementById('summary-bar');
+        const dataSections = document.getElementById('data-sections');
+
+        // Upload handlers
+        browseLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.pptx')) {
+                loadFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadFile(file);
+            }
+        });
+
+        function loadFile(file) {
+            // For prototype, use mock data regardless of actual file
+            document.getElementById('file-name').textContent = file.name;
+            renderData(mockPptxData);
+            showToast('Data extracted from presentation', 'success');
+        }
+
+        function renderData(data) {
+            // Hide upload, show file info and summary
+            uploadArea.style.display = 'none';
+            fileInfo.classList.add('visible');
+            summaryBar.style.display = 'flex';
+
+            // Calculate summary
+            const totalTables = data.slides.reduce((sum, s) => sum + s.tables.length, 0);
+            const totalRows = data.slides.reduce((sum, s) =>
+                sum + s.tables.reduce((tsum, t) => tsum + t.rows.length, 0), 0);
+
+            document.getElementById('summary-slides').textContent = data.slides.length;
+            document.getElementById('summary-tables').textContent = totalTables;
+            document.getElementById('summary-rows').textContent = totalRows;
+            document.getElementById('file-meta').textContent = `${data.slides.length} slides • ${totalTables} tables extracted`;
+
+            // Render slide sections
+            dataSections.innerHTML = data.slides.map(slide => `
+                <div class="slide-section">
+                    <div class="slide-header">
+                        <div class="slide-title">
+                            <span class="slide-number">Slide ${slide.number}</span>
+                            <span class="slide-name">${slide.title}</span>
+                        </div>
+                        <div class="slide-actions">
+                            <button class="btn btn--sm btn--icon" onclick="copySlideData(${slide.number})" title="Copy all">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                            <button class="btn btn--sm btn--icon" onclick="exportSlide(${slide.number})" title="Export">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    ${slide.tables.map((table, idx) => renderTable(table, slide.number, idx)).join('')}
+                </div>
+            `).join('');
+        }
+
+        function renderTable(table, slideNum, tableIdx) {
+            const numericCols = table.numericCols || [];
+            const changeCols = table.changeCols || [];
+
+            return `
+                <div class="data-table-wrapper">
+                    <div class="data-table-header">
+                        <span class="data-table-label">${table.label}</span>
+                        <div class="data-table-actions">
+                            <button class="btn btn--sm btn--icon" onclick="editTable(${slideNum}, ${tableIdx})" title="Edit">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                            <button class="btn btn--sm btn--icon" onclick="copyTable(${slideNum}, ${tableIdx})" title="Copy">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                ${table.headers.map((h, i) => `<th${numericCols.includes(i) ? ' style="text-align: right;"' : ''}>${h}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${table.rows.map(row => `
+                                <tr>
+                                    ${row.map((cell, i) => {
+                                        let classes = [];
+                                        if (numericCols.includes(i)) classes.push('numeric');
+                                        if (changeCols.includes(i)) {
+                                            if (cell.startsWith('+')) classes.push('positive');
+                                            else if (cell.startsWith('-')) classes.push('negative');
+                                        }
+                                        return `<td${classes.length ? ` class="${classes.join(' ')}"` : ''}>${cell}</td>`;
+                                    }).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function clearFile() {
+            uploadArea.style.display = 'block';
+            fileInfo.classList.remove('visible');
+            summaryBar.style.display = 'none';
+            dataSections.innerHTML = '';
+            fileInput.value = '';
+        }
+
+        function copyTable(slideNum, tableIdx) {
+            const slide = mockPptxData.slides.find(s => s.number === slideNum);
+            const table = slide.tables[tableIdx];
+            const csv = [table.headers.join('\t'), ...table.rows.map(r => r.join('\t'))].join('\n');
+            navigator.clipboard.writeText(csv);
+            showToast('Table copied to clipboard', 'success');
+        }
+
+        function copySlideData(slideNum) {
+            const slide = mockPptxData.slides.find(s => s.number === slideNum);
+            let text = `Slide ${slideNum}: ${slide.title}\n\n`;
+            slide.tables.forEach(table => {
+                text += `${table.label}\n`;
+                text += [table.headers.join('\t'), ...table.rows.map(r => r.join('\t'))].join('\n');
+                text += '\n\n';
+            });
+            navigator.clipboard.writeText(text);
+            showToast('Slide data copied to clipboard', 'success');
+        }
+
+        function exportSlide(slideNum) {
+            showToast('Export slide as CSV...', 'success');
+        }
+
+        function exportAll() {
+            showToast('Exporting all data...', 'success');
+        }
+
+        function editTable(slideNum, tableIdx) {
+            showToast('Edit mode coming soon', 'success');
+        }
+
+        // Toast notification
+        let toastTimeout = null;
+        function showToast(message, type = 'default') {
+            let toast = document.querySelector('.toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toast.classList.remove('toast--success', 'toast--error');
+            if (type !== 'default') toast.classList.add(`toast--${type}`);
+            toast.textContent = message;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Auto-load mock data for demo
+        // Uncomment the line below to start with data loaded
+        // renderData(mockPptxData);
+    </script>
+</body>
+</html>
