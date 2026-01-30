@@ -830,6 +830,10 @@
                         <a href="#" class="page-link" data-page="ai-blocks" onclick="loadReference(this, 'references/ai-blocks.html'); return false;">AI Blocks</a>
                         <span class="status-badge status-badge--wip" data-page="ai-blocks" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
                     </div>
+                    <div class="page-link-row">
+                        <a href="#" class="page-link" data-page="slide" onclick="loadReference(this, 'references/slide.html'); return false;">Slide</a>
+                        <span class="status-badge status-badge--wip" data-page="slide" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
+                    </div>
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Prototypes</div>
                 <div class="pages-sidebar__list">
@@ -1054,6 +1058,11 @@
             'pptx-data-view': {
                 title: 'PPTX Data View',
                 description: 'Extract and view tabular data from PowerPoint presentations.',
+                download: null
+            },
+            'slide': {
+                title: 'Slide',
+                description: 'Standalone slide component with chart visualization and markdown description.',
                 download: null
             },
             'design-system-v2': {
