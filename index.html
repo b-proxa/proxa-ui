@@ -830,10 +830,14 @@
                         <a href="#" class="page-link" data-page="ai-blocks" onclick="loadReference(this, 'references/ai-blocks.html'); return false;">AI Blocks</a>
                         <span class="status-badge status-badge--wip" data-page="ai-blocks" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
                     </div>
-                    <div class="page-link-row">
-                        <a href="#" class="page-link" data-page="slide" onclick="loadReference(this, 'references/slide.html'); return false;">Slide</a>
-                        <span class="status-badge status-badge--wip" data-page="slide" onclick="cycleStatus(this); event.stopPropagation();">WIP</span>
-                    </div>
+                </div>
+                <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Slides</div>
+                <div class="pages-sidebar__list">
+                    <a href="#" class="page-link" data-page="slide" onclick="loadReference(this, 'references/slide.html'); return false;">Financial Performance</a>
+                    <a href="#" class="page-link" data-page="slide-sales-by-region" onclick="loadReference(this, 'references/slide-sales-by-region.html'); return false;">Sales by Region</a>
+                    <a href="#" class="page-link" data-page="slide-customer-growth" onclick="loadReference(this, 'references/slide-customer-growth.html'); return false;">Customer Growth</a>
+                    <a href="#" class="page-link" data-page="slide-operating-costs" onclick="loadReference(this, 'references/slide-operating-costs.html'); return false;">Operating Costs</a>
+                    <a href="#" class="page-link" data-page="slide-market-share" onclick="loadReference(this, 'references/slide-market-share.html'); return false;">Market Share</a>
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Prototypes</div>
                 <div class="pages-sidebar__list">
@@ -1061,8 +1065,28 @@
                 download: null
             },
             'slide': {
-                title: 'Slide',
-                description: 'Standalone slide component with chart visualization and markdown description.',
+                title: 'Financial Performance',
+                description: 'Revenue, expenses, and profit trends for 2024 with line chart.',
+                download: null
+            },
+            'slide-sales-by-region': {
+                title: 'Sales by Region',
+                description: 'Quarterly regional sales breakdown with grouped bar chart.',
+                download: null
+            },
+            'slide-customer-growth': {
+                title: 'Customer Growth',
+                description: 'Customer acquisition and retention metrics with area chart.',
+                download: null
+            },
+            'slide-operating-costs': {
+                title: 'Operating Costs',
+                description: 'Operating expense categories tracked monthly with line chart.',
+                download: null
+            },
+            'slide-market-share': {
+                title: 'Market Share',
+                description: 'Product line market share over 5 years with bar chart.',
                 download: null
             },
             'design-system-v2': {
