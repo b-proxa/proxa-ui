@@ -833,6 +833,7 @@
                 </div>
                 <div class="pages-sidebar__title" style="margin-top: var(--space-5);">Slides</div>
                 <div class="pages-sidebar__list">
+                    <a href="#" class="page-link" data-page="slide-title" onclick="loadReference(this, 'references/slide-title.html'); return false;">Title</a>
                     <a href="#" class="page-link" data-page="slide" onclick="loadReference(this, 'references/slide.html'); return false;">Financial Performance</a>
                     <a href="#" class="page-link" data-page="slide-sales-by-region" onclick="loadReference(this, 'references/slide-sales-by-region.html'); return false;">Sales by Region</a>
                     <a href="#" class="page-link" data-page="slide-customer-growth" onclick="loadReference(this, 'references/slide-customer-growth.html'); return false;">Customer Growth</a>
@@ -1062,6 +1063,11 @@
             'pptx-data-view': {
                 title: 'PPTX Data View',
                 description: 'Extract and view tabular data from PowerPoint presentations.',
+                download: null
+            },
+            'slide-title': {
+                title: 'Title Slide',
+                description: 'Presentation title slide with version number and date.',
                 download: null
             },
             'slide': {
