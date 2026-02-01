@@ -1,0 +1,2714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selkirk Snow Cat Skiing - Dashboard</title>
+    <!-- SheetJS for xlsx parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f6f5f3;
+        }
+        
+        /* Tokens as CSS variables */
+        :root {
+            --gray-50: #fafaf8;
+            --gray-75: #f8f8f6;
+            --gray-100: #f6f5f3;
+            --gray-200: #e7e5e4;
+            --gray-300: #d6d3d1;
+            --gray-400: #a8a29e;
+            --gray-500: #78716c;
+            --gray-600: #57534e;
+            --gray-700: #44403c;
+            --gray-800: #292524;
+            --gray-900: #1c1917;
+            --accent: #4a6fa5;
+            --success: #6b8f71;
+            --error: #b54848;
+        }
+        
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 24px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .header-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--gray-200);
+        }
+        .header-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        
+        /* Content */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Section header */
+        .section-header {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        
+        /* Hub grid */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .hub-card {
+            display: flex;
+            flex-direction: column;
+            padding: 14px;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--gray-200);
+        }
+        .hub-card:hover {
+            background: var(--gray-75);
+        }
+        .hub-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .hub-card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .hub-card-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .badge {
+            padding: 2px 7px;
+            font-size: 0.675rem;
+            font-weight: 600;
+            color: white;
+            background: var(--accent);
+            border-radius: 10px;
+        }
+        
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .metric-card {
+            padding: 14px;
+            background: var(--gray-100);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--gray-200);
+        }
+        .metric-card:hover {
+            background: var(--gray-75);
+        }
+        .metric-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+        .metric-change {
+            font-size: 0.675rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .metric-change.positive { color: var(--success); }
+        .metric-change.negative { color: var(--error); }
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+        }
+        
+        /* Table */
+        .table-wrap {
+            background: transparent;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            background: transparent;
+            letter-spacing: 0.5px;
+        }
+        th:not(:first-child) {
+            text-align: center;
+            padding: 10px 8px;
+        }
+        td {
+            padding: 10px 16px;
+        }
+        td:not(:first-child) {
+            text-align: center;
+            padding: 10px 8px;
+        }
+        .table-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-800);
+        }
+        .avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            font-size: 0.675rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .table-time {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        .table-dash {
+            color: var(--gray-300);
+        }
+        
+        /* Icons */
+        .icon { stroke: var(--gray-500); }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 200;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Slide-over panel */
+        .panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: var(--gray-50);
+            border-left: 1px solid var(--gray-200);
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel.active {
+            transform: translateX(0);
+        }
+        .panel--wide {
+            width: min(600px, 50vw);
+        }
+        @media (max-width: 768px) {
+            .panel--wide {
+                width: 100%;
+            }
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .panel-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        .panel-close {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: all 0.15s ease;
+        }
+        .panel-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+        .panel-section {
+            margin-bottom: 24px;
+        }
+        .panel-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        /* Panel list items */
+        .panel-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .panel-item:last-child {
+            border-bottom: none;
+        }
+        .panel-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            flex-shrink: 0;
+        }
+        .panel-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .panel-item-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .panel-item-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .panel-item-time {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+            flex-shrink: 0;
+        }
+        
+        /* Team member item */
+        .member-role {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .member-status {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .member-status.offline {
+            background: var(--gray-300);
+        }
+        
+        /* Calendar event */
+        .event-date {
+            width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .event-day {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            line-height: 1;
+        }
+        .event-month {
+            font-size: 0.65rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+        }
+        
+        /* Project item */
+        .project-progress {
+            width: 100%;
+            height: 3px;
+            background: var(--gray-200);
+            border-radius: 2px;
+            margin-top: 6px;
+        }
+        .project-progress-bar {
+            height: 100%;
+            background: var(--gray-400);
+            border-radius: 2px;
+        }
+        
+        /* Metric detail panel */
+        .metric-detail-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+        .metric-detail-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .metric-detail-change.negative { color: var(--error); }
+        .metric-detail-change.positive { color: var(--success); }
+        .metric-detail-chart {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .metric-detail-description {
+            font-size: 0.8rem;
+            line-height: 1.7;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .metric-detail-description p {
+            margin-bottom: 10px;
+        }
+        .metric-detail-description p:last-child {
+            margin-bottom: 0;
+        }
+        .detail-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .detail-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .detail-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        .detail-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .detail-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+        .detail-meta-label {
+            color: var(--gray-500);
+        }
+        .detail-meta-value {
+            color: var(--gray-700);
+        }
+        .comment {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .comment:last-child {
+            margin-bottom: 0;
+        }
+        .comment-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            flex-shrink: 0;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+        .comment-author {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+        .comment-time {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+        }
+        .comment-text {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .source-link:hover {
+            text-decoration: underline;
+        }
+        /* Record preview panel */
+        .record-preview {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .record-preview__section {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            margin-bottom: 4px;
+        }
+        .record-preview__title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 12px;
+        }
+        .record-preview__grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .record-preview__highlights {
+            font-size: 11px;
+            line-height: 1.5;
+            color: var(--gray-600);
+        }
+        .record-preview__highlights strong {
+            color: var(--gray-800);
+        }
+        .record-preview__chart {
+            background: white;
+            border-radius: 4px;
+            padding: 8px;
+        }
+        .record-preview__legend {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 4px;
+        }
+        .record-preview__legend span {
+            font-size: 9px;
+        }
+        .open-record-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: var(--gray-800);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .open-record-btn:hover {
+            background: var(--gray-700);
+        }
+        .source-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gray-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* PDF Preview */
+        .pdf-preview {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            aspect-ratio: 8.5 / 11;
+            max-height: 360px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        .pdf-preview-placeholder {
+            text-align: center;
+            color: var(--gray-400);
+        }
+        .pdf-preview-placeholder svg {
+            margin-bottom: 8px;
+        }
+        .pdf-preview-placeholder span {
+            font-size: 0.7rem;
+        }
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .panel-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            background: transparent;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .panel-btn:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-300);
+        }
+        .panel-btn--primary {
+            background: var(--gray-800);
+            border-color: var(--gray-800);
+            color: white;
+        }
+        .panel-btn--primary:hover {
+            background: var(--gray-700);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+            .header-title {
+                font-size: 0.8rem;
+            }
+            .content {
+                padding: 16px;
+            }
+            .hub-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .table-wrap {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 600px;
+            }
+            .panel {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 12px;
+                gap: 12px;
+            }
+            .header svg {
+                width: 36px;
+                height: 36px;
+            }
+            .header-divider {
+                display: none;
+            }
+            .header-label {
+                display: none;
+            }
+            .content {
+                padding: 12px;
+            }
+            .section-header {
+                font-size: 0.65rem;
+            }
+            .hub-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .hub-card {
+                flex-direction: row;
+                align-items: center;
+                gap: 12px;
+            }
+            .hub-card-top {
+                margin-bottom: 0;
+            }
+            .hub-card-top .badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            .hub-card {
+                position: relative;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .metric-value {
+                font-size: 1.1rem;
+            }
+            .panel-header {
+                padding: 14px 16px;
+            }
+            .panel-content {
+                padding: 14px 16px;
+            }
+            .metric-detail-value {
+                font-size: 1.25rem;
+            }
+            .comment {
+                gap: 8px;
+            }
+            .comment-avatar {
+                width: 20px;
+                height: 20px;
+                font-size: 0.55rem;
+            }
+        }
+
+        /* Calendar Module */
+        .calendar-panel-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .calendar-picker {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .calendar-worksheet-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .calendar-worksheet-tab {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--gray-600);
+        }
+        .calendar-worksheet-tab:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+        .calendar-worksheet-tab.active {
+            background: var(--gray-900);
+            color: white;
+            border-color: var(--gray-900);
+        }
+        .calendar-month-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .calendar-month-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .calendar-month-nav {
+            display: flex;
+            gap: 2px;
+        }
+        .calendar-month-nav button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: all 0.15s ease;
+        }
+        .calendar-month-nav button:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 2px;
+        }
+        .calendar-weekday {
+            text-align: center;
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: var(--gray-400);
+            padding: 4px 0;
+        }
+        .calendar-days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+        }
+        .calendar-day-btn {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--gray-700);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+        }
+        .calendar-day-btn:hover {
+            background: var(--gray-100);
+        }
+        .calendar-day-btn.other-month {
+            color: var(--gray-300);
+        }
+        .calendar-day-btn.today {
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .calendar-day-btn.selected {
+            background: var(--gray-900);
+            color: white;
+            font-weight: 500;
+        }
+        .calendar-day-btn.selected:hover {
+            background: var(--gray-800);
+        }
+        .calendar-detail {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 12px 16px;
+        }
+        .calendar-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 10px;
+        }
+        .calendar-xlsx-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: all 0.15s ease;
+        }
+        .calendar-xlsx-link:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+        .calendar-detail-empty {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            padding: 20px 0;
+            text-align: center;
+        }
+        .calendar-events {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .calendar-event-group-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+        .calendar-event-group-label:first-child {
+            margin-top: 0;
+        }
+        .calendar-event-item {
+            padding: 10px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+        }
+        .calendar-event-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .calendar-event-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+        .calendar-event-dates {
+            font-size: 0.65rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+        .calendar-list-view .calendar-event-item {
+            display: flex;
+            gap: 10px;
+        }
+        .calendar-list-date {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            white-space: nowrap;
+            min-width: 70px;
+        }
+        .calendar-list-content {
+            flex: 1;
+        }
+        .calendar-loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-400);
+            font-size: 0.8rem;
+        }
+
+        /* XLSX Preview Panel */
+        .xlsx-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            font-size: 13px;
+        }
+        .xlsx-preview-dims {
+            color: var(--gray-500);
+        }
+        .xlsx-preview-dims strong {
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+        .spreadsheet {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 13px;
+            color: var(--gray-900);
+        }
+        .spreadsheet__tabs {
+            display: flex;
+            gap: 2px;
+            padding: 8px 12px;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .spreadsheet__tab {
+            padding: 6px 14px;
+            font-size: 12px;
+            color: var(--gray-500);
+            background: var(--gray-200);
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+        }
+        .spreadsheet__tab:hover {
+            background: var(--gray-300);
+        }
+        .spreadsheet__tab.active {
+            background: white;
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+        .spreadsheet__grid {
+            flex: 1;
+            overflow: auto;
+        }
+        .spreadsheet__table {
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+        .spreadsheet__table th,
+        .spreadsheet__table td {
+            border: 1px solid var(--gray-100);
+            padding: 8px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .spreadsheet__table th {
+            background: var(--gray-50);
+            font-weight: 400;
+            color: var(--gray-500);
+            text-align: center;
+            border-bottom: 1px solid var(--gray-300);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .spreadsheet__table td {
+            background: white;
+        }
+        .spreadsheet__row-num {
+            background: var(--gray-50) !important;
+            color: var(--gray-400);
+            text-align: center !important;
+            width: 40px;
+            min-width: 40px;
+            font-weight: 400;
+            border-right: 1px solid var(--gray-300);
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+        .spreadsheet__corner {
+            background: var(--gray-50) !important;
+            width: 40px;
+            min-width: 40px;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+        .xlsx-preview-meta {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        .xlsx-preview-meta-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .xlsx-preview-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        .xlsx-preview-meta-label {
+            color: var(--gray-500);
+        }
+        .xlsx-preview-meta-value {
+            color: var(--gray-800);
+            text-align: right;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="24" y="4" width="28" height="28" rx="2" transform="rotate(45 24 4)" fill="#1c1917"/>
+            <path d="M12 32 Q18 28, 24 26 Q30 24, 36 16" stroke="#e8e8e6" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M14 34 Q20 30, 26 28 Q32 26, 38 18" stroke="#6b8f71" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="header-divider"></div>
+        <div>
+            <div class="header-label">Proxa Workspace</div>
+            <div class="header-title">Selkirk Snow Cat Skiing</div>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+        <!-- Hub Section -->
+        <div class="section-header">Hub</div>
+        <div class="hub-grid">
+            <div class="hub-card" onclick="openPanel('updates')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <span class="badge">4</span>
+                </div>
+                <div class="hub-card-title">Updates</div>
+                <div class="hub-card-meta">12 new this week</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('team')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="7" r="3"/>
+                        <path d="M3 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                        <circle cx="17" cy="7" r="2.5"/>
+                        <path d="M21 20v-1.5a3 3 0 0 0-2.5-2.96"/>
+                    </svg>
+                </div>
+                <div class="hub-card-title">Team</div>
+                <div class="hub-card-meta">8 members</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('calendar')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="17" rx="2"/>
+                        <path d="M3 9h18"/>
+                        <path d="M8 2v4"/>
+                        <path d="M16 2v4"/>
+                    </svg>
+                </div>
+                <div class="hub-card-title">Calendar</div>
+                <div class="hub-card-meta">3 tours scheduled</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('notes')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <div class="hub-card-title">Notes</div>
+                <div class="hub-card-meta">5 active</div>
+            </div>
+            <div class="hub-card" onclick="openPanel('messages')">
+                <div class="hub-card-top">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    </svg>
+                    <span class="badge">3</span>
+                </div>
+                <div class="hub-card-title">Messages</div>
+                <div class="hub-card-meta">3 unread</div>
+            </div>
+        </div>
+        
+        <!-- Metrics Section -->
+        <div class="section-header">Metrics</div>
+        <div class="metrics-grid">
+            <div class="metric-card" onclick="openPanel('revenue')">
+                <div class="metric-top">
+                    <span class="metric-label">Revenue</span>
+                    <span class="metric-change negative">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        -70.88%
+                    </span>
+                </div>
+                <div class="metric-value">$14.3K</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-red" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/><stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,18 L11,12 L20,16 L29,10 L38,14 L47,20 L56,16 L65,8 L74,12 L83,6 L92,10 L98,4 L98,26 Z" fill="url(#grad-red)"/>
+                    <polyline points="2,18 11,12 20,16 29,10 38,14 47,20 56,16 65,8 74,12 83,6 92,10 98,4" fill="none" stroke="#b54848" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('sales')">
+                <div class="metric-top">
+                    <span class="metric-label">Sales</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +97.16%
+                    </span>
+                </div>
+                <div class="metric-value">$11.5K</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-green" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/><stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,20 L11,18 L20,14 L29,16 L38,10 L47,6 L56,8 L65,4 L74,6 L83,3 L92,5 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,20 11,18 20,14 29,16 38,10 47,6 56,8 65,4 74,6 83,3 92,5 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('profit')">
+                <div class="metric-top">
+                    <span class="metric-label">Profit</span>
+                    <span class="metric-change negative">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        -63.55%
+                    </span>
+                </div>
+                <div class="metric-value">$6.69K</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-red2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/><stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,10 L11,14 L20,18 L29,12 L38,16 L47,20 L56,14 L65,6 L74,4 L83,8 L92,12 L98,14 L98,26 Z" fill="url(#grad-red2)"/>
+                    <polyline points="2,10 11,14 20,18 29,12 38,16 47,20 56,14 65,6 74,4 83,8 92,12 98,14" fill="none" stroke="#b54848" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('bookings')">
+                <div class="metric-top">
+                    <span class="metric-label">Bookings</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +12.5%
+                    </span>
+                </div>
+                <div class="metric-value">47</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <path d="M2,26 L2,22 L11,20 L20,16 L29,18 L38,12 L47,8 L56,10 L65,4 L74,6 L83,8 L92,4 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,22 11,20 20,16 29,18 38,12 47,8 56,10 65,4 74,6 83,8 92,4 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('guests')">
+                <div class="metric-top">
+                    <span class="metric-label">Guests</span>
+                    <span class="metric-change positive">
+                        <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                        +8.2%
+                    </span>
+                </div>
+                <div class="metric-value">184</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <path d="M2,26 L2,20 L11,16 L20,18 L29,12 L38,14 L47,8 L56,10 L65,4 L74,6 L83,3 L92,2 L98,2 L98,26 Z" fill="url(#grad-green)"/>
+                    <polyline points="2,20 11,16 20,18 29,12 38,14 47,8 56,10 65,4 74,6 83,3 92,2 98,2" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="metric-card" onclick="openPanel('record')">
+                <div class="metric-top">
+                    <span class="metric-label">Financial Performance</span>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #4a6fa5;">
+                        <rect x="2" y="2" width="12" height="12" rx="2"/>
+                        <path d="M5 11V8M8 11V6M11 11V4"/>
+                    </svg>
+                </div>
+                <div class="metric-value" style="font-size: 14px; color: var(--gray-600);">2024 Report</div>
+                <svg width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
+                    <defs><linearGradient id="grad-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a6fa5" stop-opacity="0.15"/><stop offset="100%" stop-color="#4a6fa5" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M2,26 L2,22 L14,20 L26,18 L38,15 L50,13 L62,11 L74,8 L86,6 L98,3 L98,26 Z" fill="url(#grad-blue)"/>
+                    <polyline points="2,22 14,20 26,18 38,15 50,13 62,11 74,8 86,6 98,3" fill="none" stroke="#4a6fa5" stroke-width="1"/>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Files Section -->
+        <div class="section-header">Files</div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TITLE</th>
+                        <th>OWNER</th>
+                        <th title="Verified">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon" stroke-width="1.5"><path d="M3 7L6 10L11 4"/></svg>
+                        </th>
+                        <th title="Priority">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3"/></svg>
+                        </th>
+                        <th>STATUS</th>
+                        <th title="Last updated">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="icon" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 2"/></svg>
+                        </th>
+                        <th style="width: 40px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5V14C2 15.1 2.9 16 4 16H14C15.1 16 16 15.1 16 14V7C16 5.9 15.1 5 14 5H9L7 3H4C2.9 3 2 3.9 2 5Z"/></svg>
+                                New Record
+                            </div>
+                        </td>
+                        <td><span class="avatar">JD</span></td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#6b8f71"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">24 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5V14C2 15.1 2.9 16 4 16H14C15.1 16 16 15.1 16 14V7C16 5.9 15.1 5 14 5H9L7 3H4C2.9 3 2 3.9 2 5Z"/></svg>
+                                Library
+                            </div>
+                        </td>
+                        <td><span class="avatar">JD</span></td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#6b8f71"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">24 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                    <tr onclick="openPanel('pdf')" style="cursor: pointer;">
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#b54848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="10" height="14" rx="2"/><path d="M7 6h4M7 9h4M7 12h2"/></svg>
+                                2021 Financial Statements
+                            </div>
+                        </td>
+                        <td><span class="avatar">B</span></td>
+                        <td class="table-dash">—</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">25 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="table-title">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="icon" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="10" height="14" rx="2"/><path d="M7 6h4M7 9h4M7 12h2"/></svg>
+                                Expenses
+                            </div>
+                        </td>
+                        <td><span class="avatar">JD</span></td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#6b8f71"/><path d="M5.5 8L7 9.5L10.5 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="icon" stroke-width="1.5"><path d="M4 12V8M8 12V4M12 12V6"/></svg>
+                        </td>
+                        <td class="table-dash">—</td>
+                        <td class="table-time">25 d</td>
+                        <td>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#78716c"><circle cx="4" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12" cy="8" r="1.5"/></svg>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" onclick="closePanel()"></div>
+    
+    <!-- Updates Panel -->
+    <div class="panel" id="panel-updates">
+        <div class="panel-header">
+            <span class="panel-title">Updates</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-section">
+                <div class="panel-section-title">Today</div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">JD</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Equipment maintenance completed</div>
+                        <div class="panel-item-meta">Snow cat #3 serviced and ready</div>
+                    </div>
+                    <div class="panel-item-time">2h ago</div>
+                </div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">MR</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">New booking confirmed</div>
+                        <div class="panel-item-meta">Group of 6 for Jan 15</div>
+                    </div>
+                    <div class="panel-item-time">4h ago</div>
+                </div>
+            </div>
+            <div class="panel-section">
+                <div class="panel-section-title">Yesterday</div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">KL</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Weather report updated</div>
+                        <div class="panel-item-meta">40cm fresh snow expected</div>
+                    </div>
+                    <div class="panel-item-time">1d ago</div>
+                </div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">JD</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Safety checklist completed</div>
+                        <div class="panel-item-meta">All zones cleared for operation</div>
+                    </div>
+                    <div class="panel-item-time">1d ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Team Panel -->
+    <div class="panel" id="panel-team">
+        <div class="panel-header">
+            <span class="panel-title">Team</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-item">
+                <div class="panel-item-icon">JD</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Jake Donovan</div>
+                    <div class="member-role">Operations Manager</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">MR</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Maria Rodriguez</div>
+                    <div class="member-role">Lead Guide</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">KL</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Kevin Lee</div>
+                    <div class="member-role">Snow Safety</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">SB</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Sarah Bennett</div>
+                    <div class="member-role">Guide</div>
+                </div>
+                <div class="member-status offline"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">TM</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Tom Mitchell</div>
+                    <div class="member-role">Mechanic</div>
+                </div>
+                <div class="member-status offline"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">AL</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Amy Liu</div>
+                    <div class="member-role">Bookings</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">RK</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Ryan Kim</div>
+                    <div class="member-role">Guide</div>
+                </div>
+                <div class="member-status offline"></div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-icon">EP</div>
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Emma Park</div>
+                    <div class="member-role">Guest Services</div>
+                </div>
+                <div class="member-status"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Calendar Panel -->
+    <div class="panel" id="panel-calendar">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--gray-500);">
+                    <rect x="3" y="4" width="18" height="17" rx="2"/>
+                    <path d="M3 9h18"/>
+                    <path d="M8 2v4"/>
+                    <path d="M16 2v4"/>
+                </svg>
+                <span class="panel-title">Calendar</span>
+            </div>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content calendar-panel-content" style="padding: 0;">
+            <!-- Picker Section (fixed) -->
+            <div class="calendar-picker">
+                <!-- Worksheet Tabs -->
+                <div class="calendar-worksheet-tabs" id="cal-worksheet-tabs"></div>
+
+                <!-- Month Header -->
+                <div class="calendar-month-header">
+                    <div class="calendar-month-nav">
+                        <button onclick="calPrevMonth()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="calendar-month-title" id="cal-month-title">January 2026</div>
+                    <div class="calendar-month-nav">
+                        <button onclick="calNextMonth()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Weekdays -->
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">Su</div>
+                    <div class="calendar-weekday">Mo</div>
+                    <div class="calendar-weekday">Tu</div>
+                    <div class="calendar-weekday">We</div>
+                    <div class="calendar-weekday">Th</div>
+                    <div class="calendar-weekday">Fr</div>
+                    <div class="calendar-weekday">Sa</div>
+                </div>
+
+                <!-- Days Grid -->
+                <div class="calendar-days-grid" id="cal-days-grid"></div>
+            </div>
+
+            <!-- Day Detail (scrollable) -->
+            <div class="calendar-detail">
+                <div class="calendar-detail-header" id="cal-detail-header">Monday, January 26</div>
+                <div id="cal-detail-content">
+                    <div class="calendar-loading">Loading calendar data...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notes Panel -->
+    <div class="panel" id="panel-notes">
+        <div class="panel-header">
+            <span class="panel-title">Notes</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Website Redesign</div>
+                    <div class="panel-item-meta">4 tasks remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 75%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Equipment Upgrade</div>
+                    <div class="panel-item-meta">2 tasks remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 60%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Safety Training Program</div>
+                    <div class="panel-item-meta">6 tasks remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 40%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Lodge Renovation</div>
+                    <div class="panel-item-meta">On hold</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 20%"></div></div>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-item-content">
+                    <div class="panel-item-title">Marketing Campaign</div>
+                    <div class="panel-item-meta">1 task remaining</div>
+                    <div class="project-progress"><div class="project-progress-bar" style="width: 90%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Panel -->
+    <div class="panel" id="panel-messages">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 128 128">
+                    <path d="M27.255 80.719c0 7.33-5.978 13.317-13.309 13.317C6.616 94.036.63 88.049.63 80.719s5.987-13.317 13.317-13.317h13.309zm6.709 0c0-7.33 5.987-13.317 13.317-13.317s13.317 5.986 13.317 13.317v33.335c0 7.33-5.986 13.317-13.317 13.317-7.33 0-13.317-5.987-13.317-13.317z" fill="#DE1C59"/>
+                    <path d="M47.281 27.255c-7.33 0-13.317-5.978-13.317-13.309C33.964 6.616 39.951.63 47.281.63s13.317 5.987 13.317 13.317v13.309zm0 6.709c7.33 0 13.317 5.987 13.317 13.317s-5.986 13.317-13.317 13.317H13.946C6.616 60.598.63 54.612.63 47.281c0-7.33 5.987-13.317 13.317-13.317z" fill="#35C5F0"/>
+                    <path d="M100.745 47.281c0-7.33 5.978-13.317 13.309-13.317 7.33 0 13.317 5.987 13.317 13.317s-5.987 13.317-13.317 13.317h-13.309zm-6.709 0c0 7.33-5.987 13.317-13.317 13.317s-13.317-5.986-13.317-13.317V13.946C67.402 6.616 73.388.63 80.719.63c7.33 0 13.317 5.987 13.317 13.317z" fill="#2EB57D"/>
+                    <path d="M80.719 100.745c7.33 0 13.317 5.978 13.317 13.309 0 7.33-5.987 13.317-13.317 13.317s-13.317-5.987-13.317-13.317v-13.309zm0-6.709c-7.33 0-13.317-5.987-13.317-13.317s5.986-13.317 13.317-13.317h33.335c7.33 0 13.317 5.986 13.317 13.317 0 7.33-5.987 13.317-13.317 13.317z" fill="#ECB22D"/>
+                </svg>
+                <span class="panel-title">Slack</span>
+            </div>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="panel-section">
+                <div class="panel-section-title">Unread</div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">MR</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Mike Reynolds</div>
+                        <div class="panel-item-meta">Hey, can we reschedule the morning tour?</div>
+                    </div>
+                    <div class="panel-item-time">10m ago</div>
+                </div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">SL</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Sarah Lin</div>
+                        <div class="panel-item-meta">Equipment checklist updated for tomorrow</div>
+                    </div>
+                    <div class="panel-item-time">1h ago</div>
+                </div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">JK</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Jake Kim</div>
+                        <div class="panel-item-meta">Snow report looks great for the weekend!</div>
+                    </div>
+                    <div class="panel-item-time">2h ago</div>
+                </div>
+            </div>
+            <div class="panel-section">
+                <div class="panel-section-title">Earlier</div>
+                <div class="panel-item">
+                    <div class="panel-item-icon">TD</div>
+                    <div class="panel-item-content">
+                        <div class="panel-item-title">Tom Davis</div>
+                        <div class="panel-item-meta">Guest feedback from yesterday's tour</div>
+                    </div>
+                    <div class="panel-item-time">Yesterday</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Panel -->
+    <div class="panel" id="panel-revenue">
+        <div class="panel-header">
+            <span class="panel-title">Revenue</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">$14.3K</div>
+            <div class="metric-detail-change negative">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                70.88% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="revenue-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,65 L30,50 L60,58 L90,42 L120,54 L150,70 L180,58 L210,35 L240,46 L270,28 L300,38 L330,22 L360,18 L360,100 L0,100 Z" fill="url(#revenue-grad)"/>
+                    <polyline points="0,65 30,50 60,58 90,42 120,54 150,70 180,58 210,35 240,46 270,28 300,38 330,22 360,18" fill="none" stroke="#b54848" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Revenue has declined significantly compared to the previous period, driven primarily by reduced group bookings during the early season and unseasonably warm weather in November.</p>
+                <p>December typically accounts for 35% of winter revenue, but this year saw a 40% reduction in advance bookings. The trend began stabilizing in late December as conditions improved.</p>
+                <p>Forecasts suggest recovery in Q1 as snow conditions normalize and marketing efforts targeting corporate groups take effect.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Jake Donovan</span>
+                            <span class="comment-time">2 days ago</span>
+                        </div>
+                        <div class="comment-text">We should revisit pricing for group bookings. Early bird discounts may help recover lost ground in Q1.</div>
+                    </div>
+                </div>
+                <div class="comment">
+                    <div class="comment-avatar">AL</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Amy Liu</span>
+                            <span class="comment-time">5 days ago</span>
+                        </div>
+                        <div class="comment-text">January inquiries are up 15% week-over-week. Looks like snow reports are driving interest.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Jake Donovan</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 8, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    revenue-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sales Panel -->
+    <div class="panel" id="panel-sales">
+        <div class="panel-header">
+            <span class="panel-title">Sales</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">$11.5K</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                97.16% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="sales-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,75 L30,70 L60,62 L90,65 L120,55 L150,48 L180,50 L210,42 L240,45 L270,38 L300,40 L330,32 L360,28 L360,100 L0,100 Z" fill="url(#sales-grad)"/>
+                    <polyline points="0,75 30,70 60,62 90,65 120,55 150,48 180,50 210,42 240,45 270,38 300,40 330,32 360,28" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Sales have nearly doubled compared to the same period last year, driven by successful group booking initiatives and partnerships with regional ski clubs.</p>
+                <p>The corporate retreat program launched in October has exceeded expectations, with 12 bookings from tech companies in Vancouver and Seattle. Average group size increased from 6 to 9 guests.</p>
+                <p>Online booking conversion improved 23% following the website refresh in November.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">AL</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Amy Liu</span>
+                            <span class="comment-time">1 day ago</span>
+                        </div>
+                        <div class="comment-text">Corporate retreat program is performing above forecast. Recommending we expand marketing budget for Q2.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Amy Liu</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 8, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    sales-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profit Panel -->
+    <div class="panel" id="panel-profit">
+        <div class="panel-header">
+            <span class="panel-title">Profit</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">$6.69K</div>
+            <div class="metric-detail-change negative">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                63.55% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="profit-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#b54848" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#b54848" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,45 L30,52 L60,58 L90,50 L120,55 L150,62 L180,54 L210,38 L240,35 L270,42 L300,48 L330,52 L360,55 L360,100 L0,100 Z" fill="url(#profit-grad)"/>
+                    <polyline points="0,45 30,52 60,58 90,50 120,55 150,62 180,54 210,38 240,35 270,42 300,48 330,52 360,55" fill="none" stroke="#b54848" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Profit margins contracted due to planned equipment investments and rising fuel costs. The decline was anticipated as part of the fleet modernization initiative.</p>
+                <p>Two new snow cats were acquired in November, adding $45K to operating costs. Fuel costs increased 18% due to extended terrain grooming requirements following variable snowfall.</p>
+                <p>Margins are expected to recover in Q2 as the new equipment reduces maintenance costs and fuel efficiency improves.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">TM</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Tom Mitchell</span>
+                            <span class="comment-time">3 days ago</span>
+                        </div>
+                        <div class="comment-text">New cats are running 15% more fuel efficient than the old fleet. Should see savings by February.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Jake Donovan</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 7, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    profit-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bookings Panel -->
+    <div class="panel" id="panel-bookings">
+        <div class="panel-header">
+            <span class="panel-title">Bookings</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">47</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                12.5% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="bookings-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,78 L30,72 L60,65 L90,68 L120,58 L150,52 L180,55 L210,45 L240,48 L270,42 L300,38 L330,35 L360,30 L360,100 L0,100 Z" fill="url(#bookings-grad)"/>
+                    <polyline points="0,78 30,72 60,65 90,68 120,58 150,52 180,55 210,45 240,48 270,42 300,38 330,35 360,30" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Total bookings continue to trend upward with 47 confirmed reservations for the period. Group bookings account for 60% of total volume, up from 45% last year.</p>
+                <p>The new online booking system has reduced abandonment rate by 28%. Average lead time increased to 21 days, giving operations better planning visibility.</p>
+                <p>Weekend slots are at 94% capacity through February. Midweek availability remains open with opportunity for targeted promotions.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">EP</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Emma Park</span>
+                            <span class="comment-time">1 day ago</span>
+                        </div>
+                        <div class="comment-text">Seeing strong interest for Valentine's weekend. May want to consider a couples package.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Emma Park</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 9, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Daily</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    bookings-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Guests Panel -->
+    <div class="panel" id="panel-guests">
+        <div class="panel-header">
+            <span class="panel-title">Guests</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="metric-detail-value">184</div>
+            <div class="metric-detail-change positive">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="transform: rotate(-45deg)"><path d="M5 2L10 7L5 12"/></svg>
+                8.2% from last period
+            </div>
+            
+            <div class="metric-detail-chart">
+                <svg width="100%" height="100" viewBox="0 0 360 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="guests-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#6b8f71" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#6b8f71" stop-opacity="0.02"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,72 L30,65 L60,68 L90,58 L120,55 L150,50 L180,52 L210,42 L240,45 L270,38 L300,35 L330,30 L360,28 L360,100 L0,100 Z" fill="url(#guests-grad)"/>
+                    <polyline points="0,72 30,65 60,68 90,58 120,55 150,50 180,52 210,42 240,45 270,38 300,35 330,30 360,28" fill="none" stroke="#6b8f71" stroke-width="1.5"/>
+                </svg>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Guest count reached 184 for the period, with an average of 3.9 guests per booking. Return guest rate improved to 34%, up from 28% last season.</p>
+                <p>Demographics shifted slightly younger, with 18-35 age group representing 42% of guests compared to 35% previously. This aligns with social media marketing efforts on Instagram and TikTok.</p>
+                <p>Guest origin: 45% BC, 30% Alberta, 15% Washington State, 10% other.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">MR</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Maria Rodriguez</span>
+                            <span class="comment-time">4 days ago</span>
+                        </div>
+                        <div class="comment-text">Noticing more first-timers this season. We should consider an intro package with extra guide support.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Owner</span>
+                        <span class="detail-meta-value">Maria Rodriguez</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Jan 8, 2026</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Update frequency</span>
+                        <span class="detail-meta-value">Weekly</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Dec 1 – Dec 31, 2025</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Source</div>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    guests-dec-2025.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Record Panel (Financial Performance 2024) -->
+    <div class="panel" id="panel-record">
+        <div class="panel-header">
+            <span class="panel-title">Financial Performance 2024</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <!-- Mini Slide Preview -->
+            <div class="record-preview">
+                <div class="record-preview__section">Fall 2025 Management Presentation</div>
+                <div class="record-preview__title">Financial Performance 2024</div>
+                <div class="record-preview__grid">
+                    <div class="record-preview__highlights">
+                        <strong>Key Highlights</strong><br>
+                        Revenue growth of 108% YoY<br>
+                        Consistent upward trajectory<br>
+                        Profit margins expanding in H2
+                    </div>
+                    <div class="record-preview__chart">
+                        <svg width="100%" height="60" viewBox="0 0 120 60" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="record-chart-grad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#4a6fa5" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#4a6fa5" stop-opacity="0.02"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,55 L10,52 L20,50 L30,45 L40,42 L50,38 L60,35 L70,30 L80,28 L90,22 L100,18 L110,12 L120,8 L120,60 L0,60 Z" fill="url(#record-chart-grad)"/>
+                            <polyline points="0,55 10,52 20,50 30,45 40,42 50,38 60,35 70,30 80,28 90,22 100,18 110,12 120,8" fill="none" stroke="#4a6fa5" stroke-width="1.5"/>
+                            <polyline points="0,58 10,56 20,54 30,50 40,48 50,45 60,42 70,38 80,36 90,32 100,30 110,26 120,22" fill="none" stroke="#6b8f71" stroke-width="1"/>
+                            <polyline points="0,52 10,50 20,48 30,44 40,42 50,38 60,36 70,32 80,28 90,24 100,20 110,16 120,12" fill="none" stroke="#c9a227" stroke-width="1"/>
+                        </svg>
+                        <div class="record-preview__legend">
+                            <span style="color: #4a6fa5;">Revenue</span>
+                            <span style="color: #6b8f71;">Expenses</span>
+                            <span style="color: #c9a227;">Profit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-detail-description">
+                <p><strong>Revenue growth</strong> of 108% year-over-year demonstrates strong market position with consistent upward trajectory across all quarters.</p>
+                <p>Expenses scaling efficiently with revenue. Profit margins expanding in H2 with year-end performance exceeding targets.</p>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">FT</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Finance Team</span>
+                            <span class="comment-time">Dec 1</span>
+                        </div>
+                        <div class="comment-text">Great progress on cost management this quarter.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Type</span>
+                        <span class="detail-meta-value">Presentation Record</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Last updated</span>
+                        <span class="detail-meta-value">Dec 1, 2025</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Jan – Dec 2024</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">Actions</div>
+                <button onclick="openRecord()" class="open-record-btn">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="12" height="12" rx="2"/>
+                        <path d="M5 11V8M8 11V6M11 11V4"/>
+                    </svg>
+                    Open Full Record
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PDF Panel -->
+    <div class="panel panel--wide" id="panel-pdf">
+        <div class="panel-header">
+            <span class="panel-title">2021 Financial Statements</span>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="pdf-preview" style="aspect-ratio: 8.5/11; max-height: 320px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-start; background: white;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 48px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#57534e" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v2M12 16v2M6 12h2M16 12h2"/></svg>
+                    <span style="font-size: 1.1rem; color: #44403c;">Grant Thornton</span>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="font-size: 1.3rem; color: #292524; margin-bottom: 8px;">Financial Statements</div>
+                    <div style="font-size: 1rem; color: #57534e; margin-bottom: 4px;">Selkirk Wilderness Skiing Ltd.</div>
+                    <div style="font-size: 0.85rem; color: #78716c;">June 30, 2021</div>
+                </div>
+                <div style="position: absolute; bottom: 12px; right: 12px; font-size: 0.65rem; color: #a8a29e;">Page 1 of 13</div>
+            </div>
+            
+            <div class="panel-actions">
+                <a href="2021-financial-statements.pdf" download class="panel-btn panel-btn--primary" style="text-decoration: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    Download
+                </a>
+                <a href="2021-financial-statements.pdf" target="_blank" class="panel-btn" style="text-decoration: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                    Open
+                </a>
+                <button class="panel-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>
+                    Share
+                </button>
+            </div>
+            
+            <div class="metric-detail-description">
+                <p>Audited financial statements for Selkirk Wilderness Skiing Ltd. for the fiscal year ended June 30, 2021. Prepared by Grant Thornton LLP, Nelson, BC.</p>
+                <p>Includes Balance Sheet, Statement of Income and Retained Earnings, Statement of Cash Flows, and Notes to the Financial Statements.</p>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Comments</div>
+                <div class="comment">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">Jake Donovan</span>
+                            <span class="comment-time">Sep 2021</span>
+                        </div>
+                        <div class="comment-text">Filed and archived. Net income of $315K despite COVID impacts — solid year considering reduced operations.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Metadata</div>
+                <div class="detail-meta">
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Prepared by</span>
+                        <span class="detail-meta-value">Grant Thornton LLP</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Period</span>
+                        <span class="detail-meta-value">Year ended June 30, 2021</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Pages</span>
+                        <span class="detail-meta-value">13</span>
+                    </div>
+                    <div class="detail-meta-row">
+                        <span class="detail-meta-label">Uploaded</span>
+                        <span class="detail-meta-value">Sep 24, 2021</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-section-title">Related files</div>
+                <a href="#" class="source-link" style="margin-bottom: 8px; display: flex;">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#b54848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    2020-financial-statements.pdf
+                </a>
+                <a href="#" class="source-link">
+                    <div class="source-icon">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="12" height="12" rx="2"/>
+                            <path d="M5 6h6M5 8h6M5 10h3"/>
+                        </svg>
+                    </div>
+                    2021-budget-vs-actual.xlsx
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- XLSX Preview Panel -->
+    <div class="panel panel--wide" id="panel-xlsx-preview">
+        <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="12" height="12" rx="2"/>
+                    <path d="M5 6h6M5 8h6M5 10h3"/>
+                </svg>
+                <span class="panel-title" id="xlsx-preview-title">calendar-data.xlsx</span>
+            </div>
+            <button class="panel-close" onclick="closePanel()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            </button>
+        </div>
+        <div class="panel-content" style="padding: 0; display: flex; flex-direction: column;">
+            <div class="xlsx-preview-header">
+                <div class="xlsx-preview-dims"><strong>XLSX</strong> <span id="xlsx-dims">0 rows × 0 columns</span></div>
+            </div>
+            <div id="xlsx-spreadsheet-container" style="flex: 1; display: flex; flex-direction: column; min-height: 0;"></div>
+            <div class="xlsx-preview-meta" id="xlsx-preview-meta"></div>
+        </div>
+    </div>
+
+    <script>
+        function openPanel(panel) {
+            document.querySelector('.overlay').classList.add('active');
+            document.getElementById('panel-' + panel).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePanel() {
+            document.querySelector('.overlay').classList.remove('active');
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.body.style.overflow = '';
+        }
+
+        function openRecord() {
+            // Switch to Record tab in parent sandbox
+            if (window.parent && window.parent.switchTab) {
+                window.parent.switchTab('record');
+            } else {
+                // Fallback if not in iframe
+                alert('Open Record page (Financial Performance 2024)');
+            }
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closePanel();
+        });
+
+        // ========== Calendar Module ==========
+        let calWorksheets = [];
+        let calXlsxUrl = null;
+        let calActiveView = { type: 'date' };
+        let calCurrentDate = new Date(2026, 0, 26);
+        let calSelectedDate = new Date(2026, 0, 26);
+        const calMonths = ['January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        const calDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        async function loadCalendarData() {
+            try {
+                const filesRes = await fetch('/api/files');
+                const files = await filesRes.json();
+                const calendarFile = files.find(f => f.name.includes('calendar-data.xlsx'));
+
+                if (!calendarFile) {
+                    console.log('No calendar-data.xlsx found, using sample data');
+                    useCalSampleData();
+                    return;
+                }
+
+                calXlsxUrl = calendarFile.url;
+                const xlsxRes = await fetch(calendarFile.url);
+                const arrayBuffer = await xlsxRes.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+                calWorksheets = workbook.SheetNames.map((sheetName, idx) => {
+                    const sheet = workbook.Sheets[sheetName];
+                    const rows = XLSX.utils.sheet_to_json(sheet);
+                    return {
+                        id: sheetName.toLowerCase().replace(/\s+/g, '-'),
+                        name: sheetName,
+                        items: rows.map((row, i) => ({
+                            id: idx * 100 + i,
+                            title: row.Title || '',
+                            startDate: formatCalExcelDate(row.StartDate),
+                            endDate: formatCalExcelDate(row.EndDate),
+                            notes: row.Notes || ''
+                        }))
+                    };
+                });
+                console.log('Loaded calendar worksheets:', calWorksheets);
+            } catch (error) {
+                console.error('Error loading calendar data:', error);
+                useCalSampleData();
+            }
+            renderCalWorksheetTabs();
+            renderCalMonth();
+            renderCalDetail();
+        }
+
+        function formatCalExcelDate(value) {
+            if (!value) return '';
+            if (typeof value === 'string') {
+                const d = new Date(value);
+                if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
+                return value;
+            }
+            if (typeof value === 'number') {
+                const date = XLSX.SSF.parse_date_code(value);
+                return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`;
+            }
+            return '';
+        }
+
+        function useCalSampleData() {
+            calWorksheets = [
+                { id: 'team-schedule', name: 'Team Schedule', items: [
+                    { id: 1, title: 'Morning Grooming Crew', startDate: '2026-01-26', endDate: '2026-01-26', notes: '4:30 AM start' },
+                    { id: 2, title: 'Ski Patrol Training', startDate: '2026-01-27', endDate: '2026-01-27', notes: 'Avalanche response' },
+                ]},
+                { id: 'guest-schedule', name: 'Guest Schedule', items: [
+                    { id: 7, title: 'Johnson Family', startDate: '2026-01-26', endDate: '2026-01-30', notes: 'Cabin 4' },
+                ]},
+                { id: 'other', name: 'Other', items: [
+                    { id: 12, title: 'Live Music', startDate: '2026-01-26', endDate: '2026-01-26', notes: 'Lodge bar, 7-10 PM' },
+                ]}
+            ];
+        }
+
+        function renderCalWorksheetTabs() {
+            const container = document.getElementById('cal-worksheet-tabs');
+            container.innerHTML = calWorksheets.map(ws => `
+                <button class="calendar-worksheet-tab ${calActiveView.type === 'worksheet' && calActiveView.id === ws.id ? 'active' : ''}"
+                        onclick="selectCalWorksheet('${ws.id}')">${ws.name}</button>
+            `).join('');
+        }
+
+        function selectCalWorksheet(wsId) {
+            calActiveView = { type: 'worksheet', id: wsId };
+            renderCalWorksheetTabs();
+            renderCalMonth();
+            renderCalDetail();
+        }
+
+        function renderCalMonth() {
+            const year = calCurrentDate.getFullYear();
+            const month = calCurrentDate.getMonth();
+            document.getElementById('cal-month-title').textContent = `${calMonths[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+            const container = document.getElementById('cal-days-grid');
+            container.innerHTML = '';
+
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                container.appendChild(createCalDayBtn(day, 'other-month', new Date(year, month - 1, day)));
+            }
+
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === today.toDateString();
+                const isSelected = calActiveView.type === 'date' && date.toDateString() === calSelectedDate.toDateString();
+                let className = '';
+                if (isToday) className += ' today';
+                if (isSelected) className += ' selected';
+                container.appendChild(createCalDayBtn(day, className.trim(), date));
+            }
+
+            const totalCells = firstDay + daysInMonth;
+            const remaining = totalCells <= 35 ? 35 - totalCells : 42 - totalCells;
+            for (let day = 1; day <= remaining; day++) {
+                container.appendChild(createCalDayBtn(day, 'other-month', new Date(year, month + 1, day)));
+            }
+        }
+
+        function createCalDayBtn(day, className, date) {
+            const btn = document.createElement('button');
+            btn.className = `calendar-day-btn ${className}`;
+            btn.textContent = day;
+            btn.onclick = () => selectCalDate(date);
+            return btn;
+        }
+
+        function selectCalDate(date) {
+            calSelectedDate = date;
+            calCurrentDate = new Date(date.getFullYear(), date.getMonth(), 1);
+            calActiveView = { type: 'date' };
+            renderCalWorksheetTabs();
+            renderCalMonth();
+            renderCalDetail();
+        }
+
+        function renderCalDetail() {
+            const header = document.getElementById('cal-detail-header');
+            const content = document.getElementById('cal-detail-content');
+
+            if (calActiveView.type === 'worksheet') {
+                const ws = calWorksheets.find(w => w.id === calActiveView.id);
+                if (!ws) return;
+                header.innerHTML = `<span>${ws.name}</span>`;
+
+                const sourceSection = calWorksheets.length ? `
+                    <div class="detail-section" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                        <div class="detail-section-title">Source</div>
+                        <a href="#" onclick="openXlsxPreview(); return false;" class="source-link">
+                            <div class="source-icon">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b8f71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="2" width="12" height="12" rx="2"/>
+                                    <path d="M5 6h6M5 8h6M5 10h3"/>
+                                </svg>
+                            </div>
+                            calendar-data.xlsx
+                        </a>
+                    </div>
+                ` : '';
+
+                if (ws.items.length === 0) {
+                    content.innerHTML = `<div class="calendar-detail-empty">No items in this worksheet</div>${sourceSection}`;
+                } else {
+                    content.innerHTML = `<div class="calendar-events calendar-list-view">${ws.items.map(item => `
+                        <div class="calendar-event-item">
+                            <div class="calendar-list-date">${formatCalDisplayDate(item.startDate, item.endDate)}</div>
+                            <div class="calendar-list-content">
+                                <div class="calendar-event-title">${item.title}</div>
+                                ${item.notes ? `<div class="calendar-event-meta">${item.notes}</div>` : ''}
+                            </div>
+                        </div>
+                    `).join('')}</div>${sourceSection}`;
+                }
+            } else {
+                const dayName = calDays[calSelectedDate.getDay()];
+                const monthName = calMonths[calSelectedDate.getMonth()];
+                header.textContent = `${dayName}, ${monthName} ${calSelectedDate.getDate()}`;
+
+                const dateStr = formatCalDateKey(calSelectedDate);
+                const worksheetItems = calWorksheets.map(ws => ({
+                    ...ws,
+                    dayItems: ws.items.filter(item => dateStr >= item.startDate && dateStr <= item.endDate)
+                }));
+                const totalItems = worksheetItems.reduce((sum, ws) => sum + ws.dayItems.length, 0);
+
+                if (totalItems === 0) {
+                    content.innerHTML = '<div class="calendar-detail-empty">Nothing scheduled today</div>';
+                } else {
+                    content.innerHTML = `<div class="calendar-events">${worksheetItems.filter(ws => ws.dayItems.length > 0).map(ws => `
+                        <div class="calendar-event-group-label">${ws.name}</div>
+                        ${ws.dayItems.map(item => `
+                            <div class="calendar-event-item">
+                                <div class="calendar-event-title">${item.title}</div>
+                                ${item.notes ? `<div class="calendar-event-meta">${item.notes}</div>` : ''}
+                                ${item.startDate !== item.endDate ? `<div class="calendar-event-dates">${item.startDate} → ${item.endDate}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    `).join('')}</div>`;
+                }
+            }
+        }
+
+        function formatCalDisplayDate(start, end) {
+            const options = { month: 'short', day: 'numeric' };
+            const startDate = new Date(start + 'T00:00:00');
+            const startStr = startDate.toLocaleDateString('en-US', options);
+            if (start === end) return startStr;
+            const endDate = new Date(end + 'T00:00:00');
+            return `${startStr} → ${endDate.toLocaleDateString('en-US', options)}`;
+        }
+
+        function formatCalDateKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function calPrevMonth() {
+            calCurrentDate = new Date(calCurrentDate.getFullYear(), calCurrentDate.getMonth() - 1, 1);
+            renderCalMonth();
+        }
+
+        function calNextMonth() {
+            calCurrentDate = new Date(calCurrentDate.getFullYear(), calCurrentDate.getMonth() + 1, 1);
+            renderCalMonth();
+        }
+
+        // ========== XLSX Preview ==========
+        let xlsxPreviewData = null;
+        let xlsxPreviewActiveSheet = 0;
+
+        function getColumnLetter(index) {
+            let letter = '';
+            while (index >= 0) {
+                letter = String.fromCharCode((index % 26) + 65) + letter;
+                index = Math.floor(index / 26) - 1;
+            }
+            return letter;
+        }
+
+        function openXlsxPreview() {
+            if (!calWorksheets.length) return;
+
+            // Build preview data from calWorksheets (with header row)
+            xlsxPreviewData = calWorksheets.map(ws => {
+                const headers = ['StartDate', 'EndDate', 'Title', 'Notes'];
+                const dataRows = ws.items.map(item => [item.startDate, item.endDate, item.title, item.notes]);
+                return {
+                    name: ws.name,
+                    data: [headers, ...dataRows]
+                };
+            });
+
+            xlsxPreviewActiveSheet = 0;
+            renderXlsxSpreadsheet();
+            renderXlsxMeta();
+            openPanel('xlsx-preview');
+        }
+
+        function selectXlsxSheet(idx) {
+            xlsxPreviewActiveSheet = idx;
+            renderXlsxSpreadsheet();
+        }
+
+        function renderXlsxSpreadsheet() {
+            const container = document.getElementById('xlsx-spreadsheet-container');
+            const dimsEl = document.getElementById('xlsx-dims');
+            const sheet = xlsxPreviewData[xlsxPreviewActiveSheet];
+
+            if (!sheet || !sheet.data.length) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">No data in spreadsheet</div>';
+                dimsEl.textContent = '0 rows × 0 columns';
+                return;
+            }
+
+            const data = sheet.data;
+            const rowCount = data.length;
+            const colCount = Math.max(...data.map(row => row ? row.length : 0), 0);
+
+            dimsEl.textContent = `${rowCount} rows × ${colCount} columns`;
+
+            let html = '<div class="spreadsheet">';
+
+            // Sheet tabs (if multiple sheets)
+            if (xlsxPreviewData.length > 1) {
+                html += '<div class="spreadsheet__tabs">';
+                xlsxPreviewData.forEach((s, i) => {
+                    const activeClass = i === xlsxPreviewActiveSheet ? ' active' : '';
+                    html += `<button class="spreadsheet__tab${activeClass}" onclick="selectXlsxSheet(${i})">${s.name}</button>`;
+                });
+                html += '</div>';
+            }
+
+            // Grid
+            html += '<div class="spreadsheet__grid"><table class="spreadsheet__table">';
+
+            // Column headers (A, B, C...)
+            html += '<thead><tr><th class="spreadsheet__corner"></th>';
+            for (let c = 0; c < colCount; c++) {
+                html += `<th>${getColumnLetter(c)}</th>`;
+            }
+            html += '</tr></thead>';
+
+            // Data rows
+            html += '<tbody>';
+            data.forEach((row, r) => {
+                html += `<tr><td class="spreadsheet__row-num">${r + 1}</td>`;
+                for (let c = 0; c < colCount; c++) {
+                    const cell = row && row[c] !== undefined ? row[c] : '';
+                    html += `<td>${cell}</td>`;
+                }
+                html += '</tr>';
+            });
+            html += '</tbody></table></div></div>';
+
+            container.innerHTML = html;
+        }
+
+        function renderXlsxMeta() {
+            const container = document.getElementById('xlsx-preview-meta');
+            const totalRows = xlsxPreviewData.reduce((sum, s) => sum + s.data.length, 0);
+
+            container.innerHTML = `
+                <div class="xlsx-preview-meta-title">Metadata</div>
+                <div class="xlsx-preview-meta-row">
+                    <span class="xlsx-preview-meta-label">Sheets</span>
+                    <span class="xlsx-preview-meta-value">${xlsxPreviewData.length}</span>
+                </div>
+                <div class="xlsx-preview-meta-row">
+                    <span class="xlsx-preview-meta-label">Location</span>
+                    <span class="xlsx-preview-meta-value">${calXlsxUrl ? calXlsxUrl.split('/').pop() : 'calendar-data.xlsx'}</span>
+                </div>
+            `;
+        }
+
+        // Load calendar data on page load
+        loadCalendarData();
+    </script>
+</body>
+</html>
